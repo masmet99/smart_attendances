@@ -2,7 +2,7 @@ from insightface.app import FaceAnalysis
 
 print("START FACE SERVICE")
 
-app = FaceAnalysis()
+app = FaceAnalysis(name="buffalo_s")
 
 app.prepare(
     ctx_id=-1,
