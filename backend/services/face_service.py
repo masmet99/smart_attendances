@@ -1,6 +1,15 @@
-import numpy as np
+from insightface.app import FaceAnalysis
 
-print("FACE SERVICE LOADED")
+print("START FACE SERVICE")
+
+app = FaceAnalysis()
+
+app.prepare(
+    ctx_id=-1,
+    det_size=(640, 640)
+)
+
+print("FACE MODEL LOADED")
 
 
 def extract_embedding(image_path):
