@@ -1,8 +1,12 @@
 from insightface.app import FaceAnalysis
+import cv2
+import numpy as np
 
 print("START FACE SERVICE")
 
-app = FaceAnalysis(name="buffalo_s")
+app = FaceAnalysis(
+    name="buffalo_s"
+)
 
 app.prepare(
     ctx_id=-1,
@@ -14,9 +18,19 @@ print("FACE MODEL LOADED")
 
 def extract_embedding(image_path):
 
-    print("DUMMY EMBEDDING")
+    image = cv2.imread(image_path)
 
-    return [0.1] * 512
+    if image is None:
+        return None
+
+    faces = app.get(image)
+
+    if len(faces) == 0:
+        return None
+
+    embedding = faces[0].embedding
+
+    return embedding.tolist()
 
 
 def compare_embeddings(
@@ -24,4 +38,15 @@ def compare_embeddings(
     embedding2
 ):
 
-    return 0.9
+    embedding1 = np.array(embedding1)
+    embedding2 = np.array(embedding2)
+
+    similarity = np.dot(
+        embedding1,
+        embedding2
+    ) / (
+        np.linalg.norm(embedding1)
+        * np.linalg.norm(embedding2)
+    )
+
+    return float(similarity)
