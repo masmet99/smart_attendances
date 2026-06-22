@@ -20,6 +20,17 @@ const [form, setForm] =
     role: "user"
   });
 
+  const [editingUser, setEditingUser] =
+  useState(null);
+
+  const [editForm, setEditForm] =
+  useState({
+    nama: "",
+    jabatan: "",
+    unit_kerja: "",
+    role: "user"
+  });
+
   useEffect(() => {
 
     loadUsers();
@@ -51,7 +62,7 @@ const [form, setForm] =
 
     setForm({
 
-      ...form,
+      form,
 
       [e.target.name]:
         e.target.value
@@ -79,7 +90,8 @@ const [form, setForm] =
         nama: "",
         jabatan: "",
         unit_kerja: "",
-        password: ""
+        password: "",
+        role: "user"
       });
 
       loadUsers();
@@ -147,6 +159,60 @@ const [form, setForm] =
 
     alert(
       "Gagal menghapus user"
+    );
+
+  }
+
+};
+
+const openEdit = (user) => {
+
+  setEditingUser(user);
+
+  setEditForm({
+
+    nama: user.nama || "",
+
+    jabatan:
+      user.jabatan || "",
+
+    unit_kerja:
+      user.unit_kerja || "",
+
+    role:
+      user.role || "user"
+
+  });
+
+};
+
+const saveEdit =
+  async () => {
+
+  try {
+
+    await api.put(
+
+      `/admin/users/${editingUser.id}`,
+
+      editForm
+
+    );
+
+    setEditingUser(null);
+
+    loadUsers();
+
+    alert(
+      "User berhasil diperbarui"
+    );
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert(
+      "Gagal update user"
     );
 
   }
@@ -313,11 +379,107 @@ const [form, setForm] =
         placeholder="Cari nama user..."
         value={search}
         onChange={(e) =>
-            setSearch(
-            e.target.value
-            )
+            setSearch(e.target.value)
         }
+        style={{
+            marginBottom: "20px",
+            width: "300px"
+        }}
         />
+
+        {
+        editingUser && (
+
+        <div
+        style={{
+            marginTop: "30px",
+            padding: "20px",
+            border: "1px solid #ddd"
+        }}
+        >
+
+        <h3>
+            Edit User
+        </h3>
+
+        <input
+            type="text"
+            value={editForm.nama}
+            onChange={(e) =>
+            setEditForm({
+                ...editForm,
+                nama: e.target.value
+            })
+            }
+            placeholder="Nama"
+        />
+
+        <input
+            type="text"
+            value={editForm.jabatan}
+            onChange={(e) =>
+            setEditForm({
+                ...editForm,
+                jabatan: e.target.value
+            })
+            }
+            placeholder="Jabatan"
+        />
+
+        <input
+            type="text"
+            value={
+            editForm.unit_kerja
+            }
+            onChange={(e) =>
+            setEditForm({
+                ...editForm,
+                unit_kerja:
+                e.target.value
+            })
+            }
+            placeholder="Unit Kerja"
+        />
+
+        <select
+            value={editForm.role}
+            onChange={(e) =>
+            setEditForm({
+                ...editForm,
+                role: e.target.value
+            })
+            }
+        >
+
+            <option value="user">
+            User
+            </option>
+
+            <option value="admin">
+            Admin
+            </option>
+
+        </select>
+
+        <button
+        type="button"
+            onClick={saveEdit}
+        >
+            Simpan
+        </button>
+
+        <button
+        type="button"
+            onClick={() =>
+            setEditingUser(null)
+            }
+        >
+            Batal
+        </button>
+
+        </div>
+
+        )}
 
         <table
           border="1"
@@ -351,7 +513,7 @@ const [form, setForm] =
             {users
             .filter((user) =>
 
-            user.nama
+            (user.nama || "")
                 .toLowerCase()
                 .includes(
                 search.toLowerCase()
@@ -396,6 +558,7 @@ const [form, setForm] =
                 {user.is_active ? (
 
                     <button
+                    type="button"
                     onClick={() =>
                         disableUser(
                         user.id
@@ -408,6 +571,7 @@ const [form, setForm] =
                 ) : (
 
                     <button
+                    type="button"
                     onClick={() =>
                         enableUser(
                         user.id
@@ -420,6 +584,16 @@ const [form, setForm] =
                 )}
 
                 <button
+                type="button"
+                onClick={() =>
+                    openEdit(user)
+                }
+                >
+                Edit
+                </button>
+
+                <button
+                type="button"
                     onClick={() =>
                     deleteUser(
                         user.id
@@ -440,6 +614,7 @@ const [form, setForm] =
         </table>
 
       </div>
+
 
     </div>
 
