@@ -24,7 +24,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://smart-attendances.vercel.app/"
+        "https://smart-attendances.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
