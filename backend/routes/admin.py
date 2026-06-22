@@ -115,6 +115,62 @@ def get_users(
         "data": result
     }
 
+@router.get("/users/export")
+def export_users(
+
+    db: Session = Depends(get_db),
+    admin=Depends(admin_required)
+
+):
+
+    users = db.query(User).all()
+
+    wb = Workbook()
+
+    ws = wb.active
+
+    ws.title = "Data User"
+
+    ws.append([
+        "ID",
+        "NIP",
+        "Nama",
+        "Jabatan",
+        "Unit Kerja",
+        "Role",
+        "Status"
+    ])
+
+    for user in users:
+
+        ws.append([
+
+            user.id,
+
+            user.nip,
+
+            user.nama,
+
+            user.jabatan,
+
+            user.unit_kerja,
+
+            user.role,
+
+            "Aktif"
+            if user.is_active
+            else "Nonaktif"
+
+        ])
+
+    filename = "data_user.xlsx"
+
+    wb.save(filename)
+
+    return FileResponse(
+        filename,
+        filename=filename
+    )
 
 @router.get("/users/{user_id}")
 def get_user(

@@ -299,6 +299,57 @@ const resetPassword =
 
 };
 
+const exportUsers = async () => {
+
+  try {
+
+    const response =
+      await api.get(
+        "/admin/users/export",
+        {
+          responseType:
+            "blob"
+        }
+      );
+
+    const url =
+      window.URL.createObjectURL(
+        new Blob([
+          response.data
+        ])
+      );
+
+    const link =
+      document.createElement("a");
+
+    link.href = url;
+
+    link.setAttribute(
+      "download",
+      "data_user.xlsx"
+    );
+
+    document.body.appendChild(
+      link
+    );
+
+    link.click();
+
+  } catch (err) {
+
+    console.log(err);
+
+    Swal.fire({
+      icon: "error",
+      title: "Gagal",
+      text:
+        "Export gagal"
+    });
+
+  }
+
+};
+
 const openEdit = (user) => {
 
   setEditingUser(user);
@@ -509,6 +560,14 @@ const saveEdit =
           </button>
 
         </form>
+
+        <button
+        type="button"
+        onClick={exportUsers}
+        >
+        📥 Export Excel
+        </button>
+        
 
         <input
         type="text"
