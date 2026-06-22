@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 import api from "../utils/api";
+import Swal from "sweetalert2";
 
 function UserManagement() {
 
@@ -96,53 +97,109 @@ const [form, setForm] =
 
       loadUsers();
 
-      alert(
-        "User berhasil ditambahkan"
-      );
+    Swal.fire({
+    icon: "success",
+    title: "Berhasil",
+    text: "User berhasil ditambahkan"
+    });
 
     } catch (err) {
 
       console.log(err);
 
-      alert(
-        "Gagal menambah user"
-      );
+    Swal.fire({
+    icon: "error",
+    title: "Gagal",
+    text: "Gagal menambah user"
+    });
 
     }
 
   };
 
-  const disableUser =
-    async (id) => {
-
-    await api.put(
-      `/admin/users/${id}/disable`
-    );
-
-    loadUsers();
-
-  };
-
-  const enableUser =
-    async (id) => {
-
-    await api.put(
-      `/admin/users/${id}/enable`
-    );
-
-    loadUsers();
-
-  };
-
-  const deleteUser =
+const disableUser =
   async (id) => {
 
-  const confirmDelete =
-    window.confirm(
-      "Yakin ingin menghapus user ini?"
-    );
+  const result =
+    await Swal.fire({
 
-  if (!confirmDelete)
+      title:
+        "Nonaktifkan User?",
+
+      icon:
+        "question",
+
+      showCancelButton:
+        true
+
+    });
+
+  if (!result.isConfirmed)
+    return;
+
+  await api.put(
+    `/admin/users/${id}/disable`
+  );
+
+  loadUsers();
+
+};
+
+const enableUser =
+  async (id) => {
+
+  const result =
+    await Swal.fire({
+
+      title:
+        "Aktifkan User?",
+
+      icon:
+        "question",
+
+      showCancelButton:
+        true
+
+    });
+
+  if (!result.isConfirmed)
+    return;
+
+  await api.put(
+    `/admin/users/${id}/enable`
+  );
+
+  loadUsers();
+
+};
+
+const deleteUser =
+  async (id) => {
+
+  const result =
+    await Swal.fire({
+
+      title:
+        "Hapus User?",
+
+      text:
+        "Data yang dihapus tidak dapat dikembalikan",
+
+      icon:
+        "warning",
+
+      showCancelButton:
+        true,
+
+      confirmButtonText:
+        "Ya, Hapus",
+
+      cancelButtonText:
+        "Batal"
+
+    });
+
+  if (!result.isConfirmed)
     return;
 
   try {
@@ -153,13 +210,19 @@ const [form, setForm] =
 
     loadUsers();
 
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil",
+      text: "User berhasil dihapus"
+    });
+
   } catch (err) {
 
-    console.log(err);
-
-    alert(
-      "Gagal menghapus user"
-    );
+    Swal.fire({
+      icon: "error",
+      title: "Gagal",
+      text: "Gagal menghapus user"
+    });
 
   }
 
@@ -203,9 +266,11 @@ const saveEdit =
 
     loadUsers();
 
-    alert(
-      "User berhasil diperbarui"
-    );
+    Swal.fire({
+    icon: "success",
+    title: "Berhasil",
+    text: "User berhasil diperbarui"
+    });
 
   } catch (err) {
 
