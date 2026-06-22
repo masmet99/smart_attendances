@@ -9,7 +9,8 @@ from database.dependencies import get_db
 
 from schemas.user_schema import (
     UserCreate,
-    UserUpdate
+    UserUpdate,
+    ResetPasswordRequest
 )
 
 from datetime import date
@@ -63,7 +64,7 @@ def create_user(
     
     print("REQUEST USER =", user)
     print("ROLE =", user.role)
-    
+
     new_user = User(
         nip=user.nip,
         nama=user.nama,
@@ -226,6 +227,48 @@ def delete_user(
     return {
         "success": True,
         "message": "User berhasil dihapus"
+    }
+
+
+@router.put(
+    "/users/{user_id}/reset-password"
+)
+def reset_password(
+
+    user_id: int,
+
+    data: ResetPasswordRequest,
+
+    db: Session = Depends(get_db),
+
+    admin=Depends(
+        admin_required
+    )
+
+):
+
+    user = db.query(User).filter(
+        User.id == user_id
+    ).first()
+
+    if not user:
+
+        return {
+            "success": False,
+            "message":
+            "User tidak ditemukan"
+        }
+
+    user.password = hash_password(
+        data.password
+    )
+
+    db.commit()
+
+    return {
+        "success": True,
+        "message":
+        "Password berhasil direset"
     }
 
 

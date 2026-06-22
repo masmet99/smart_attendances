@@ -228,6 +228,77 @@ const deleteUser =
 
 };
 
+const resetPassword =
+  async (id) => {
+
+  const result =
+    await Swal.fire({
+
+      title:
+        "Reset Password",
+
+      input:
+        "password",
+
+      inputLabel:
+        "Password Baru",
+
+      inputPlaceholder:
+        "Masukkan password baru",
+
+      showCancelButton:
+        true
+
+    });
+
+  if (!result.value)
+    return;
+
+  try {
+
+    await api.put(
+
+      `/admin/users/${id}/reset-password`,
+
+      {
+        password:
+          result.value
+      }
+
+    );
+
+    Swal.fire({
+
+      icon:
+        "success",
+
+      title:
+        "Berhasil",
+
+      text:
+        "Password berhasil direset"
+
+    });
+
+  } catch (err) {
+
+    Swal.fire({
+
+      icon:
+        "error",
+
+      title:
+        "Gagal",
+
+      text:
+        "Reset password gagal"
+
+    });
+
+  }
+
+};
+
 const openEdit = (user) => {
 
   setEditingUser(user);
@@ -655,6 +726,17 @@ const saveEdit =
                 }
                 >
                 Edit
+                </button>
+
+                <button
+                type="button"
+                onClick={() =>
+                    resetPassword(
+                    user.id
+                    )
+                }
+                >
+                🔑 Reset Password
                 </button>
 
                 <button
