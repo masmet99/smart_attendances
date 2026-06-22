@@ -4,6 +4,9 @@ import api from "../utils/api";
 
 function UserManagement() {
 
+const [search, setSearch] =
+  useState("");
+
   const [users, setUsers] =
     useState([]);
 
@@ -119,6 +122,37 @@ const [form, setForm] =
 
   };
 
+  const deleteUser =
+  async (id) => {
+
+  const confirmDelete =
+    window.confirm(
+      "Yakin ingin menghapus user ini?"
+    );
+
+  if (!confirmDelete)
+    return;
+
+  try {
+
+    await api.delete(
+      `/admin/users/${id}`
+    );
+
+    loadUsers();
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert(
+      "Gagal menghapus user"
+    );
+
+  }
+
+};
+
   return (
 
     <div className="dashboard-container">
@@ -130,6 +164,63 @@ const [form, setForm] =
         <h1>
           Kelola Akun
         </h1>
+
+        <div
+            style={{
+                display: "flex",
+                gap: "20px",
+                marginBottom: "20px"
+            }}
+            >
+
+            <div>
+
+                <h2>
+                {users.length}
+                </h2>
+
+                <p>
+                Total User
+                </p>
+
+            </div>
+
+            <div>
+
+                <h2>
+                {
+                    users.filter(
+                    user =>
+                        user.is_active
+                    ).length
+                }
+                </h2>
+
+                <p>
+                User Aktif
+                </p>
+
+            </div>
+
+            <div>
+
+                <h2>
+                {
+                    users.filter(
+                    user =>
+                        user.role ===
+                        "admin"
+                    ).length
+                }
+                </h2>
+
+                <p>
+                Admin
+                </p>
+
+            </div>
+
+            </div>
 
         <form
           onSubmit={
@@ -217,6 +308,17 @@ const [form, setForm] =
 
         </form>
 
+        <input
+        type="text"
+        placeholder="Cari nama user..."
+        value={search}
+        onChange={(e) =>
+            setSearch(
+            e.target.value
+            )
+        }
+        />
+
         <table
           border="1"
           width="100%"
@@ -246,7 +348,17 @@ const [form, setForm] =
 
           <tbody>
 
-            {users.map(
+            {users
+            .filter((user) =>
+
+            user.nama
+                .toLowerCase()
+                .includes(
+                search.toLowerCase()
+                )
+
+            )
+            .map(
               (user) => (
 
               <tr
@@ -281,31 +393,41 @@ const [form, setForm] =
 
                 <td>
 
-                  {user.is_active ? (
+                {user.is_active ? (
 
                     <button
-                      onClick={() =>
+                    onClick={() =>
                         disableUser(
-                          user.id
+                        user.id
                         )
-                      }
+                    }
                     >
-                      Disable
+                    Disable
                     </button>
 
-                  ) : (
+                ) : (
 
                     <button
-                      onClick={() =>
+                    onClick={() =>
                         enableUser(
-                          user.id
+                        user.id
                         )
-                      }
+                    }
                     >
-                      Enable
+                    Enable
                     </button>
 
-                  )}
+                )}
+
+                <button
+                    onClick={() =>
+                    deleteUser(
+                        user.id
+                    )
+                    }
+                >
+                    Hapus
+                </button>
 
                 </td>
 
