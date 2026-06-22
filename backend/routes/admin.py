@@ -448,6 +448,16 @@ def update_geofence(
 
     if not geofence:
 
+        geofence = Geofence(
+            nama_lokasi=data.nama_lokasi,
+            latitude=data.latitude,
+            longitude=data.longitude,
+            radius_meter=data.radius_meter
+        )
+
+        db.add(geofence)
+        db.commit()
+
         return {
             "success": False,
             "message": "Geofence tidak ditemukan"
