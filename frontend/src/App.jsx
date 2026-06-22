@@ -10,6 +10,7 @@ import AdminGeofence from "./pages/AdminGeofence";
 
 import RegisterFace from "./pages/RegisterFace";
 import AttendanceHistory from "./pages/AttendanceHistory";
+import UserManagement from "./pages/UserManagement";
 
 function App() {
 
@@ -79,6 +80,11 @@ function App() {
           element={
             <AdminGeofence />
           }
+        />
+
+        <Route
+          path="/admin/users"
+          element={<UserManagement />}
         />
 
         </Routes>

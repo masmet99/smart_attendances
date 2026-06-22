@@ -130,6 +130,21 @@ return (
           📍 Geofence
         </Link>
 
+        <Link
+        to="/admin/users"
+        className={
+          location.pathname ===
+          "/admin/users"
+            ? "sidebar-link active-link"
+            : "sidebar-link"
+        }
+        onClick={() =>
+          setMenuOpen(false)
+        }
+      >
+        👥 Kelola Akun
+      </Link>
+
         </div>
 
       </div>

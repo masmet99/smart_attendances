@@ -8,6 +8,7 @@ class UserCreate(BaseModel):
     jabatan: Optional[str] = None
     unit_kerja: Optional[str] = None
     password: str
+    role: str = "user"
 
 
 class UserUpdate(BaseModel):
@@ -15,6 +16,7 @@ class UserUpdate(BaseModel):
     jabatan: Optional[str] = None
     unit_kerja: Optional[str] = None
     password: Optional[str] = None
+    role: Optional[str] = None
     is_active: Optional[bool] = None
 
 

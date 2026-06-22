@@ -7,7 +7,10 @@ from utils.admin_middleware import admin_required
 
 from database.dependencies import get_db
 
-from schemas.user_schema import UserCreate
+from schemas.user_schema import (
+    UserCreate,
+    UserUpdate
+)
 
 from datetime import date
 from sqlalchemy import func
@@ -57,12 +60,17 @@ def create_user(
     db: Session = Depends(get_db),
     admin=Depends(admin_required)
 ):
+    
+    print("REQUEST USER =", user)
+    print("ROLE =", user.role)
+    
     new_user = User(
         nip=user.nip,
         nama=user.nama,
         jabatan=user.jabatan,
         unit_kerja=user.unit_kerja,
-        password=hash_password(user.password)
+        password=hash_password(user.password),
+        role=user.role
     )
 
     db.add(new_user)
@@ -138,6 +146,86 @@ def get_user(
             "created_at": user.created_at,
             "updated_at": user.updated_at
         }
+    }
+
+
+
+@router.put("/users/{user_id}")
+def update_user(
+
+    user_id: int,
+    data: UserUpdate,
+
+    db: Session = Depends(get_db),
+    admin=Depends(admin_required)
+
+):
+
+    user = db.query(User).filter(
+        User.id == user_id
+    ).first()
+
+    if not user:
+        return {
+            "success": False,
+            "message": "User tidak ditemukan"
+        }
+
+    if data.nama is not None:
+        user.nama = data.nama
+
+    if data.jabatan is not None:
+        user.jabatan = data.jabatan
+
+    if data.unit_kerja is not None:
+        user.unit_kerja = data.unit_kerja
+
+    if data.role is not None:
+        user.role = data.role
+
+    if data.password is not None:
+        user.password = hash_password(
+            data.password
+        )
+
+    if data.is_active is not None:
+        user.is_active = data.is_active
+
+    db.commit()
+
+    return {
+        "success": True,
+        "message": "User berhasil diperbarui"
+    }
+
+@router.delete("/users/{user_id}")
+def delete_user(
+
+    user_id: int,
+
+    db: Session = Depends(get_db),
+    admin=Depends(admin_required)
+
+):
+
+    user = db.query(User).filter(
+        User.id == user_id
+    ).first()
+
+    if not user:
+
+        return {
+            "success": False,
+            "message": "User tidak ditemukan"
+        }
+
+    db.delete(user)
+
+    db.commit()
+
+    return {
+        "success": True,
+        "message": "User berhasil dihapus"
     }
 
 
