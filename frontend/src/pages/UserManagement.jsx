@@ -14,6 +14,12 @@ const [users, setUsers] =
 const [excelFile, setExcelFile] =
   useState(null);
 
+const [showForm, setShowForm] =
+  useState(false);
+
+const [roleDropdownOpen, setRoleDropdownOpen] =
+  useState(false);
+
 const [form, setForm] =
   useState({
     nip: "",
@@ -513,321 +519,436 @@ const downloadTemplate =
 
 };
 
-  return (
+return (
 
-    <div className="dashboard-container">
+  <div className="dashboard-container">
 
-      <AdminSidebar />
+    <AdminSidebar />
 
-      <div className="dashboard-content">
+    <div className="dashboard-content">
+
+      {/* HEADER */}
+
+      <div className="page-header-card">
 
         <h1>
-          Kelola Akun
+          👥 Kelola Akun Pegawai
         </h1>
 
-        <div
-            style={{
-                display: "flex",
-                gap: "20px",
-                marginBottom: "20px"
-            }}
-            >
+        <p>
+          Monitoring dan manajemen akun pengguna sistem.
+        </p>
 
-            <div>
+      </div>
 
-                <h2>
-                {users.length}
-                </h2>
+      {/* STATISTIK */}
 
-                <p>
-                Total User
-                </p>
+      <div className="user-stats-grid">
 
-            </div>
+        <div className="stat-card">
 
-            <div>
+          <h2>
+            {users.length}
+          </h2>
 
-                <h2>
-                {
-                    users.filter(
-                    user =>
-                        user.is_active
-                    ).length
-                }
-                </h2>
+          <p>
+            Total User
+          </p>
 
-                <p>
-                User Aktif
-                </p>
+        </div>
 
-            </div>
+        <div className="stat-card">
 
-            <div>
-
-                <h2>
-                {
-                    users.filter(
-                    user =>
-                        user.role ===
-                        "admin"
-                    ).length
-                }
-                </h2>
-
-                <p>
-                Admin
-                </p>
-
-            </div>
-
-            </div>
-
-        <form
-          onSubmit={
-            handleSubmit
-          }
-          style={{
-            marginBottom:
-              "30px"
-          }}
-        >
-
-          <input
-            type="text"
-            name="nip"
-            placeholder="NIP"
-            value={form.nip}
-            onChange={
-              handleChange
+          <h2>
+            {
+              users.filter(
+                user =>
+                  user.is_active
+              ).length
             }
-          />
+          </h2>
 
-          <input
-            type="text"
-            name="nama"
-            placeholder="Nama"
-            value={form.nama}
-            onChange={
-              handleChange
+          <p>
+            User Aktif
+          </p>
+
+        </div>
+
+        <div className="stat-card">
+
+          <h2>
+            {
+              users.filter(
+                user =>
+                  user.role === "admin"
+              ).length
             }
-          />
+          </h2>
 
-          <input
-            type="text"
-            name="jabatan"
-            placeholder="Jabatan"
-            value={form.jabatan}
-            onChange={
-              handleChange
-            }
-          />
+          <p>
+            Admin
+          </p>
 
-          <input
-            type="text"
-            name="unit_kerja"
-            placeholder="Unit Kerja"
-            value={
-              form.unit_kerja
-            }
-            onChange={
-              handleChange
-            }
-          />
+        </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={
-              form.password
-            }
-            onChange={
-              handleChange
-            }
-          />
+      </div>
 
-            <select
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-            >
-            <option value="user">
-                User
-            </option>
+      {/* FORM */}
 
-            <option value="admin">
-                Admin
-            </option>
-            </select>
+<div className="attendance-filter-card">
 
-          <button
-            type="submit"
-          >
-            Tambah User
-          </button>
+  <div
+    className="accordion-header"
+    onClick={() =>
+      setShowForm(
+        !showForm
+      )
+    }
+  >
 
-        </form>
+    <div>
 
-        <input
-        type="file"
-        accept=".xlsx"
-        onChange={(e) =>
-          setExcelFile(
-            e.target.files[0]
-          )
-        }
+      <h3>
+        ➕ Tambah Akun Baru
+      </h3>
+
+      <p>
+        Tambah akun baru dan import data pengguna.
+      </p>
+
+    </div>
+
+    <div
+      className={
+        showForm
+          ? "accordion-arrow rotate"
+          : "accordion-arrow"
+      }
+    >
+      ▼
+    </div>
+
+  </div>
+
+  <div
+    className={
+      showForm
+        ? "accordion-content open"
+        : "accordion-content"
+    }
+  >
+
+    <form
+      onSubmit={handleSubmit}
+      className="user-form"
+    >
+
+      <input
+        type="text"
+        name="nip"
+        placeholder="NIP"
+        value={form.nip}
+        onChange={handleChange}
       />
 
-        <button
+      <input
+        type="text"
+        name="nama"
+        placeholder="Nama"
+        value={form.nama}
+        onChange={handleChange}
+      />
+
+      <input
+        type="text"
+        name="jabatan"
+        placeholder="Jabatan"
+        value={form.jabatan}
+        onChange={handleChange}
+      />
+
+      <input
+        type="text"
+        name="unit_kerja"
+        placeholder="Unit Kerja"
+        value={form.unit_kerja}
+        onChange={handleChange}
+      />
+
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={form.password}
+        onChange={handleChange}
+      />
+
+<div className="custom-select">
+
+  <div
+    className="custom-select-trigger"
+    onClick={() =>
+      setRoleDropdownOpen(
+        !roleDropdownOpen
+      )
+    }
+  >
+
+    <span>
+
+      {
+        form.role === "admin"
+          ? "🛠️ Admin"
+          : "👤 User"
+      }
+
+    </span>
+
+    <span>
+      {
+        roleDropdownOpen
+          ? "▲"
+          : "▼"
+      }
+    </span>
+
+  </div>
+
+  {
+
+    roleDropdownOpen && (
+
+      <div className="custom-select-menu">
+
+        <div
+          className="custom-option"
+          onClick={() => {
+
+            setForm({
+              ...form,
+              role: "user"
+            });
+
+            setRoleDropdownOpen(
+              false
+            );
+
+          }}
+        >
+          👤 User
+        </div>
+
+        <div
+          className="custom-option"
+          onClick={() => {
+
+            setForm({
+              ...form,
+              role: "admin"
+            });
+
+            setRoleDropdownOpen(
+              false
+            );
+
+          }}
+        >
+          🛠️ Admin
+        </div>
+
+      </div>
+
+    )
+
+  }
+
+</div>
+
+      <button
+        type="submit"
+        className="btn-primary"
+      >
+        ➕ Tambah User
+      </button>
+
+    </form>
+
+    <hr
+      style={{
+        margin: "15px 0"
+      }}
+    />
+
+    <input
+      type="file"
+      accept=".xlsx"
+      onChange={(e) =>
+        setExcelFile(
+          e.target.files[0]
+        )
+      }
+    />
+
+    <div className="action-buttons">
+
+      <button
         type="button"
         onClick={importUsers}
+        className="btn-primary"
       >
         📤 Import Excel
       </button>
 
-        <button
+      <button
         type="button"
         onClick={exportUsers}
-        >
+        className="btn-success"
+      >
         📥 Export Excel
-        </button>
-        
+      </button>
 
-        <input
-        type="text"
-        placeholder="Cari nama user..."
-        value={search}
-        onChange={(e) =>
-            setSearch(e.target.value)
-        }
-        style={{
-            marginBottom: "20px",
-            width: "300px"
-        }}
-        />
+      <button
+        type="button"
+        onClick={downloadTemplate}
+        className="btn-warning"
+      >
+        📄 Template
+      </button>
 
-        {
-        editingUser && (
+    </div>
 
-        <div
-        style={{
-            marginTop: "30px",
-            padding: "20px",
-            border: "1px solid #ddd"
-        }}
-        >
+  </div>
 
-        <h3>
-            Edit User
-        </h3>
+</div>
 
-        <input
+      {/* EDIT USER */}
+
+      {editingUser && (
+
+        <div className="attendance-filter-card">
+
+          <h3>
+            ✏️ Edit User
+          </h3>
+
+          <input
             type="text"
             value={editForm.nama}
             onChange={(e) =>
-            setEditForm({
+              setEditForm({
                 ...editForm,
                 nama: e.target.value
-            })
+              })
             }
             placeholder="Nama"
-        />
+          />
 
-        <input
+          <input
             type="text"
             value={editForm.jabatan}
             onChange={(e) =>
-            setEditForm({
+              setEditForm({
                 ...editForm,
                 jabatan: e.target.value
-            })
+              })
             }
             placeholder="Jabatan"
-        />
+          />
 
-        <input
+          <input
             type="text"
-            value={
-            editForm.unit_kerja
-            }
+            value={editForm.unit_kerja}
             onChange={(e) =>
-            setEditForm({
+              setEditForm({
                 ...editForm,
                 unit_kerja:
-                e.target.value
-            })
+                  e.target.value
+              })
             }
             placeholder="Unit Kerja"
-        />
+          />
 
-        <select
+          <select
             value={editForm.role}
             onChange={(e) =>
-            setEditForm({
+              setEditForm({
                 ...editForm,
                 role: e.target.value
-            })
+              })
             }
-        >
+          >
 
             <option value="user">
-            User
+              User
             </option>
 
             <option value="admin">
-            Admin
+              Admin
             </option>
 
-        </select>
+          </select>
 
-        <button
-        type="button"
-            onClick={saveEdit}
-        >
-            Simpan
-        </button>
+          <div className="action-buttons">
 
-        <button
-        type="button"
-            onClick={() =>
-            setEditingUser(null)
-            }
-        >
-            Batal
-        </button>
+            <button
+              type="button"
+              onClick={saveEdit}
+              className="btn-success"
+            >
+              💾 Simpan
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                setEditingUser(null)
+              }
+              className="btn-danger"
+            >
+              ❌ Batal
+            </button>
+
+          </div>
 
         </div>
 
-        )}
+      )}
 
-        <button
-        type="button"
-        onClick={downloadTemplate}
-      >
-        📄 Download Template
-      </button>
+      {/* TABEL USER */}
 
-        <table
-          border="1"
-          width="100%"
-        >
+      <div className="attendance-table-card">
+
+        <div className="table-header">
+
+          <h3>
+            Daftar Akun
+          </h3>
+
+          <input
+            type="text"
+            placeholder="Cari user..."
+            value={search}
+            onChange={(e) =>
+              setSearch(
+                e.target.value
+              )
+            }
+          />
+
+        </div>
+
+        <table>
 
           <thead>
 
             <tr>
 
               <th>NIP</th>
-
               <th>Nama</th>
-
               <th>Jabatan</th>
-
               <th>Unit Kerja</th>
-
               <th>Role</th>
-
               <th>Status</th>
-
               <th>Aksi</th>
 
             </tr>
@@ -837,114 +958,93 @@ const downloadTemplate =
           <tbody>
 
             {users
-            .filter((user) =>
+              .filter(
+                (user) =>
+                  (user.nama || "")
+                    .toLowerCase()
+                    .includes(
+                      search.toLowerCase()
+                    )
+              )
+              .map((user) => (
 
-            (user.nama || "")
-                .toLowerCase()
-                .includes(
-                search.toLowerCase()
-                )
+                <tr key={user.id}>
 
-            )
-            .map(
-              (user) => (
+                  <td>{user.nip}</td>
 
-              <tr
-                key={user.id}
-              >
+                  <td>{user.nama}</td>
 
-                <td>
-                  {user.nip}
-                </td>
+                  <td>{user.jabatan}</td>
 
-                <td>
-                  {user.nama}
-                </td>
+                  <td>{user.unit_kerja}</td>
 
-                <td>
-                  {user.jabatan}
-                </td>
+                  <td>{user.role}</td>
 
-                <td>
-                  {user.unit_kerja}
-                </td>
+                  <td>
+                    {
+                      user.is_active
+                        ? "Aktif"
+                        : "Nonaktif"
+                    }
+                  </td>
 
-                <td>
-                  {user.role}
-                </td>
-
-                <td>
-                  {user.is_active
-                    ? "Aktif"
-                    : "Nonaktif"}
-                </td>
-
-                <td>
-
-                {user.is_active ? (
+                  <td>
 
                     <button
-                    type="button"
-                    onClick={() =>
-                        disableUser(
-                        user.id
-                        )
-                    }
+                      type="button"
+                      onClick={() =>
+                        openEdit(user)
+                      }
                     >
-                    Disable
+                      ✏️
                     </button>
-
-                ) : (
 
                     <button
-                    type="button"
-                    onClick={() =>
-                        enableUser(
-                        user.id
+                      type="button"
+                      onClick={() =>
+                        resetPassword(
+                          user.id
                         )
-                    }
+                      }
                     >
-                    Enable
+                      🔑
                     </button>
 
-                )}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        user.is_active
+                          ? disableUser(
+                              user.id
+                            )
+                          : enableUser(
+                              user.id
+                            )
+                      }
+                    >
+                      {
+                        user.is_active
+                          ? "⛔"
+                          : "✅"
+                      }
+                    </button>
 
-                <button
-                type="button"
-                onClick={() =>
-                    openEdit(user)
-                }
-                >
-                Edit
-                </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        deleteUser(
+                          user.id
+                        )
+                      }
+                    >
+                      🗑️
+                    </button>
 
-                <button
-                type="button"
-                onClick={() =>
-                    resetPassword(
-                    user.id
-                    )
-                }
-                >
-                🔑 Reset Password
-                </button>
+                  </td>
 
-                <button
-                type="button"
-                    onClick={() =>
-                    deleteUser(
-                        user.id
-                    )
-                    }
-                >
-                    Hapus
-                </button>
+                </tr>
 
-                </td>
-
-              </tr>
-
-            ))}
+              ))}
 
           </tbody>
 
@@ -952,10 +1052,11 @@ const downloadTemplate =
 
       </div>
 
-
     </div>
 
-  );
+  </div>
+
+);
 
 }
 
