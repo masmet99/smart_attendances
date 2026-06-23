@@ -26,6 +26,23 @@ const [
 ] = useState(false);
 
 const [
+  roleFilter,
+  setRoleFilter
+] = useState("all");
+
+const [
+  currentPage,
+  setCurrentPage
+] = useState(1);
+
+const itemsPerPage = 10;
+
+const [
+  statusFilter,
+  setStatusFilter
+] = useState("all");
+
+const [
   showAddModal,
   setShowAddModal
 ] = useState(false);
@@ -541,6 +558,101 @@ const downloadTemplate =
 
 };
 
+const filteredUsers = users
+
+.filter((user) => {
+
+  const keyword =
+    search.toLowerCase();
+
+  const matchSearch =
+
+    user.nama
+      ?.toLowerCase()
+      .includes(keyword)
+
+    ||
+
+    user.nip
+      ?.toLowerCase()
+      .includes(keyword)
+
+    ||
+
+    user.jabatan
+      ?.toLowerCase()
+      .includes(keyword)
+
+    ||
+
+    user.unit_kerja
+      ?.toLowerCase()
+      .includes(keyword)
+
+    ||
+
+    user.role
+      ?.toLowerCase()
+      .includes(keyword);
+
+  const matchRole =
+
+    roleFilter === "all"
+
+    ||
+
+    user.role === roleFilter;
+
+  const matchStatus =
+
+    statusFilter === "all"
+
+    ||
+
+    (
+      statusFilter === "active"
+      &&
+      user.is_active
+    )
+
+    ||
+
+    (
+      statusFilter === "inactive"
+      &&
+      !user.is_active
+    );
+
+  return (
+    matchSearch
+    &&
+    matchRole
+    &&
+    matchStatus
+  );
+
+});
+
+const totalPages =
+  Math.ceil(
+    filteredUsers.length
+    /
+    itemsPerPage
+  );
+
+const paginatedUsers =
+  filteredUsers.slice(
+
+    (
+      currentPage - 1
+    ) * itemsPerPage,
+
+    currentPage
+    *
+    itemsPerPage
+
+  );
+
 return (
 
   <div className="dashboard-container">
@@ -553,9 +665,9 @@ return (
 
       <div className="page-header-card">
 
-        <h1>
+        <h2>
           👥 Kelola Akun Pegawai
-        </h1>
+        </h2>
 
         <p>
           Monitoring dan manajemen akun pengguna sistem.
@@ -1121,11 +1233,13 @@ return (
 
       <div className="attendance-table-card">
 
-        <div className="table-header">
+      <div className="table-header">
 
-          <h3>
-            Daftar Akun
-          </h3>
+        <h3>
+          Daftar Akun
+        </h3>
+
+        <div className="table-tools">
 
           <input
             type="text"
@@ -1138,7 +1252,55 @@ return (
             }
           />
 
+          <select
+            value={roleFilter}
+            onChange={(e) =>
+              setRoleFilter(
+                e.target.value
+              )
+            }
+          >
+
+            <option value="all">
+              Semua Role
+            </option>
+
+            <option value="admin">
+              Admin
+            </option>
+
+            <option value="user">
+              User
+            </option>
+
+          </select>
+
+          <select
+            value={statusFilter}
+            onChange={(e) =>
+              setStatusFilter(
+                e.target.value
+              )
+            }
+          >
+
+            <option value="all">
+              Semua Status
+            </option>
+
+            <option value="active">
+              Aktif
+            </option>
+
+            <option value="inactive">
+              Nonaktif
+            </option>
+
+          </select>
+
         </div>
+
+      </div>
 
         <table>
 
@@ -1160,16 +1322,8 @@ return (
 
           <tbody>
 
-            {users
-              .filter(
-                (user) =>
-                  (user.nama || "")
-                    .toLowerCase()
-                    .includes(
-                      search.toLowerCase()
-                    )
-              )
-              .map((user) => (
+            {paginatedUsers.map(
+              (user) => (
 
                 <tr key={user.id}>
 
@@ -1183,113 +1337,239 @@ return (
 
                   <td>
 
-                  <span
-                    className={
-                      user.role === "admin"
-                        ? "role-admin"
-                        : "role-user"
-                    }
-                  >
-
-                    {
-                      user.role === "admin"
-                        ? "🛠️ Admin"
-                        : "👤 User"
-                    }
-
-                  </span>
-
-                </td>
-
-                <td>
-
-                  <span
-                    className={
-                      user.is_active
-                        ? "status-active"
-                        : "status-inactive"
-                    }
-                  >
-
-                    {
-                      user.is_active
-                        ? "🟢 Aktif"
-                        : "🔴 Nonaktif"
-                    }
-
-                  </span>
-
-                </td>
-
-                <td>
-
-                  <div className="action-group">
-
-                  <button
-                    type="button"
-                    className="action-btn edit-btn"
-                    onClick={() =>
-                      openEdit(user)
-                    }
-                  >
-                    ✏️
-                  </button>
-
-                  <button
-                    type="button"
-                    className="action-btn reset-btn"
-                    onClick={() =>
-                      resetPassword(
-                        user.id
-                      )
-                    }
-                  >
-                    🔑
-                  </button>
-
-                  <button
-                    type="button"
-                    className={
-                      user.is_active
-                        ? "action-btn disable-btn"
-                        : "action-btn enable-btn"
-                    }
-                    onClick={() =>
-                      user.is_active
-                        ? disableUser(user.id)
-                        : enableUser(user.id)
-                    }
-                  >
-                      {
-                        user.is_active
-                          ? "⛔"
-                          : "✅"
-                      }
-                    </button>
-
-                    <button
-                      type="button"
-                      className="action-btn delete-btn"
-                      onClick={() =>
-                        deleteUser(
-                          user.id
-                        )
+                    <span
+                      className={
+                        user.role === "admin"
+                          ? "role-admin"
+                          : "role-user"
                       }
                     >
-                      🗑️
-                    </button>
 
-                  </div>
+                      {
+                        user.role === "admin"
+                          ? "🛠️ Admin"
+                          : "👤 User"
+                      }
 
-                </td>
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    <span
+                      className={
+                        user.is_active
+                          ? "status-active"
+                          : "status-inactive"
+                      }
+                    >
+
+                      {
+                        user.is_active
+                          ? "🟢 Aktif"
+                          : "🔴 Nonaktif"
+                      }
+
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    <div className="action-group">
+
+                      <button
+                        type="button"
+                        className="action-btn edit-btn"
+                        onClick={() =>
+                          openEdit(user)
+                        }
+                      >
+                        ✏️
+                      </button>
+
+                      <button
+                        type="button"
+                        className="action-btn reset-btn"
+                        onClick={() =>
+                          resetPassword(
+                            user.id
+                          )
+                        }
+                      >
+                        🔑
+                      </button>
+
+                      <button
+                        type="button"
+                        className={
+                          user.is_active
+                            ? "action-btn disable-btn"
+                            : "action-btn enable-btn"
+                        }
+                        onClick={() =>
+                          user.is_active
+                            ? disableUser(user.id)
+                            : enableUser(user.id)
+                        }
+                      >
+                        {
+                          user.is_active
+                            ? "⛔"
+                            : "✅"
+                        }
+                      </button>
+
+                      <button
+                        type="button"
+                        className="action-btn delete-btn"
+                        onClick={() =>
+                          deleteUser(
+                            user.id
+                          )
+                        }
+                      >
+                        🗑️
+                      </button>
+
+                    </div>
+
+                  </td>
 
                 </tr>
 
-              ))}
+              )
+            )}
 
           </tbody>
 
         </table>
+
+            <div className="pagination-container">
+
+            <div className="pagination-info">
+
+              Menampilkan
+
+              {" "}
+
+              {
+                filteredUsers.length === 0
+                ? 0
+                : (
+                    (
+                      currentPage - 1
+                    )
+                    *
+                    itemsPerPage
+                  ) + 1
+              }
+
+              -
+
+              {
+                Math.min(
+                  currentPage
+                  *
+                  itemsPerPage,
+
+                  filteredUsers.length
+                )
+              }
+
+              {" "}
+
+              dari
+
+              {" "}
+
+              {
+                filteredUsers.length
+              }
+
+              data
+
+            </div>
+
+            <div className="pagination-buttons">
+
+              <button
+
+                disabled={
+                  currentPage === 1
+                }
+
+                onClick={() =>
+                  setCurrentPage(
+                    currentPage - 1
+                  )
+                }
+
+              >
+                ←
+              </button>
+
+              {
+
+                [...Array(totalPages)]
+                .map((_, index) => (
+
+                  <button
+
+                    key={index}
+
+                    className={
+                      currentPage ===
+                      index + 1
+
+                      ?
+
+                      "active-page"
+
+                      :
+
+                      ""
+                    }
+
+                    onClick={() =>
+                      setCurrentPage(
+                        index + 1
+                      )
+                    }
+
+                  >
+
+                    {
+                      index + 1
+                    }
+
+                  </button>
+
+                ))
+
+              }
+
+              <button
+
+                disabled={
+                  currentPage ===
+                  totalPages
+                }
+
+                onClick={() =>
+                  setCurrentPage(
+                    currentPage + 1
+                  )
+                }
+
+              >
+                →
+              </button>
+
+            </div>
+
+          </div>
 
       </div>
 
