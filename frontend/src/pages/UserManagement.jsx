@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 import api from "../utils/api";
 import Swal from "sweetalert2";
@@ -36,6 +36,9 @@ const [
 ] = useState(1);
 
 const itemsPerPage = 10;
+
+const fileInputRef =
+  useRef(null);
 
 const [
   statusFilter,
@@ -488,6 +491,16 @@ const importUsers =
 
     loadUsers();
 
+    setExcelFile(null);
+
+    if (
+      fileInputRef.current
+    ) {
+
+      fileInputRef.current.value = "";
+
+    }
+
     Swal.fire({
 
       icon: "success",
@@ -663,69 +676,43 @@ return (
 
       {/* HEADER */}
 
-      <div className="page-header-card">
+<div className="page-header-card">
 
-        <h2>
-          👥 Kelola Akun Pegawai
-        </h2>
+  <h1>
+    👥 Kelola Akun Pegawai
+  </h1>
 
-        <p>
-          Monitoring dan manajemen akun pengguna sistem.
-        </p>
+  <p>
+    Monitoring dan manajemen akun pengguna sistem.
+  </p>
 
-      </div>
+  <div className="header-stats">
 
-      {/* STATISTIK */}
+    <span>
+      👥 {users.length} User
+    </span>
 
-      <div className="user-stats-grid">
+    <span>
+      🟢 {
+        users.filter(
+          user =>
+            user.is_active
+        ).length
+      } Aktif
+    </span>
 
-        <div className="stat-card">
+    <span>
+      🛠️ {
+        users.filter(
+          user =>
+            user.role === "admin"
+        ).length
+      } Admin
+    </span>
 
-          <h2>
-            {users.length}
-          </h2>
+  </div>
 
-          <p>
-            Total User
-          </p>
-
-        </div>
-
-        <div className="stat-card">
-
-          <h2>
-            {
-              users.filter(
-                user =>
-                  user.is_active
-              ).length
-            }
-          </h2>
-
-          <p>
-            User Aktif
-          </p>
-
-        </div>
-
-        <div className="stat-card">
-
-          <h2>
-            {
-              users.filter(
-                user =>
-                  user.role === "admin"
-              ).length
-            }
-          </h2>
-
-          <p>
-            Admin
-          </p>
-
-        </div>
-
-      </div>
+</div>
 
 {/* FORM */}
 
@@ -777,6 +764,7 @@ return (
       📁 Pilih Berkas
 
       <input
+        ref={fileInputRef}
         type="file"
         accept=".xlsx"
         onChange={(e) =>
@@ -804,6 +792,7 @@ return (
       type="button"
       onClick={importUsers}
       className="tool-btn import-btn"
+      disabled={!excelFile}
     >
       📤 Impor Data
     </button>

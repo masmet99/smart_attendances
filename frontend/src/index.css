@@ -1874,6 +1874,15 @@ img {
     translateY(-2px);
 }
 
+.tool-btn:disabled {
+
+  opacity: .5;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
 .import-btn {
 
   background: linear-gradient(
@@ -2138,4 +2147,30 @@ img {
   min-height: 100vh;
 
   background: #f1f5f9;
+}
+
+.header-stats {
+
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  margin-top: 12px;
+}
+
+.header-stats span {
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  padding: 8px 14px;
+
+  border-radius: 999px;
+
+  font-size: 13px;
+
+  font-weight: 600;
 }
