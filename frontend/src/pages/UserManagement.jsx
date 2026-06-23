@@ -25,6 +25,11 @@ const [
   setEditRoleOpen
 ] = useState(false);
 
+const [
+  showAddModal,
+  setShowAddModal
+] = useState(false);
+
 const [form, setForm] =
   useState({
     nip: "",
@@ -610,233 +615,291 @@ return (
 
       </div>
 
-      {/* FORM */}
+{/* FORM */}
 
 <div className="attendance-filter-card">
 
-  <div
-    className="accordion-header"
-    onClick={() =>
-      setShowForm(
-        !showForm
-      )
-    }
-  >
+  <div className="quick-action-header">
 
     <div>
 
-      <h3>
-        ➕ Tambah Akun Baru
-      </h3>
+    <h3>
+      👥 Manajemen Data Pegawai
+    </h3>
 
-      <p>
-        Tambah akun baru dan import data pengguna.
-      </p>
+    <p>
+      Kelola akun dan data pegawai dalam sistem.
+    </p>
 
     </div>
+
+    <button
+      className="open-add-btn"
+      onClick={() =>
+        setShowAddModal(true)
+      }
+    >
+      ➕ Tambah Akun
+    </button>
+
+  </div>
+
+  <div className="bulk-data-card">
+
+  <h4>
+    📂 Data Massal
+  </h4>
+
+  <p>
+    Pilih berkas untuk menambahkan banyak data pegawai sekaligus.
+  </p>
+
+</div>
+
+  <div className="account-tools">
+
+  <div className="file-upload-box">
+
+    <label className="file-picker">
+
+      📁 Pilih Berkas
+
+      <input
+        type="file"
+        accept=".xlsx"
+        onChange={(e) =>
+          setExcelFile(
+            e.target.files[0]
+          )
+        }
+      />
+
+    </label>
+
+    <p className="selected-file">
+
+      {
+        excelFile
+          ? `📄 ${excelFile.name}`
+          : "Belum ada berkas dipilih"
+      }
+
+    </p>
+
+</div>
+
+    <button
+      type="button"
+      onClick={importUsers}
+      className="tool-btn import-btn"
+    >
+      📤 Impor Data
+    </button>
+
+    <button
+      type="button"
+      onClick={exportUsers}
+      className="tool-btn export-btn"
+    >
+      📥 Unduh Data
+    </button>
+
+    <button
+      type="button"
+      onClick={downloadTemplate}
+      className="tool-btn template-btn"
+    >
+      📄 Format Data
+    </button>
+
+  </div>
+
+</div>
+
+{showAddModal && (
+
+  <div
+    className="modal-overlay"
+    onClick={() =>
+      setShowAddModal(false)
+    }
+  >
 
     <div
-      className={
-        showForm
-          ? "accordion-arrow rotate"
-          : "accordion-arrow"
+      className="edit-user-modal"
+      onClick={(e) =>
+        e.stopPropagation()
       }
     >
-      ▼
-    </div>
 
-  </div>
+      <button
+        className="modal-close"
+        onClick={() =>
+          setShowAddModal(false)
+        }
+      >
+        ✕
+      </button>
 
-  <div
-    className={
-      showForm
-        ? "accordion-content open"
-        : "accordion-content"
-    }
-  >
+      <div className="section-title">
 
-    <form
-      onSubmit={handleSubmit}
-      className="user-form"
-    >
-
-      <input
-        type="text"
-        name="nip"
-        placeholder="NIP"
-        value={form.nip}
-        onChange={handleChange}
-      />
-
-      <input
-        type="text"
-        name="nama"
-        placeholder="Nama"
-        value={form.nama}
-        onChange={handleChange}
-      />
-
-      <input
-        type="text"
-        name="jabatan"
-        placeholder="Jabatan"
-        value={form.jabatan}
-        onChange={handleChange}
-      />
-
-      <input
-        type="text"
-        name="unit_kerja"
-        placeholder="Unit Kerja"
-        value={form.unit_kerja}
-        onChange={handleChange}
-      />
-
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={form.password}
-        onChange={handleChange}
-      />
-
-<div className="custom-select">
-
-  <div
-    className="custom-select-trigger"
-    onClick={() =>
-      setRoleDropdownOpen(
-        !roleDropdownOpen
-      )
-    }
-  >
-
-    <span>
-
-      {
-        form.role === "admin"
-          ? "🛠️ Admin"
-          : "👤 User"
-      }
-
-    </span>
-
-    <span>
-      {
-        roleDropdownOpen
-          ? "▲"
-          : "▼"
-      }
-    </span>
-
-  </div>
-
-  {
-
-    roleDropdownOpen && (
-
-      <div className="custom-select-menu">
-
-        <div
-          className="custom-option"
-          onClick={() => {
-
-            setForm({
-              ...form,
-              role: "user"
-            });
-
-            setRoleDropdownOpen(
-              false
-            );
-
-          }}
-        >
-          👤 User
+        <div className="section-icon">
+          ➕
         </div>
 
-        <div
-          className="custom-option"
-          onClick={() => {
+        <div>
 
-            setForm({
-              ...form,
-              role: "admin"
-            });
+          <h2>
+            Tambah Akun Baru
+          </h2>
 
-            setRoleDropdownOpen(
-              false
-            );
+          <p>
+            Tambah akun pengguna sistem.
+          </p>
 
-          }}
-        >
-          🛠️ Admin
         </div>
 
       </div>
 
-    )
-
-  }
-
-</div>
-
-      <button
-        type="submit"
-        className="btn-primary"
+      <form
+        onSubmit={handleSubmit}
+        className="edit-user-form"
       >
-        ➕ Tambah User
-      </button>
 
-    </form>
+        <input
+          type="text"
+          name="nip"
+          placeholder="NIP"
+          value={form.nip}
+          onChange={handleChange}
+        />
 
-    <hr
-      style={{
-        margin: "15px 0"
-      }}
-    />
+        <input
+          type="text"
+          name="nama"
+          placeholder="Nama"
+          value={form.nama}
+          onChange={handleChange}
+        />
 
-    <input
-      type="file"
-      accept=".xlsx"
-      onChange={(e) =>
-        setExcelFile(
-          e.target.files[0]
-        )
-      }
-    />
+        <input
+          type="text"
+          name="jabatan"
+          placeholder="Jabatan"
+          value={form.jabatan}
+          onChange={handleChange}
+        />
 
-    <div className="action-buttons">
+        <input
+          type="text"
+          name="unit_kerja"
+          placeholder="Unit Kerja"
+          value={form.unit_kerja}
+          onChange={handleChange}
+        />
 
-      <button
-        type="button"
-        onClick={importUsers}
-        className="btn-primary"
-      >
-        📤 Import Excel
-      </button>
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+        />
 
-      <button
-        type="button"
-        onClick={exportUsers}
-        className="btn-success"
-      >
-        📥 Export Excel
-      </button>
+        <div className="custom-select">
 
-      <button
-        type="button"
-        onClick={downloadTemplate}
-        className="btn-warning"
-      >
-        📄 Template
-      </button>
+          <div
+            className="custom-select-trigger"
+            onClick={() =>
+              setRoleDropdownOpen(
+                !roleDropdownOpen
+              )
+            }
+          >
+
+            <span>
+
+              {
+                form.role === "admin"
+                  ? "🛠️ Administrator"
+                  : "👤 User"
+              }
+
+            </span>
+
+            <span>
+
+              {
+                roleDropdownOpen
+                  ? "▲"
+                  : "▼"
+              }
+
+            </span>
+
+          </div>
+
+          {
+
+            roleDropdownOpen && (
+
+              <div className="custom-select-menu">
+
+                <div
+                  className="custom-option"
+                  onClick={() => {
+
+                    setForm({
+                      ...form,
+                      role: "user"
+                    });
+
+                    setRoleDropdownOpen(false);
+
+                  }}
+                >
+                  👤 User
+                </div>
+
+                <div
+                  className="custom-option"
+                  onClick={() => {
+
+                    setForm({
+                      ...form,
+                      role: "admin"
+                    });
+
+                    setRoleDropdownOpen(false);
+
+                  }}
+                >
+                  🛠️ Administrator
+                </div>
+
+              </div>
+
+            )
+
+          }
+
+        </div>
+
+        <button
+          type="submit"
+          className="modal-save-btn"
+        >
+          ➕ Tambah User
+        </button>
+
+      </form>
 
     </div>
 
   </div>
 
-</div>
+)}
+
 
 {/* EDIT USER */}
 
