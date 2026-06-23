@@ -2114,7 +2114,15 @@ img {
 
 .dashboard-content {
 
-  padding: 20px;
+  flex: 1;
+
+  padding:
+    25px
+    clamp(
+      15px,
+      3vw,
+      35px
+    );
 
   width: 100%;
 
