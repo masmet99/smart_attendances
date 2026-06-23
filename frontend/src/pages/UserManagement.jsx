@@ -1235,10 +1235,6 @@ return (
 
       <div className="table-header">
 
-        <h3>
-          Daftar Akun
-        </h3>
-
         <div className="table-tools">
 
           <input
