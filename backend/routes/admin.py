@@ -27,6 +27,9 @@ from openpyxl import Workbook
 from datetime import date
 import os
 
+from fastapi import UploadFile, File
+import pandas as pd
+
 from datetime import timedelta
 
 from models.geofence import Geofence
@@ -113,6 +116,70 @@ def get_users(
         "success": True,
         "total": len(result),
         "data": result
+    }
+
+@router.post("/users/import")
+async def import_users(
+
+    file: UploadFile = File(...),
+
+    db: Session = Depends(get_db),
+
+    admin=Depends(admin_required)
+
+):
+
+    df = pd.read_excel(
+        file.file
+    )
+
+    total = 0
+
+    for _, row in df.iterrows():
+
+        existing = db.query(User).filter(
+            User.nip == str(row["nip"])
+        ).first()
+
+        if existing:
+            continue
+
+        new_user = User(
+
+            nip=str(row["nip"]),
+
+            nama=str(row["nama"]),
+
+            jabatan=str(
+                row["jabatan"]
+            ),
+
+            unit_kerja=str(
+                row["unit_kerja"]
+            ),
+
+            password=hash_password(
+                str(row["password"])
+            ),
+
+            role=str(
+                row["role"]
+            )
+
+        )
+
+        db.add(new_user)
+
+        total += 1
+
+    db.commit()
+
+    return {
+
+        "success": True,
+
+        "inserted": total
+
     }
 
 @router.get("/users/export")

@@ -8,8 +8,11 @@ function UserManagement() {
 const [search, setSearch] =
   useState("");
 
-  const [users, setUsers] =
-    useState([]);
+const [users, setUsers] =
+  useState([]);
+
+const [excelFile, setExcelFile] =
+  useState(null);
 
 const [form, setForm] =
   useState({
@@ -406,6 +409,68 @@ const saveEdit =
 
 };
 
+const importUsers =
+  async () => {
+
+  if (!excelFile)
+    return;
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    "file",
+    excelFile
+  );
+
+  try {
+
+    const res =
+      await api.post(
+
+        "/admin/users/import",
+
+        formData,
+
+        {
+          headers: {
+            "Content-Type":
+              "multipart/form-data"
+          }
+        }
+
+      );
+
+    loadUsers();
+
+    Swal.fire({
+
+      icon: "success",
+
+      title: "Berhasil",
+
+      text:
+        `${res.data.inserted} user berhasil ditambahkan`
+
+    });
+
+  } catch (err) {
+
+    Swal.fire({
+
+      icon: "error",
+
+      title: "Gagal",
+
+      text:
+        "Import gagal"
+
+    });
+
+  }
+
+};
+
   return (
 
     <div className="dashboard-container">
@@ -560,6 +625,23 @@ const saveEdit =
           </button>
 
         </form>
+
+        <input
+        type="file"
+        accept=".xlsx"
+        onChange={(e) =>
+          setExcelFile(
+            e.target.files[0]
+          )
+        }
+      />
+
+        <button
+        type="button"
+        onClick={importUsers}
+      >
+        📤 Import Excel
+      </button>
 
         <button
         type="button"
