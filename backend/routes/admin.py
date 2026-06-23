@@ -324,6 +324,21 @@ def update_user(
             "success": False,
             "message": "User tidak ditemukan"
         }
+    
+    if data.nip is not None:
+
+        existing = db.query(User).filter(
+            User.nip == data.nip,
+            User.id != user_id
+        ).first()
+
+        if existing:
+            return {
+                "success": False,
+                "message": "NIP sudah digunakan"
+            }
+
+        user.nip = data.nip
 
     if data.nama is not None:
         user.nama = data.nama

@@ -40,10 +40,19 @@ const [form, setForm] =
 
   const [editForm, setEditForm] =
   useState({
+
+    id: null,
+
+    nip: "",
+
     nama: "",
+
     jabatan: "",
+
     unit_kerja: "",
+
     role: "user"
+
   });
 
   useEffect(() => {

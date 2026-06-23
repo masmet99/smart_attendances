@@ -12,6 +12,7 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
+    nip: Optional[str] = None
     nama: Optional[str] = None
     jabatan: Optional[str] = None
     unit_kerja: Optional[str] = None
