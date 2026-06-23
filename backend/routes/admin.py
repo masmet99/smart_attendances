@@ -239,6 +239,36 @@ def export_users(
         filename=filename
     )
 
+@router.get("/users/template")
+def download_template(
+    admin=Depends(admin_required)
+):
+
+    wb = Workbook()
+
+    ws = wb.active
+
+    ws.title = "Template User"
+
+    ws.append([
+        "nip",
+        "nama",
+        "jabatan",
+        "unit_kerja",
+        "password",
+        "role"
+    ])
+
+    filename = "template_user.xlsx"
+
+    wb.save(filename)
+
+    return FileResponse(
+        path=filename,
+        filename=filename,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
 @router.get("/users/{user_id}")
 def get_user(
     user_id: int,
