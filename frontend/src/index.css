@@ -1383,3 +1383,175 @@ img {
 
   color: #1976d2;
 }
+
+.status-active {
+
+  background: #dcfce7;
+
+  color: #15803d;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.status-inactive {
+
+  background: #fee2e2;
+
+  color: #dc2626;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.action-group {
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 6px;
+}
+
+.action-group button {
+
+  width: 36px;
+
+  height: 36px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.action-group button:hover {
+
+  transform: translateY(-2px);
+}
+
+.action-btn {
+
+  width: 38px;
+
+  height: 38px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+
+  color: white;
+
+  font-size: 15px;
+
+  box-shadow:
+    0 3px 8px
+    rgba(
+      0,
+      0,
+      0,
+      0.15
+    );
+}
+
+.action-btn:hover {
+
+  transform:
+    translateY(-3px);
+
+  box-shadow:
+    0 8px 16px
+    rgba(
+      0,
+      0,
+      0,
+      0.18
+    );
+}
+
+.edit-btn {
+
+  background: #2563eb;
+
+  box-shadow:
+    0 4px 12px
+    rgba(
+      37,
+      99,
+      235,
+      0.25
+    );
+}
+
+.reset-btn {
+
+  background: #f59e0b;
+
+  box-shadow:
+    0 4px 12px
+    rgba(
+      245,
+      158,
+      11,
+      0.25
+    );
+}
+
+.disable-btn {
+
+  background: #ea580c;
+
+  box-shadow:
+    0 4px 12px
+    rgba(
+      234,
+      88,
+      12,
+      0.25
+    );
+}
+
+.enable-btn {
+
+  background: #16a34a;
+
+  box-shadow:
+    0 4px 12px
+    rgba(
+      22,
+      163,
+      74,
+      0.25
+    );
+}
+
+.delete-btn {
+
+  background: #dc2626;
+
+  box-shadow:
+    0 4px 12px
+    rgba(
+      220,
+      38,
+      38,
+      0.25
+    );
+}

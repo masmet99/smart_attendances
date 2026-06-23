@@ -978,50 +978,85 @@ return (
 
                   <td>{user.unit_kerja}</td>
 
-                  <td>{user.role}</td>
-
                   <td>
+
+                  <span
+                    className={
+                      user.role === "admin"
+                        ? "role-admin"
+                        : "role-user"
+                    }
+                  >
+
+                    {
+                      user.role === "admin"
+                        ? "🛠️ Admin"
+                        : "👤 User"
+                    }
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span
+                    className={
+                      user.is_active
+                        ? "status-active"
+                        : "status-inactive"
+                    }
+                  >
+
                     {
                       user.is_active
-                        ? "Aktif"
-                        : "Nonaktif"
+                        ? "🟢 Aktif"
+                        : "🔴 Nonaktif"
                     }
-                  </td>
 
-                  <td>
+                  </span>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        openEdit(user)
-                      }
-                    >
-                      ✏️
-                    </button>
+                </td>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        resetPassword(
-                          user.id
-                        )
-                      }
-                    >
-                      🔑
-                    </button>
+                <td>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        user.is_active
-                          ? disableUser(
-                              user.id
-                            )
-                          : enableUser(
-                              user.id
-                            )
-                      }
-                    >
+                  <div className="action-group">
+
+                  <button
+                    type="button"
+                    className="action-btn edit-btn"
+                    onClick={() =>
+                      openEdit(user)
+                    }
+                  >
+                    ✏️
+                  </button>
+
+                  <button
+                    type="button"
+                    className="action-btn reset-btn"
+                    onClick={() =>
+                      resetPassword(
+                        user.id
+                      )
+                    }
+                  >
+                    🔑
+                  </button>
+
+                  <button
+                    type="button"
+                    className={
+                      user.is_active
+                        ? "action-btn disable-btn"
+                        : "action-btn enable-btn"
+                    }
+                    onClick={() =>
+                      user.is_active
+                        ? disableUser(user.id)
+                        : enableUser(user.id)
+                    }
+                  >
                       {
                         user.is_active
                           ? "⛔"
@@ -1031,6 +1066,7 @@ return (
 
                     <button
                       type="button"
+                      className="action-btn delete-btn"
                       onClick={() =>
                         deleteUser(
                           user.id
@@ -1040,7 +1076,9 @@ return (
                       🗑️
                     </button>
 
-                  </td>
+                  </div>
+
+                </td>
 
                 </tr>
 
