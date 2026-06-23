@@ -20,6 +20,11 @@ const [showForm, setShowForm] =
 const [roleDropdownOpen, setRoleDropdownOpen] =
   useState(false);
 
+const [
+  editRoleOpen,
+  setEditRoleOpen
+] = useState(false);
+
 const [form, setForm] =
   useState({
     nip: "",
@@ -365,7 +370,11 @@ const openEdit = (user) => {
 
   setEditForm({
 
-    nama: user.nama || "",
+    id: user.id,
+
+    nip: user.nip,
+
+    nama: user.nama,
 
     jabatan:
       user.jabatan || "",
@@ -373,8 +382,7 @@ const openEdit = (user) => {
     unit_kerja:
       user.unit_kerja || "",
 
-    role:
-      user.role || "user"
+    role: user.role
 
   });
 
@@ -821,98 +829,221 @@ return (
 
 </div>
 
-      {/* EDIT USER */}
+{/* EDIT USER */}
 
-      {editingUser && (
+{editingUser && (
 
-        <div className="attendance-filter-card">
+  <div
+    className="modal-overlay"
+    onClick={() =>
+      setEditingUser(null)
+    }
+  >
 
-          <h3>
-            ✏️ Edit User
-          </h3>
+    <div
+      className="edit-user-modal"
+      onClick={(e) =>
+        e.stopPropagation()
+      }
+    >
 
-          <input
-            type="text"
-            value={editForm.nama}
-            onChange={(e) =>
-              setEditForm({
-                ...editForm,
-                nama: e.target.value
-              })
-            }
-            placeholder="Nama"
-          />
+      <button
+        className="modal-close"
+        onClick={() =>
+          setEditingUser(null)
+        }
+      >
+        ✕
+      </button>
 
-          <input
-            type="text"
-            value={editForm.jabatan}
-            onChange={(e) =>
-              setEditForm({
-                ...editForm,
-                jabatan: e.target.value
-              })
-            }
-            placeholder="Jabatan"
-          />
+      <div className="section-title">
 
-          <input
-            type="text"
-            value={editForm.unit_kerja}
-            onChange={(e) =>
-              setEditForm({
-                ...editForm,
-                unit_kerja:
-                  e.target.value
-              })
-            }
-            placeholder="Unit Kerja"
-          />
+        <div className="section-icon">
+          ✏️
+        </div>
 
-          <select
-            value={editForm.role}
-            onChange={(e) =>
-              setEditForm({
-                ...editForm,
-                role: e.target.value
-              })
-            }
-          >
+        <div>
 
-            <option value="user">
-              User
-            </option>
+          <h2>
+            Edit User
+          </h2>
 
-            <option value="admin">
-              Admin
-            </option>
-
-          </select>
-
-          <div className="action-buttons">
-
-            <button
-              type="button"
-              onClick={saveEdit}
-              className="btn-success"
-            >
-              💾 Simpan
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                setEditingUser(null)
-              }
-              className="btn-danger"
-            >
-              ❌ Batal
-            </button>
-
-          </div>
+          <p>
+            Perbarui informasi akun pengguna.
+          </p>
 
         </div>
 
-      )}
+      </div>
+
+      <div className="edit-user-form">
+
+        <input
+          type="text"
+          value={editForm.nip}
+          onChange={(e) =>
+            setEditForm({
+              ...editForm,
+              nip: e.target.value
+            })
+          }
+          placeholder="NIP"
+        />
+
+        <input
+          type="text"
+          value={editForm.nama}
+          onChange={(e) =>
+            setEditForm({
+              ...editForm,
+              nama: e.target.value
+            })
+          }
+          placeholder="Nama"
+        />
+
+        <input
+          type="text"
+          value={editForm.jabatan}
+          onChange={(e) =>
+            setEditForm({
+              ...editForm,
+              jabatan: e.target.value
+            })
+          }
+          placeholder="Jabatan"
+        />
+
+        <input
+          type="text"
+          value={editForm.unit_kerja}
+          onChange={(e) =>
+            setEditForm({
+              ...editForm,
+              unit_kerja:
+                e.target.value
+            })
+          }
+          placeholder="Unit Kerja"
+        />
+
+        <div className="custom-select">
+
+          <div
+            className="custom-select-trigger"
+            onClick={() =>
+              setEditRoleOpen(
+                !editRoleOpen
+              )
+            }
+          >
+
+            <span>
+
+              {
+                editForm.role ===
+                "admin"
+                  ? "🛠️ Administrator"
+                  : "👤 User"
+              }
+
+            </span>
+
+            <span>
+
+              {
+                editRoleOpen
+                  ? "▲"
+                  : "▼"
+              }
+
+            </span>
+
+          </div>
+
+          {
+
+            editRoleOpen && (
+
+              <div
+                className="custom-select-menu"
+              >
+
+                <div
+                  className="custom-option"
+                  onClick={() => {
+
+                    setEditForm({
+                      ...editForm,
+                      role: "user"
+                    });
+
+                    setEditRoleOpen(
+                      false
+                    );
+
+                  }}
+                >
+                  👤 User
+                </div>
+
+                <div
+                  className="custom-option"
+                  onClick={() => {
+
+                    setEditForm({
+                      ...editForm,
+                      role: "admin"
+                    });
+
+                    setEditRoleOpen(
+                      false
+                    );
+
+                  }}
+                >
+                  🛠️ Administrator
+                </div>
+
+              </div>
+
+            )
+
+          }
+
+        </div>
+
+      </div>
+
+      <div
+        className="edit-user-actions"
+      >
+
+        <button
+          type="button"
+          onClick={saveEdit}
+          className="modal-save-btn"
+        >
+          💾 Simpan Perubahan
+        </button>
+
+        <button
+          type="button"
+          onClick={() =>
+            setEditingUser(null)
+          }
+          className="modal-cancel-btn"
+        >
+          Tutup
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
 
       {/* TABEL USER */}
 
