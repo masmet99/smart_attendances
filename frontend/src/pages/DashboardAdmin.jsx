@@ -187,7 +187,7 @@ const attendanceData = [
           <div>
 
             <h1>
-              Dashboarda
+              Dashboard
             </h1>
 
           </div>
