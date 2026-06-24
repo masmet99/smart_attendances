@@ -5,6 +5,9 @@ from sqlalchemy import desc
 from utils.security import hash_password
 from utils.admin_middleware import admin_required
 
+from models.face_embedding import FaceEmbedding
+from models.user import User
+
 from database.dependencies import get_db
 
 from schemas.user_schema import (
@@ -367,6 +370,51 @@ def update_user(
         "message": "User berhasil diperbarui"
     }
 
+@router.delete(
+    "/users/{user_id}/face"
+)
+def delete_face_id(
+
+    user_id: int,
+
+    db: Session = Depends(get_db),
+
+    admin=Depends(
+        admin_required
+    )
+
+):
+
+    user = db.query(User).filter(
+        User.id == user_id
+    ).first()
+
+    if not user:
+
+        return {
+            "success": False,
+            "message": "User tidak ditemukan"
+        }
+
+    embedding = db.query(
+        FaceEmbedding
+    ).filter(
+        FaceEmbedding.user_id
+        == user_id
+    ).first()
+
+    if embedding:
+        db.delete(embedding)
+
+    user.face_registered = False
+
+    db.commit()
+
+    return {
+        "success": True,
+        "message": "Face ID berhasil dihapus"
+    }
+
 @router.delete("/users/{user_id}")
 def delete_user(
 
@@ -396,6 +444,7 @@ def delete_user(
         "success": True,
         "message": "User berhasil dihapus"
     }
+
 
 
 @router.put(
@@ -438,6 +487,8 @@ def reset_password(
         "message":
         "Password berhasil direset"
     }
+
+
 
 
 # =====================================

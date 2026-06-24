@@ -666,6 +666,78 @@ const paginatedUsers =
 
   );
 
+  const deleteFace =
+  async (userId) => {
+
+  const result =
+    await Swal.fire({
+
+      title:
+        "Hapus Face ID?",
+
+      text:
+        "User harus registrasi wajah ulang.",
+
+      icon:
+        "warning",
+
+      showCancelButton:
+        true,
+
+      confirmButtonText:
+        "Hapus",
+
+      cancelButtonText:
+        "Batal"
+
+    });
+
+  if (
+    !result.isConfirmed
+  ) return;
+
+  try {
+
+    await api.delete(
+      `/admin/users/${userId}/face`
+    );
+
+    Swal.fire({
+
+      icon:
+        "success",
+
+      title:
+        "Berhasil",
+
+      text:
+        "Face ID berhasil dihapus"
+
+    });
+
+    loadUsers();
+
+    setEditingUser(null);
+
+  } catch (err) {
+
+    Swal.fire({
+
+      icon:
+        "error",
+
+      title:
+        "Gagal",
+
+      text:
+        "Tidak dapat menghapus Face ID"
+
+    });
+
+  }
+
+};
+
 return (
 
   <div className="dashboard-container">
@@ -781,7 +853,7 @@ return (
       {
         excelFile
           ? `📄 ${excelFile.name}`
-          : "Belum ada berkas dipilih"
+          : "Belum ada berkas dipilih (.xlsx)"
       }
 
     </p>
@@ -1049,6 +1121,50 @@ return (
 
       </div>
 
+      <div className="face-status-box">
+
+        <h4>
+          Face ID
+        </h4>
+
+        <span
+          className={
+            editingUser.face_registered
+              ? "face-registered"
+              : "face-not-registered"
+          }
+        >
+
+          {
+            editingUser.face_registered
+              ? "✅ Terdaftar"
+              : "❌ Belum Terdaftar"
+          }
+
+        </span>
+
+      </div>
+
+      {
+        editingUser.face_registered && (
+
+          <button
+            type="button"
+            className="remove-face-btn"
+            onClick={() =>
+              deleteFace(
+                editingUser.id
+              )
+            }
+          >
+
+            🗑️ Hapus Face ID
+
+          </button>
+
+        )
+      }
+
       <div className="edit-user-form">
 
         <input
@@ -1297,6 +1413,7 @@ return (
               <th>Jabatan</th>
               <th>Unit Kerja</th>
               <th>Role</th>
+              <th>Face ID</th>
               <th>Status</th>
               <th>Aksi</th>
 
@@ -1338,6 +1455,26 @@ return (
                     </span>
 
                   </td>
+
+                  <td>
+
+          <span
+            className={
+              user.face_registered
+                ? "face-registered"
+                : "face-not-registered"
+            }
+          >
+
+            {
+              user.face_registered
+                ? "✅ Terdaftar"
+                : "❌ Belum"
+            }
+
+          </span>
+
+        </td>
 
                   <td>
 
