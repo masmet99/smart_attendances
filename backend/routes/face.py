@@ -6,6 +6,8 @@ from fastapi import (
     Depends
 )
 
+import os
+
 from sqlalchemy.orm import Session
 from database.dependencies import get_db
 
@@ -42,6 +44,11 @@ async def register_face(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
+    
+    os.makedirs(
+    "uploads/register",
+    exist_ok=True
+    )
 
     file_path = f"uploads/register/{file.filename}"
 
@@ -100,6 +107,12 @@ async def verify_face(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
+
+
+    os.makedirs(
+        "uploads/register",
+        exist_ok=True
+    )
 
     file_path = f"uploads/register/{file.filename}"
 

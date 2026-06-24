@@ -6,6 +6,8 @@ from fastapi import (
     Form
 )
 
+import os
+
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -49,6 +51,13 @@ async def checkin(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
+    
+    
+    
+    os.makedirs(
+    "uploads/attendance",
+    exist_ok=True
+    )   
 
     file_path = f"uploads/attendance/{file.filename}"
 
