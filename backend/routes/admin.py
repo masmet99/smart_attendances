@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
+import requests
+
 from utils.security import hash_password
 from utils.admin_middleware import admin_required
 
@@ -59,6 +61,7 @@ def test_admin():
     return {
         "message": "Admin Route Working"
     }
+
 
 
 @router.post("/users")
@@ -184,6 +187,7 @@ async def import_users(
         "inserted": total
 
     }
+
 
 @router.get("/users/export")
 def export_users(
@@ -836,3 +840,67 @@ def update_geofence(
         "message":
         "Geofence berhasil diperbarui"
     }
+
+@router.get("/search-location")
+def search_location(
+    q: str,
+    admin=Depends(admin_required)
+):
+
+    try:
+
+        response = requests.get(
+
+            "https://nominatim.openstreetmap.org/search",
+
+            params={
+                "q": q,
+                "format": "json",
+                "limit": 1
+            },
+
+            headers={
+                "User-Agent":
+                "SmartAttendance/1.0"
+            }
+
+        )
+
+        data = response.json()
+
+        if len(data) == 0:
+
+            return {
+                "success": False,
+                "message": "Lokasi tidak ditemukan"
+            }
+
+        location = data[0]
+
+        return {
+
+            "success": True,
+
+            "latitude":
+                float(location["lat"]),
+
+            "longitude":
+                float(location["lon"]),
+
+            "name":
+                location["display_name"]
+
+        }
+
+    except Exception as e:
+
+        print(e)
+
+        return {
+
+            "success": False,
+
+            "message":
+                "Gagal mencari lokasi"
+
+        }
