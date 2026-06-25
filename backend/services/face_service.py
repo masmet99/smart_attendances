@@ -16,9 +16,7 @@ app.prepare(
 print("FACE MODEL LOADED")
 
 
-def extract_embedding(image_path):
-
-    image = cv2.imread(image_path)
+def extract_embedding(image):
 
     if image is None:
         return None
@@ -28,9 +26,22 @@ def extract_embedding(image_path):
     if len(faces) == 0:
         return None
 
-    embedding = faces[0].embedding
+    return faces[0].embedding.tolist()
 
-    return embedding.tolist()
+
+def extract_embedding_from_bytes(file_bytes):
+
+    np_array = np.frombuffer(
+        file_bytes,
+        np.uint8
+    )
+
+    image = cv2.imdecode(
+        np_array,
+        cv2.IMREAD_COLOR
+    )
+
+    return extract_embedding(image)
 
 
 def compare_embeddings(

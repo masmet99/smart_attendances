@@ -6,7 +6,7 @@ from fastapi import (
     Depends
 )
 
-import os
+
 
 from sqlalchemy.orm import Session
 from database.dependencies import get_db
@@ -14,7 +14,7 @@ from database.dependencies import get_db
 from utils.auth_middleware import get_current_user
 
 from services.face_service import (
-    extract_embedding,
+    extract_embedding_from_bytes,
     compare_embeddings
 )
 
@@ -45,17 +45,11 @@ async def register_face(
     user=Depends(get_current_user)
 ):
     
-    os.makedirs(
-    "uploads/register",
-    exist_ok=True
-    )
+    contents = await file.read()
 
-    file_path = f"uploads/register/{file.filename}"
-
-    with open(file_path, "wb") as buffer:
-        buffer.write(await file.read())
-
-    embedding = extract_embedding(file_path)
+    embedding = extract_embedding_from_bytes(
+    contents
+)
 
     if embedding is None:
         return {
@@ -109,17 +103,11 @@ async def verify_face(
 ):
 
 
-    os.makedirs(
-        "uploads/register",
-        exist_ok=True
-    )
+    contents = await file.read()
 
-    file_path = f"uploads/register/{file.filename}"
-
-    with open(file_path, "wb") as buffer:
-        buffer.write(await file.read())
-
-    current_embedding = extract_embedding(file_path)
+    current_embedding = extract_embedding_from_bytes(
+        contents
+)
 
     if current_embedding is None:
         return {

@@ -6,7 +6,7 @@ from fastapi import (
     Form
 )
 
-import os
+
 
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -19,7 +19,7 @@ from models.face_embedding import FaceEmbedding
 from models.geofence import Geofence
 
 from services.face_service import (
-    extract_embedding,
+    extract_embedding_from_bytes,
     compare_embeddings
 )
 
@@ -53,20 +53,12 @@ async def checkin(
 ):
     
     
-    
-    os.makedirs(
-    "uploads/attendance",
-    exist_ok=True
-    )   
+    contents = await file.read()
 
-    file_path = f"uploads/attendance/{file.filename}"
+    current_embedding = extract_embedding_from_bytes(
+        contents
+)
 
-    with open(file_path, "wb") as buffer:
-        buffer.write(await file.read())
-
-    current_embedding = extract_embedding(
-        file_path
-    )
 
     if current_embedding is None:
         return {
