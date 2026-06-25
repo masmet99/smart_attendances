@@ -1282,25 +1282,25 @@ return (
 
           <div>
 
-            ☀ Cahaya cukup
+            ☀ Cahaya Cukup
 
           </div>
 
           <div>
 
-            🙂 Wajah penuh
+            🙂 Wajah Penuh
 
           </div>
 
           <div>
 
-            📱 Kamera stabil
+            📱 Kamera Stabil
 
           </div>
 
           <div>
 
-            🚫 Tanpa masker
+            🚫 Tanpa Masker
 
           </div>
 
