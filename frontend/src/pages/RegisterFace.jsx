@@ -33,6 +33,14 @@ function RegisterFace() {
   setFaceStable] =
   useState(false);
 
+  const [saving,
+  setSaving] =
+  useState(false);
+
+  const [poseFinished,
+  setPoseFinished] =
+  useState(false);
+
   const [capturing,
   setCapturing] =
   useState(false);
@@ -579,6 +587,8 @@ console.log({
 
   const handleRegister = async () => {
 
+    setSaving(true);
+
       try {
 
         if (!photoFile) {
@@ -591,9 +601,10 @@ console.log({
         }
 
         console.log(
-  "POSE:",
-  currentPose
-);
+        "POSE:",
+        currentPose
+        );
+
         const result =
           await registerFace(
             photoFile,
@@ -601,13 +612,11 @@ console.log({
           );
 
           console.log(
-  "RESPONSE BACKEND:",
-  result
-);
-
-        showSuccess(
-          `${currentPose} berhasil disimpan`
+          "RESPONSE BACKEND:",
+          result
         );
+
+       setPoseFinished(true);
 
         const currentIndex =
           poses.indexOf(
@@ -619,11 +628,29 @@ console.log({
           poses.length - 1
         ) {
 
+          setTimeout(() => {
+
           setCurrentPose(
-            poses[
-              currentIndex + 1
-            ]
+
+          poses[
+          currentIndex+1
+          ]
+
           );
+
+          setPhoto(null);
+
+          setPhotoFile(null);
+
+          setPoseFinished(false);
+
+          setSaving(false);
+
+          openCamera();
+
+          },800);
+
+          return;
 
           console.log(
           "POSE SEKARANG:",
@@ -643,8 +670,10 @@ console.log({
 
         }
 
+        setSaving(false);
+
         showSuccess(
-          "Registrasi wajah selesai"
+        "Registrasi wajah berhasil"
         );
 
         navigate(
@@ -1061,6 +1090,45 @@ return (
 
         />
 
+        {
+
+          poseFinished && (
+
+          <div
+          className="pose-success-card">
+
+          <h2>
+
+          ✅
+
+          </h2>
+
+          <h3>
+
+          Pose
+
+          {
+
+          poseLabels[currentPose]
+
+          }
+
+          berhasil
+
+          </h3>
+
+          <p>
+
+          Silakan lanjut ke pose berikutnya
+
+          </p>
+
+          </div>
+
+          )
+
+        }
+
         <div
           className="preview-actions"
         >
@@ -1079,25 +1147,35 @@ return (
 
           <button
 
-            className="btn btn-success"
+          className="btn btn-success"
 
-            onClick={handleRegister}
+          disabled={saving}
+
+          onClick={handleRegister}
 
           >
 
-            {
+          {
 
-              currentIndex === poses.length - 1
+          saving
 
-              ?
+          ?
 
-              "✅ Selesaikan"
+          "⏳ Menyimpan..."
 
-              :
+          :
 
-              "➡ Lanjut"
+          currentIndex===poses.length-1
 
-            }
+          ?
+
+          "✅ Selesaikan"
+
+          :
+
+          "➡ Lanjut"
+
+          }
 
           </button>
 

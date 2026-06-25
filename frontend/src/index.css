@@ -2386,3 +2386,67 @@ flex-wrap:wrap;
 min-width:180px;
 
 }
+
+.pose-success-card{
+
+margin:20px auto;
+
+padding:20px;
+
+max-width:350px;
+
+border-radius:18px;
+
+background:#dcfce7;
+
+border:1px solid #22c55e;
+
+text-align:center;
+
+animation:fadeUp .4s;
+
+}
+
+.pose-success-card h2{
+
+font-size:42px;
+
+margin:0;
+
+}
+
+.pose-success-card h3{
+
+margin-top:10px;
+
+color:#166534;
+
+}
+
+.pose-success-card p{
+
+color:#15803d;
+
+margin-top:8px;
+
+}
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:none;
+
+}
+
+}
