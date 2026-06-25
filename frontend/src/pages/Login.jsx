@@ -1,243 +1,142 @@
 import { useState } from "react";
 import { login, getProfile } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import { showError } from "../utils/alert";
 
 function Login() {
 
   const [nip, setNip] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPass, setShowPass] = useState(false);
 
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-
-    try {
-
-      const result = await login(
-        nip,
-        password
-      );
-
-      localStorage.setItem(
-        "token",
-        result.access_token
-      );
-
-      const profile =
-        await getProfile();
-
-    if (profile.user.role === "admin") {
-
-      navigate("/admin");
-
-    } else if (
-      !profile.user.face_registered
-    ) {
-
-      navigate("/register-face");
-
-    } else {
-
-      navigate("/dashboard");
-
+    if (!nip || !password) {
+      showError("NIP dan Password wajib diisi");
+      return;
     }
 
+    setLoading(true);
+
+    try {
+      const result = await login(nip, password);
+      localStorage.setItem("token", result.access_token);
+
+      const profile = await getProfile();
+
+      if (profile.user.role === "admin") {
+        navigate("/admin");
+      } else if (!profile.user.face_registered) {
+        navigate("/register-face");
+      } else {
+        navigate("/dashboard");
+      }
+
     } catch (error) {
-
-      alert(
-        "NIP atau Password salah"
-      );
-
+      showError("NIP atau Password salah");
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-return (
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleLogin();
+  };
 
-  <div className="login-page">
+  return (
+    <div className="login-page">
+      <div className="login-card">
 
-    <div className="login-card">
+        {/* LEFT */}
+        <div className="login-left">
+          <div>
+            <div className="login-logo-circle">📸</div>
 
-      {/* LEFT SIDE */}
+            <h1 style={{ fontSize: "38px", fontWeight: 700, lineHeight: 1.2, marginBottom: "12px" }}>
+              Smart Attendance
+            </h1>
 
-      <div className="login-left">
+            <p style={{ fontSize: "16px", opacity: 0.8, marginBottom: "36px", lineHeight: 1.6 }}>
+              Sistem Absensi Pegawai Berbasis
+              Face Recognition dan Geofence
+            </p>
 
-        <div>
+            <div className="login-features">
+              <div className="login-feature-item">
+                <span>📷</span> Face Recognition
+              </div>
+              <div className="login-feature-item">
+                <span>📍</span> Geofence Validation
+              </div>
+              <div className="login-feature-item">
+                <span>⏱</span> Real-Time Attendance
+              </div>
+              <div className="login-feature-item">
+                <span>🔒</span> Secure Authentication
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <div
-            style={{
-              fontSize: "60px",
-              marginBottom: "20px"
-            }}
-          >
-            📸
+        {/* RIGHT */}
+        <div className="login-right">
+
+          <div className="login-form-header">
+            <h2>Selamat Datang 👋</h2>
+            <p>Login menggunakan NIP dan Password kamu</p>
           </div>
 
-          <h1
-            style={{
-              fontSize: "42px",
-              fontWeight: "700",
-              marginBottom: "15px",
-              lineHeight: "1.2"
-            }}
-          >
-            Smart Attendance
-          </h1>
-
-          <p
-            style={{
-              fontSize: "18px",
-              opacity: "0.9",
-              marginBottom: "40px"
-            }}
-          >
-            Sistem Absensi Pegawai
-            Berbasis Face Recognition
-            dan Geofence
-          </p>
-
-          <div
-            style={{
-              lineHeight: "2.2",
-              fontSize: "15px"
-            }}
-          >
-
-            <p>
-              📷 Face Recognition
-            </p>
-
-            <p>
-              📍 Geofence Validation
-            </p>
-
-            <p>
-              ⏱ Real-Time Attendance
-            </p>
-
-            <p>
-              🔒 Secure Authentication
-            </p>
-
+          <div className="login-field">
+            <label>NIP</label>
+            <input
+              type="text"
+              placeholder="Masukkan NIP"
+              value={nip}
+              onChange={(e) => setNip(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={loading}
+            />
           </div>
 
-        </div>
+          <div className="login-field">
+            <label>Password</label>
+            <div className="login-pass-wrap">
+              <input
+                type={showPass ? "text" : "password"}
+                placeholder="Masukkan Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handleKeyDown}
+                disabled={loading}
+              />
+              <button
+                className="login-pass-toggle"
+                onClick={() => setShowPass(!showPass)}
+                type="button"
+                tabIndex={-1}
+              >
+                {showPass ? "🙈" : "👁"}
+              </button>
+            </div>
+          </div>
 
+          <button
+            className="btn login-btn"
+            onClick={handleLogin}
+            disabled={loading}
+          >
+            {loading ? "⏳ Masuk..." : "🔐 Login"}
+          </button>
+
+          <p className="login-version">Smart Attendance v1.0</p>
+
+        </div>
       </div>
-
-      {/* RIGHT SIDE */}
-
-      <div className="login-right">
-
-        <div
-          style={{
-            marginBottom: "30px"
-          }}
-        >
-
-          <h2
-            style={{
-              fontSize: "32px",
-              marginBottom: "10px"
-            }}
-          >
-            Selamat Datang
-          </h2>
-
-          <p
-            style={{
-              color: "#64748b"
-            }}
-          >
-            Login menggunakan NIP dan Password
-          </p>
-
-        </div>
-
-        <div
-          style={{
-            marginBottom: "20px"
-          }}
-        >
-
-          <label
-            style={{
-              display: "block",
-              marginBottom: "8px",
-              fontWeight: "600"
-            }}
-          >
-            NIP
-          </label>
-
-          <input
-            type="text"
-            placeholder="Masukkan NIP"
-            value={nip}
-            onChange={(e) =>
-              setNip(e.target.value)
-            }
-          />
-
-        </div>
-
-        <div
-          style={{
-            marginBottom: "25px"
-          }}
-        >
-
-          <label
-            style={{
-              display: "block",
-              marginBottom: "8px",
-              fontWeight: "600"
-            }}
-          >
-            Password
-          </label>
-
-          <input
-            type="password"
-            placeholder="Masukkan Password"
-            value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
-          />
-
-        </div>
-
-        <button
-          className="btn"
-          onClick={handleLogin}
-          style={{
-            width: "100%",
-            padding: "14px",
-            fontSize: "16px"
-          }}
-        >
-          Login
-        </button>
-
-        <p
-          style={{
-            marginTop: "20px",
-            textAlign: "center",
-            color: "#94a3b8",
-            fontSize: "13px"
-          }}
-        >
-          Smart Attendance v1.0
-        </p>
-
-      </div>
-
     </div>
-
-  </div>
-
-);
+  );
 }
 
 export default Login;
