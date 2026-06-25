@@ -2094,3 +2094,336 @@ img[alt="Preview"] {
   font-size: 12px;
   color: #cbd5e1;
 }
+
+/* =======================
+   CHECK IN PAGE
+======================= */
+
+.ci-hero-card {
+  background: #0f172a;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  margin-top: 20px;
+}
+
+.ci-hero-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.ci-hero-sub {
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+/* Step tracker */
+.ci-steps-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.ci-step-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ci-step-num {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ci-step-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Badges */
+.ci-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.ci-badge-done {
+  background: #f0fdf4;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.ci-badge-active {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.ci-badge-wait {
+  background: #f8fafc;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
+
+.ci-badge-danger {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* Section card */
+.ci-section-card {
+  margin-top: 16px;
+}
+
+.ci-section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+/* Detail rows */
+.ci-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ci-detail-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ci-detail-label {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.ci-detail-val {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.ci-empty-hint {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  text-align: center;
+  padding: 1.25rem 0;
+}
+
+/* Map */
+.ci-map-meta {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.ci-map-wrap {
+  height: 320px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Camera placeholder */
+.ci-cam-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 2rem 1rem;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.ci-cam-placeholder p {
+  font-size: 0.82rem;
+}
+
+/* Liveness banner */
+.ci-liveness-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 12px;
+}
+
+.ci-liveness-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #c2410c;
+  margin-bottom: 2px;
+}
+
+.ci-liveness-sub {
+  font-size: 0.75rem;
+  color: #ea580c;
+}
+
+.ci-liveness-success {
+  background: #f0fdf4;
+  border: 1px solid #a7f3d0;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #059669;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* Video wrapper */
+.ci-video-wrap {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+
+.ci-scanner-oval {
+  position: absolute;
+  border-width: 3px;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* Face status */
+.ci-face-status {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.ci-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 999px;
+}
+
+.ci-status-success { background: #f0fdf4; color: #059669; border: 1px solid #a7f3d0; }
+.ci-status-warning { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+.ci-status-danger  { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+/* Action buttons */
+.ci-action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ci-btn-primary {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.ci-btn-primary:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.ci-btn-secondary {
+  background: #f8fafc;
+  color: #374151;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  width: 100%;
+}
+
+.ci-btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* Check in button */
+.ci-btn-checkin {
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+}
+
+.ci-btn-checkin:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.ci-btn-checkin-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .ci-steps-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .ci-step-card {
+    padding: 0.7rem 0.75rem;
+  }
+
+  .ci-step-title {
+    font-size: 0.78rem;
+  }
+
+  .ci-action-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ci-map-wrap {
+    height: 240px;
+  }
+}
