@@ -557,6 +557,26 @@ console.log({
     }
   };
 
+  const handleRetake = () => {
+
+  setPhoto(null);
+
+  setPhotoFile(null);
+
+  setFaceDetected(false);
+
+  setFaceInsideScanner(false);
+
+  setFaceStable(false);
+
+  setCountdown(null);
+
+  setCapturing(false);
+
+  openCamera();
+
+};
+
   const handleRegister = async () => {
 
       try {
@@ -661,6 +681,38 @@ console.log({
 }
     };
 
+const poseLabels = {
+
+  front: "Depan",
+
+  left: "Kiri",
+
+  right: "Kanan",
+
+  mouth_open: "Mulut"
+
+};
+
+const poseDescriptions = {
+
+  front: "Hadapkan wajah lurus ke kamera.",
+
+  left: "Putar kepala perlahan ke kiri.",
+
+  right: "Putar kepala perlahan ke kanan.",
+
+  mouth_open: "Buka mulut seperti contoh."
+
+};
+
+const currentIndex =
+  poses.indexOf(currentPose);
+
+const progress =
+
+  ((currentIndex + 1) /
+  poses.length) * 100;
+
 return (
 
   <div className="layout">
@@ -669,6 +721,8 @@ return (
 
     <div className="main-content">
 
+      {/* HEADER */}
+
       <div className="card">
 
         <h1>
@@ -676,268 +730,426 @@ return (
         </h1>
 
         <p>
-          Pastikan wajah terlihat jelas
-          dan berada di tengah kamera.
-        </p>
 
-        <br />
-
-        <p>
-
-          Status Foto :
-
-          {
-            photo
-              ? " ✅ Siap didaftarkan"
-              : " ❌ Belum ada foto"
-          }
+          Ikuti setiap pose hingga seluruh
+          registrasi selesai.
 
         </p>
 
-        <br />
+        <div className="register-progress-card">
 
-        <ul
-          style={{
-            textAlign: "left",
-            maxWidth: "500px",
-            margin: "0 auto"
-          }}
-        >
+          <div className="progress-header">
 
-          <li>
-            Gunakan pencahayaan yang cukup
-          </li>
+            <span>
 
-          <li>
-            Lepaskan penutup wajah
-          </li>
+              Pose
 
-          <li>
-            Hadapkan wajah ke kamera
-          </li>
+              {" "}
 
-          <li>
-            Ambil foto dengan posisi stabil
-          </li>
+              {currentIndex + 1}
 
-        </ul>
+              /
 
-      </div>
+              {poses.length}
 
-      <div className="card">
+            </span>
 
-      <h3>
-        Kamera Selfie
-      </h3>
+            <strong>
 
-      <h2>
+              {Math.round(progress)}%
 
-      {
-        currentPose === "front" &&
-        "➡️ Hadapkan wajah ke depan"
-      }
-
-      {
-        currentPose === "left" &&
-        "⬅️ Putar kepala ke kiri"
-      }
-
-      {
-        currentPose === "right" &&
-        "➡️ Putar kepala ke kanan"
-      }
-
-      {
-        currentPose === "mouth_open" &&
-        "😮 Buka mulut"
-      }
-
-      </h2>
-
-      <div
-        style={{
-          position: "relative",
-          display: "inline-block"
-        }}
-      >
-
-  <video
-    ref={videoRef}
-    autoPlay
-    playsInline
-    style={{
-      width: "100%",
-      maxWidth: "600px",
-      borderRadius: "12px"
-    }}
-  />
-
-  {
-    cameraOpen && (
-
-      <div
-        style={{
-
-          position:
-            "absolute",
-
-          left:
-            scannerArea.x,
-
-          top:
-            scannerArea.y,
-
-          width:
-            scannerArea.width,
-
-          height:
-            scannerArea.height,
-
-          border:
-
-            faceInsideScanner
-
-              ? "4px solid #22c55e"
-
-              : "4px dashed #94a3b8",
-
-          borderRadius:
-            "50%",
-
-          transition:
-            ".3s",
-
-          pointerEvents:
-            "none"
-
-        }}
-      />
-
-    )
-  }
-
-  {
-  cameraOpen && (
-
-    <div
-      style={{
-        textAlign:
-          "center",
-        marginTop:
-          "15px"
-      }}
-    >
-
-      {
-        !faceDetected ? (
-
-          <h3>
-            🔴 Wajah tidak terdeteksi
-          </h3>
-
-        ) : !faceInsideScanner ? (
-
-          <h3>
-            🟡 Posisikan wajah di tengah
-          </h3>
-
-        ) : !faceStable ? (
-
-          <h3>
-            ⏳ Tahan posisi wajah...
-          </h3>
-
-        ) : (
-
-          <h3>
-            🟢 Wajah stabil
-          </h3>
-
-        )
-      }
-
-      {
-        countdown && (
-
-          <h1
-            style={{
-              color: "#2563eb",
-              marginTop: "10px"
-            }}
-          >
-            📸 {countdown}
-          </h1>
-
-        )
-      }
-
-    </div>
-
-  )
-}
-
-</div>
-
-        <canvas
-          ref={canvasRef}
-          style={{
-            display: "none"
-          }}
-        />
-
-        <br />
-        <br />
-
-      {
-        !cameraOpen && (
-
-          <button
-            className="btn"
-            onClick={openCamera}
-          >
-            📷 Buka Kamera
-          </button>
-
-        )
-      }
-
-      </div>
-
-      {
-        photo && (
-
-          <div className="card">
-
-            <h3>
-              Preview Selfie
-            </h3>
-
-            <br />
-
-            <img
-              src={photo}
-              alt="Preview"
-              width="400"
-              style={{
-                borderRadius: "10px",
-                maxWidth: "100%"
-              }}
-            />
-
-            <br />
-            <br />
-
-            <button
-              className="btn btn-success"
-              onClick={handleRegister}
-            >
-              ✅ Simpan Wajah
-            </button>
+            </strong>
 
           </div>
 
-        )
-      }
+          <div className="progress-bar">
+
+            <div
+
+              className="progress-fill"
+
+              style={{
+
+                width:
+                  `${progress}%`
+
+              }}
+
+            />
+
+          </div>
+
+          <div className="pose-step-list">
+
+            {
+
+              poses.map((pose,index)=>(
+
+                <div
+
+                  key={pose}
+
+                  className={
+
+                    index < currentIndex
+
+                    ? "pose-finished"
+
+                    :
+
+                    index === currentIndex
+
+                    ? "pose-current"
+
+                    : "pose-next"
+
+                  }
+
+                >
+
+                  {
+
+                    index < currentIndex
+
+                    ? "✔"
+
+                    :
+
+                    index === currentIndex
+
+                    ? "🟢"
+
+                    : "○"
+
+                  }
+
+                  {" "}
+
+                  {poseLabels[pose]}
+
+                </div>
+
+              ))
+
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* KAMERA & PREVIEW*/}
+
+      <div className="card">
+
+  <div className="section-title">
+
+    <div className="section-icon">
+      📷
+    </div>
+
+    <div>
+
+      <h2>
+
+        {
+
+          photo
+
+          ? "Preview Foto"
+
+          : "Kamera Selfie"
+
+        }
+
+      </h2>
+
+      <p>
+
+        {poseDescriptions[currentPose]}
+
+      </p>
+
+    </div>
+
+  </div>
+
+  {
+
+    !photo ? (
+
+      <>
+
+        <div
+          style={{
+            position: "relative",
+            display: "inline-block"
+          }}
+        >
+
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            style={{
+              width: "100%",
+              maxWidth: "600px",
+              borderRadius: "16px"
+            }}
+          />
+
+          {
+
+            cameraOpen && (
+
+              <div
+                style={{
+
+                  position:"absolute",
+
+                  left:scannerArea.x,
+
+                  top:scannerArea.y,
+
+                  width:scannerArea.width,
+
+                  height:scannerArea.height,
+
+                  border:
+
+                    faceInsideScanner
+
+                    ? "4px solid #22c55e"
+
+                    : "4px dashed #94a3b8",
+
+                  borderRadius:"50%",
+
+                  transition:".3s",
+
+                  pointerEvents:"none"
+
+                }}
+              />
+
+            )
+
+          }
+
+        </div>
+
+        {
+
+          cameraOpen && (
+
+            <div className="camera-status">
+
+              {
+
+                !faceDetected ?
+
+                <span className="status danger">
+
+                  🔴 Wajah tidak terdeteksi
+
+                </span>
+
+                :
+
+                !faceInsideScanner ?
+
+                <span className="status warning">
+
+                  🟡 Posisikan wajah di tengah
+
+                </span>
+
+                :
+
+                !faceStable ?
+
+                <span className="status info">
+
+                  ⏳ Tahan posisi wajah...
+
+                </span>
+
+                :
+
+                <span className="status success">
+
+                  🟢 Wajah stabil
+
+                </span>
+
+              }
+
+              {
+
+                countdown && (
+
+                  <h1 className="countdown-number">
+
+                    📸 {countdown}
+
+                  </h1>
+
+                )
+
+              }
+
+            </div>
+
+          )
+
+        }
+
+        <canvas
+
+          ref={canvasRef}
+
+          style={{
+
+            display:"none"
+
+          }}
+
+        />
+
+        {
+
+          !cameraOpen && (
+
+            <button
+
+              className="btn"
+
+              onClick={openCamera}
+
+            >
+
+              📷 Buka Kamera
+
+            </button>
+
+          )
+
+        }
+
+      </>
+
+    ) : (
+
+      <>
+
+        <img
+
+          src={photo}
+
+          alt="Preview"
+
+          style={{
+
+            width:"100%",
+
+            maxWidth:"450px",
+
+            borderRadius:"16px"
+
+          }}
+
+        />
+
+        <div
+          className="preview-actions"
+        >
+
+          <button
+
+            className="btn btn-danger"
+
+            onClick={handleRetake}
+
+          >
+
+            🔄 Ambil Ulang
+
+          </button>
+
+          <button
+
+            className="btn btn-success"
+
+            onClick={handleRegister}
+
+          >
+
+            {
+
+              currentIndex === poses.length - 1
+
+              ?
+
+              "✅ Selesaikan"
+
+              :
+
+              "➡ Lanjut"
+
+            }
+
+          </button>
+
+        </div>
+
+      </>
+
+    )
+
+  }
+
+</div>
+
+      {/* TIPS */}
+
+      <div className="card">
+
+        <h3>
+
+          💡 Tips Registrasi
+
+        </h3>
+
+        <div className="register-tips">
+
+          <div>
+
+            ☀ Cahaya cukup
+
+          </div>
+
+          <div>
+
+            🙂 Wajah penuh
+
+          </div>
+
+          <div>
+
+            📱 Kamera stabil
+
+          </div>
+
+          <div>
+
+            🚫 Tanpa masker
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
 

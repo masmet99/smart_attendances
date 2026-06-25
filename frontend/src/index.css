@@ -2366,3 +2366,23 @@ img {
 
   font-size: 13px;
 }
+
+.preview-actions{
+
+display:flex;
+
+justify-content:center;
+
+gap:15px;
+
+margin-top:25px;
+
+flex-wrap:wrap;
+
+}
+
+.preview-actions .btn{
+
+min-width:180px;
+
+}
