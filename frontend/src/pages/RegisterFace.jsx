@@ -33,6 +33,10 @@ function RegisterFace() {
   setFaceStable] =
   useState(false);
 
+ const [transitioning,
+  setTransitioning] =
+  useState(false); 
+
   const [saving,
   setSaving] =
   useState(false);
@@ -628,27 +632,31 @@ console.log({
           poses.length - 1
         ) {
 
-          setTimeout(() => {
+        setTimeout(() => {
 
-          setCurrentPose(
+            setTransitioning(true);
 
-          poses[
-          currentIndex+1
-          ]
+            setTimeout(() => {
 
-          );
+                setCurrentPose(
+                    poses[currentIndex + 1]
+                );
 
-          setPhoto(null);
+                setPhoto(null);
 
-          setPhotoFile(null);
+                setPhotoFile(null);
 
-          setPoseFinished(false);
+                setPoseFinished(false);
 
-          setSaving(false);
+                setSaving(false);
 
-          openCamera();
+                setTransitioning(false);
 
-          },800);
+                openCamera();
+
+            },500);
+
+        },800);
 
           return;
 
@@ -769,25 +777,33 @@ return (
 
           <div className="progress-header">
 
-            <span>
+          <div>
 
-              Pose
+          <h3>
 
-              {" "}
+          Registrasi Wajah
 
-              {currentIndex + 1}
+          </h3>
 
-              /
+          <small>
 
-              {poses.length}
+          Langkah{" "}
 
-            </span>
+          {currentIndex+1}{" "}
 
-            <strong>
+          dari{" "}
 
-              {Math.round(progress)}%
+          {poses.length}
 
-            </strong>
+          </small>
+
+          </div>
+
+          <strong>
+
+          {Math.round(progress)}%
+
+          </strong>
 
           </div>
 
@@ -808,61 +824,91 @@ return (
 
           </div>
 
-          <div className="pose-step-list">
+          <div className="register-stepper">
 
-            {
+          {
 
-              poses.map((pose,index)=>(
+          poses.map((pose,index)=>{
 
-                <div
+          const done =
+          index < currentIndex;
 
-                  key={pose}
+          const active =
+          index === currentIndex;
 
-                  className={
+          return(
 
-                    index < currentIndex
+          <div
 
-                    ? "pose-finished"
+          key={pose}
 
-                    :
+          className={
 
-                    index === currentIndex
+          `step-item
+          ${done?"done":""}
+          ${active?" active":""}`
 
-                    ? "pose-current"
+          }
 
-                    : "pose-next"
+          >
 
-                  }
+          <div className="step-circle">
 
-                >
+          {
 
-                  {
+          done
 
-                    index < currentIndex
+          ?
 
-                    ? "✔"
+          "✓"
 
-                    :
+          :
 
-                    index === currentIndex
+          pose==="front"
 
-                    ? "🟢"
+          ?
 
-                    : "○"
+          "🙂"
 
-                  }
+          :
 
-                  {" "}
+          pose==="left"
 
-                  {poseLabels[pose]}
+          ?
 
-                </div>
+          "⬅️"
 
-              ))
+          :
 
-            }
+          pose==="right"
+
+          ?
+
+          "➡️"
+
+          :
+
+          "😮"
+
+          }
 
           </div>
+
+          <p>
+
+          {poseLabels[pose]}
+
+          </p>
+
+          </div>
+
+          );
+
+          })
+
+          }
+
+        </div>
 
         </div>
 
@@ -870,159 +916,130 @@ return (
 
       {/* KAMERA & PREVIEW*/}
 
-      <div className="card">
+      <div
+        className={
 
-  <div className="section-title">
-
-    <div className="section-icon">
-      📷
-    </div>
-
-    <div>
-
-      <h2>
-
-        {
-
-          photo
-
-          ? "Preview Foto"
-
-          : "Kamera Selfie"
+        `card register-camera-card
+        ${transitioning ? "slide-next" : ""}`
 
         }
+>
 
-      </h2>
+<div className="pose-card">
 
-      <p>
+  <div className="pose-icon">
 
-        {poseDescriptions[currentPose]}
+    {
 
-      </p>
+      currentPose === "front"
 
-    </div>
+      ? "🙂"
+
+      : currentPose === "left"
+
+      ? "⬅️"
+
+      : currentPose === "right"
+
+      ? "➡️"
+
+      : "😮"
+
+    }
 
   </div>
 
-  {
+  <div>
 
-    !photo ? (
+    <h2>
 
-      <>
+      {
 
-        <div
-          style={{
-            position: "relative",
-            display: "inline-block"
-          }}
-        >
+        currentPose === "front"
 
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            style={{
-              width: "100%",
-              maxWidth: "600px",
-              borderRadius: "16px"
-            }}
-          />
+        ? "Pose Depan"
 
-          {
+        : currentPose === "left"
 
-            cameraOpen && (
+        ? "Pose Kiri"
 
-              <div
+        : currentPose === "right"
+
+        ? "Pose Kanan"
+
+        : "Pose Mulut Terbuka"
+
+      }
+
+    </h2>
+
+    <p>
+
+      {poseDescriptions[currentPose]}
+
+    </p>
+
+  </div>
+
+</div>
+
+      {
+
+        !photo ? (
+
+          <>
+
+            <div
+              style={{
+                position: "relative",
+                display: "inline-block"
+              }}
+            >
+
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
                 style={{
-
-                  position:"absolute",
-
-                  left:scannerArea.x,
-
-                  top:scannerArea.y,
-
-                  width:scannerArea.width,
-
-                  height:scannerArea.height,
-
-                  border:
-
-                    faceInsideScanner
-
-                    ? "4px solid #22c55e"
-
-                    : "4px dashed #94a3b8",
-
-                  borderRadius:"50%",
-
-                  transition:".3s",
-
-                  pointerEvents:"none"
-
+                  width: "100%",
+                  maxWidth: "600px",
+                  borderRadius: "16px"
                 }}
               />
 
-            )
-
-          }
-
-        </div>
-
-        {
-
-          cameraOpen && (
-
-            <div className="camera-status">
-
               {
 
-                !faceDetected ?
+                cameraOpen && (
 
-                <span className="status danger">
+                  <div
+                    style={{
 
-                  🔴 Wajah tidak terdeteksi
+                      position:"absolute",
 
-                </span>
+                      left:scannerArea.x,
 
-                :
+                      top:scannerArea.y,
 
-                !faceInsideScanner ?
+                      width:scannerArea.width,
 
-                <span className="status warning">
+                      height:scannerArea.height,
 
-                  🟡 Posisikan wajah di tengah
+                      border:
 
-                </span>
+                        faceInsideScanner
 
-                :
+                        ? "4px solid #22c55e"
 
-                !faceStable ?
+                        : "4px dashed #94a3b8",
 
-                <span className="status info">
+                      borderRadius:"50%",
 
-                  ⏳ Tahan posisi wajah...
+                      transition:".3s",
 
-                </span>
+                      pointerEvents:"none"
 
-                :
-
-                <span className="status success">
-
-                  🟢 Wajah stabil
-
-                </span>
-
-              }
-
-              {
-
-                countdown && (
-
-                  <h1 className="countdown-number">
-
-                    📸 {countdown}
-
-                  </h1>
+                    }}
+                  />
 
                 )
 
@@ -1030,162 +1047,224 @@ return (
 
             </div>
 
-          )
+            {
 
-        }
+              cameraOpen && (
 
-        <canvas
+                <div className="camera-status">
 
-          ref={canvasRef}
+                  {
 
-          style={{
+                    !faceDetected ?
 
-            display:"none"
+                    <span className="status danger">
 
-          }}
+                      🔴 Wajah tidak terdeteksi
 
-        />
+                    </span>
 
-        {
+                    :
 
-          !cameraOpen && (
+                    !faceInsideScanner ?
 
-            <button
+                    <span className="status warning">
 
-              className="btn"
+                      🟡 Posisikan wajah di tengah
 
-              onClick={openCamera}
+                    </span>
 
+                    :
+
+                    !faceStable ?
+
+                    <span className="status info">
+
+                      ⏳ Tahan posisi wajah...
+
+                    </span>
+
+                    :
+
+                    <span className="status success">
+
+                      🟢 Wajah stabil
+
+                    </span>
+
+                  }
+
+                  {
+
+                    countdown && (
+
+                      <h1 className="countdown-number">
+
+                        📸 {countdown}
+
+                      </h1>
+
+                    )
+
+                  }
+
+                </div>
+
+              )
+
+            }
+
+            <canvas
+
+              ref={canvasRef}
+
+              style={{
+
+                display:"none"
+
+              }}
+
+            />
+
+            {
+
+              !cameraOpen && (
+
+                <button
+
+                  className="btn"
+
+                  onClick={openCamera}
+
+                >
+
+                  📷 Buka Kamera
+
+                </button>
+
+              )
+
+            }
+
+          </>
+
+        ) : (
+
+          <>
+
+            <img
+
+              src={photo}
+
+              alt="Preview"
+
+              style={{
+
+                width:"100%",
+
+                maxWidth:"450px",
+
+                borderRadius:"16px"
+
+              }}
+
+            />
+
+            {
+
+              poseFinished && (
+
+              <div
+              className="pose-success-card">
+
+              <h2>
+
+              ✅
+
+              </h2>
+
+              <h3>
+
+              Pose
+
+              {
+
+              poseLabels[currentPose]
+
+              }
+
+              berhasil
+
+              </h3>
+
+              <p>
+
+              Silakan lanjut ke pose berikutnya
+
+              </p>
+
+              </div>
+
+              )
+
+            }
+
+            <div
+              className="preview-actions"
             >
 
-              📷 Buka Kamera
+              <button
 
-            </button>
+                className="btn btn-danger"
 
-          )
+                onClick={handleRetake}
 
-        }
+              >
 
-      </>
+                🔄 Ambil Ulang
 
-    ) : (
+              </button>
 
-      <>
+              <button
 
-        <img
+              className="btn btn-success"
 
-          src={photo}
+              disabled={saving}
 
-          alt="Preview"
+              onClick={handleRegister}
 
-          style={{
+              >
 
-            width:"100%",
+              {
 
-            maxWidth:"450px",
+              saving
 
-            borderRadius:"16px"
+              ?
 
-          }}
+              "⏳ Menyimpan..."
 
-        />
+              :
 
-        {
+              currentIndex===poses.length-1
 
-          poseFinished && (
+              ?
 
-          <div
-          className="pose-success-card">
+              "✅ Selesaikan"
 
-          <h2>
+              :
 
-          ✅
+              "➡ Lanjut"
 
-          </h2>
+              }
 
-          <h3>
+              </button>
 
-          Pose
+            </div>
 
-          {
+          </>
 
-          poseLabels[currentPose]
+        )
 
-          }
-
-          berhasil
-
-          </h3>
-
-          <p>
-
-          Silakan lanjut ke pose berikutnya
-
-          </p>
-
-          </div>
-
-          )
-
-        }
-
-        <div
-          className="preview-actions"
-        >
-
-          <button
-
-            className="btn btn-danger"
-
-            onClick={handleRetake}
-
-          >
-
-            🔄 Ambil Ulang
-
-          </button>
-
-          <button
-
-          className="btn btn-success"
-
-          disabled={saving}
-
-          onClick={handleRegister}
-
-          >
-
-          {
-
-          saving
-
-          ?
-
-          "⏳ Menyimpan..."
-
-          :
-
-          currentIndex===poses.length-1
-
-          ?
-
-          "✅ Selesaikan"
-
-          :
-
-          "➡ Lanjut"
-
-          }
-
-          </button>
-
-        </div>
-
-      </>
-
-    )
-
-  }
+      }
 
 </div>
 
