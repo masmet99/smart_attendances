@@ -2550,3 +2550,66 @@ img[alt="Preview"] {
     align-items: flex-start;
   }
 }
+
+/* =======================
+   SIDEBAR — Avatar inisial
+======================= */
+
+.sidebar-avatar-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* =======================
+   SIDEBAR UPGRADE
+======================= */
+
+/* Nav item layout */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sb-nav-icon {
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+/* Avatar inisial untuk user */
+.sb-avatar-initials {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Admin icon logo */
+.sb-admin-icon {
+  background: #7c3aed;
+}
+
+/* Admin avatar */
+.sb-admin-avatar {
+  background: #7c3aed;
+  font-size: 1.1rem;
+}
+
+/* Active link indicator — garis kiri */
+.active-link {
+  position: relative;
+}
+
+.active-link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #fff;
+  border-radius: 0 3px 3px 0;
+}

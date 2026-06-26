@@ -4,187 +4,72 @@ import { useState } from "react";
 function AdminSidebar() {
 
   const location = useLocation();
-
-  const [menuOpen, setMenuOpen] =
-    useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
-
-    localStorage.removeItem(
-      "token"
-    );
-
+    localStorage.removeItem("token");
     window.location.href = "/";
   };
 
-return (
+  const close = () => setMenuOpen(false);
 
-  <>
+  const navItems = [
+    { to: "/admin/dashboard",  icon: "📊", label: "Dashboard"   },
+    { to: "/admin/attendance", icon: "📋", label: "Attendance"  },
+    { to: "/admin/geofence",   icon: "📍", label: "Geofence"    },
+    { to: "/admin/users",      icon: "👥", label: "Kelola Akun" },
+  ];
 
-    {!menuOpen && (
+  return (
+    <>
+      {!menuOpen && (
+        <button className="mobile-menu-btn" onClick={() => setMenuOpen(true)}>☰</button>
+      )}
 
-      <button
-        className="mobile-menu-btn"
-        onClick={() =>
-          setMenuOpen(true)
-        }
-      >
-        ☰
-      </button>
+      {menuOpen && <div className="mobile-overlay" onClick={close} />}
 
-    )}
+      <div className={`sidebar ${menuOpen ? "sidebar-open" : ""}`}>
+        <button className="sidebar-close" onClick={close}>✕</button>
 
-    {
-      menuOpen && (
-
-        <div
-          className="mobile-overlay"
-          onClick={() =>
-            setMenuOpen(false)
-          }
-        />
-
-      )
-    }
-
-    <div
-      className={
-        menuOpen
-          ? "sidebar sidebar-open"
-          : "sidebar"
-      }
-    >
-
-      <button
-        className="sidebar-close"
-        onClick={() =>
-          setMenuOpen(false)
-        }
-      >
-        ✕
-      </button>
-
-      <div>
-
-        <div className="sidebar-logo">
-
-          <div className="logo-icon">
-            🛠️
+        <div>
+          <div className="sidebar-logo">
+            <div className="logo-icon sb-admin-icon">🛠️</div>
+            <div>
+              <h2>Admin Panel</h2>
+              <p>Smart Attendance</p>
+            </div>
           </div>
 
-          <div>
+          <nav className="sidebar-menu">
+            {navItems.map(({ to, icon, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className={`sidebar-link ${location.pathname === to ? "active-link" : ""}`}
+                onClick={close}
+              >
+                <span className="sb-nav-icon">{icon}</span>
+                <span>{label}</span>
+              </Link>
+            ))}
+          </nav>
+        </div>
 
-            <h2>
-              Admin Panel
-            </h2>
-
-            <p>
-              Smart Attendance
-            </p>
-
+        <div className="sidebar-footer">
+          <div className="user-card">
+            <div className="avatar sb-admin-avatar">🛠️</div>
+            <div>
+              <h4>Administrator</h4>
+              <p>System Admin</p>
+            </div>
           </div>
-
+          <button className="sidebar-logout" onClick={handleLogout}>
+            🚪 Logout
+          </button>
         </div>
-
-        <div className="sidebar-menu">
-
-          <Link
-            to="/admin/dashboard"
-            className={
-              location.pathname ===
-              "/admin/dashboard"
-                ? "sidebar-link active-link"
-                : "sidebar-link"
-            }
-            onClick={() =>
-              setMenuOpen(false)
-            }
-          >
-            📊 Dashboard
-          </Link>
-
-          <Link
-            to="/admin/attendance"
-            className={
-              location.pathname ===
-              "/admin/attendance"
-                ? "sidebar-link active-link"
-                : "sidebar-link"
-            }
-            onClick={() =>
-              setMenuOpen(false)
-            }
-          >
-            📋 Attendance
-          </Link>
-
-          <Link
-          to="/admin/geofence"
-          className={
-            location.pathname ===
-            "/admin/geofence"
-              ? "sidebar-link active-link"
-              : "sidebar-link"
-          }
-        >
-          📍 Geofence
-        </Link>
-
-        <Link
-        to="/admin/users"
-        className={
-          location.pathname ===
-          "/admin/users"
-            ? "sidebar-link active-link"
-            : "sidebar-link"
-        }
-        onClick={() =>
-          setMenuOpen(false)
-        }
-      >
-        👥 Kelola Akun
-      </Link>
-
-        </div>
-
       </div>
-
-      <div className="sidebar-footer">
-
-        <div className="user-card">
-
-          <div className="avatar">
-            🛠️
-          </div>
-
-          <div>
-
-            <h4>
-              Administrator
-            </h4>
-
-            <p>
-              System Admin
-            </p>
-
-          </div>
-
-        </div>
-
-        <button
-          className="sidebar-logout"
-          onClick={handleLogout}
-        >
-          🚪 Logout
-        </button>
-
-      </div>
-
-    </div>
-
-  </>
-
-);
+    </>
+  );
 }
 
 export default AdminSidebar;
