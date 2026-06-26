@@ -2613,3 +2613,297 @@ img[alt="Preview"] {
   background: #fff;
   border-radius: 0 3px 3px 0;
 }
+
+/* =======================
+   LOGIN — Compact Update
+======================= */
+
+/* Brand row (logo + judul sejajar) */
+.login-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 0;
+}
+
+.login-brand-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.login-brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.login-brand-sub {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.65);
+}
+
+/* Divider */
+.login-left-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.12);
+  margin: 1.25rem 0;
+}
+
+/* Desc */
+.login-left-desc {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.65;
+  margin-bottom: 1.1rem;
+}
+
+/* Feature grid — 2x2 */
+.login-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.login-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.9);
+}
+
+/* Override logo-circle lama supaya tidak bentrok */
+.login-logo-circle {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .login-features {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* =======================
+   LOGIN — Mobile Fix
+======================= */
+
+@media (max-width: 768px) {
+
+  .login-page {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .login-card {
+    flex-direction: column;
+    border-radius: 0;
+    min-height: 100vh;
+    box-shadow: none;
+  }
+
+  /* Sembunyikan panel kiri sepenuhnya di mobile */
+  .login-left {
+    display: none;
+  }
+
+  /* Form kanan ambil full layar */
+  .login-right {
+    flex: 1;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #fff;
+  }
+
+  /* Tambah mini-brand di atas form khusus mobile */
+  .login-form-header::before {
+    content: "📸";
+    display: block;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .login-form-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-form-header p {
+    font-size: 0.82rem;
+    color: #64748b;
+  }
+
+  .login-btn {
+    padding: 13px;
+    font-size: 0.95rem;
+  }
+}
+
+/* =======================
+   DASHBOARD ADMIN
+======================= */
+
+.da-hero-card {
+  background: #0f172a;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.da-hero-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.da-hero-sub {
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+.da-hero-rate {
+  text-align: right;
+}
+
+.da-rate-val {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #10b981;
+  line-height: 1;
+}
+
+.da-rate-label {
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+/* Chart card */
+.da-chart-card {
+  margin-top: 16px;
+}
+
+.da-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.da-chart-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 3px;
+}
+
+.da-chart-sub {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+/* Section label */
+.da-section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 20px 0 10px;
+}
+
+/* Quick menu grid */
+.da-quick-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.da-quick-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+}
+
+.da-quick-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(15,23,42,0.1);
+  border-color: #cbd5e1;
+}
+
+.da-quick-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.da-quick-body {
+  flex: 1;
+}
+
+.da-quick-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.da-quick-desc {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.da-quick-arrow {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .da-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .da-hero-rate {
+    text-align: left;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .da-rate-val {
+    font-size: 1.4rem;
+  }
+}
