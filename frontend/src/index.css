@@ -2697,62 +2697,6 @@ img[alt="Preview"] {
 }
 
 /* =======================
-   LOGIN — Mobile Fix
-======================= */
-
-@media (max-width: 768px) {
-
-  .login-page {
-    padding: 0;
-    align-items: stretch;
-  }
-
-  .login-card {
-    flex-direction: column;
-    border-radius: 0;
-    min-height: 100vh;
-    box-shadow: none;
-  }
-
-  /* Sembunyikan panel kiri sepenuhnya di mobile */
-  .login-left {
-    display: none;
-  }
-
-  /* Form kanan ambil full layar */
-  .login-right {
-    flex: 1;
-    padding: 2.5rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background: #fff;
-  }
-
-  /* Tambah mini-brand di atas form khusus mobile */
-  .login-form-header::before {
-    content: "📸";
-    display: block;
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .login-form-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .login-form-header p {
-    font-size: 0.82rem;
-    color: #64748b;
-  }
-
-  .login-btn {
-    padding: 13px;
-    font-size: 0.95rem;
-  }
-}
-
-/* =======================
    DASHBOARD ADMIN
 ======================= */
 
