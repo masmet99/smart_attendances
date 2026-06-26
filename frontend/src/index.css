@@ -2851,3 +2851,347 @@ img[alt="Preview"] {
     font-size: 1.4rem;
   }
 }
+
+/* =======================
+   ADMIN GEOFENCE
+======================= */
+
+.gf-hero-card {
+  background: #0f172a;
+  border-radius: 16px;
+  padding: 1.2rem 1.5rem;
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.gf-hero-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.gf-hero-sub {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.gf-unsaved-badge {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  font-size: 0.73rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Stat cards */
+.gf-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.gf-stat-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.gf-stat-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.gf-stat-val {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.gf-val-name   { font-size: 0.88rem; }
+.gf-val-radius { color: #2563eb; }
+
+/* Body grid — form kiri, map kanan */
+.gf-body-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 16px;
+  margin-top: 14px;
+  align-items: start;
+}
+
+.gf-form-card,
+.gf-map-card { margin-top: 0; }
+
+.gf-section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+}
+
+/* Form fields */
+.gf-field { margin-bottom: 14px; }
+
+.gf-field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.gf-radius-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.gf-radius-header label { margin-bottom: 0; }
+
+.gf-radius-val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+/* Range slider */
+.gf-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  background: #e2e8f0;
+  border-radius: 99px;
+  outline: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.gf-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2563eb;
+  cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+}
+
+.gf-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #94a3b8;
+  margin-top: 5px;
+}
+
+/* Action buttons */
+.gf-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.gf-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 9px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  min-width: 90px;
+}
+
+.gf-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.gf-btn-ghost         { background: #f1f5f9; color: #374151; border: 1.5px solid #e2e8f0; }
+.gf-btn-ghost:hover   { background: #e2e8f0; }
+.gf-btn-danger        { background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; }
+.gf-btn-danger:hover  { background: #fee2e2; }
+.gf-btn-success       { background: #10b981; color: #fff; }
+.gf-btn-success:hover { background: #059669; transform: translateY(-1px); }
+
+/* Map */
+.gf-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.gf-map-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.gf-radius-badge {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.gf-map-wrap {
+  height: 420px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .gf-body-grid { grid-template-columns: 1fr; }
+  .gf-stats-row { grid-template-columns: repeat(2, 1fr); }
+  .gf-map-wrap  { height: 300px; }
+}
+
+/* =======================
+   ADMIN GEOFENCE - Accordion Update
+   Tambahkan di bawah section ADMIN GEOFENCE pada index.css
+======================= */
+
+.gf-info-accordion {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.gf-info-summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 1rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.gf-info-summary::-webkit-details-marker {
+  display: none;
+}
+
+.gf-info-summary::after {
+  content: "+";
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.gf-info-accordion[open] .gf-info-summary::after {
+  content: "-";
+  background: #dbeafe;
+}
+
+.gf-info-summary:hover::after {
+  transform: scale(1.05);
+}
+
+.gf-section-label-tight {
+  margin-bottom: 5px;
+}
+
+.gf-info-title {
+  margin: 0;
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.gf-info-sub {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.gf-accordion-body {
+  padding: 0 1rem 1rem;
+  animation: gfAccordionIn 0.2s ease both;
+}
+
+.gf-accordion-body::before {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-bottom: 14px;
+  background: #e2e8f0;
+}
+
+.gf-actions-compact {
+  margin-top: 14px;
+}
+
+@keyframes gfAccordionIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .gf-info-summary {
+    padding: 0.9rem;
+  }
+
+  .gf-info-title {
+    font-size: 0.88rem;
+  }
+
+  .gf-info-sub {
+    font-size: 0.72rem;
+  }
+
+  .gf-actions-compact {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
