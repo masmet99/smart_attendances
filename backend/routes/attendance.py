@@ -159,7 +159,7 @@ async def checkin(
         Attendance
     ).filter(
         Attendance.user_id == user["user_id"],
-        Attendance.tanggal == date.today()
+        Attendance.tanggal == today()
     ).first()
 
     if today_attendance:
@@ -217,7 +217,7 @@ def checkout(
         Attendance
     ).filter(
         Attendance.user_id == user["user_id"],
-        Attendance.tanggal == date.today(),
+        Attendance.tanggal == today(),
         Attendance.jam_pulang == None
     ).first()
 
@@ -227,7 +227,7 @@ def checkout(
             "message": "Anda belum check-in atau sudah check-out hari ini"
         }
 
-    attendance.jam_pulang = datetime.now()
+    attendance.jam_pulang = now()
 
     db.commit()
 
@@ -283,7 +283,7 @@ def today_attendance(
         Attendance
     ).filter(
         Attendance.user_id == user["user_id"],
-        Attendance.tanggal == date.today()
+        Attendance.tanggal == today()
     ).first()
 
     if not attendance:
