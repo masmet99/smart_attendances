@@ -168,11 +168,10 @@ async def checkin(
             "message": "Anda sudah melakukan check-in hari ini"
         }
     
-    print("===================")
-    print("NOW :", now())
-    print("TODAY :", today())
-    print("===================")
+    jam = now()
 
+    print("NOW() :", jam)
+    
     attendance = Attendance(
         user_id=user["user_id"],
         tanggal=date.today(),
@@ -183,12 +182,22 @@ async def checkin(
         status="HADIR"
     )
 
+    print("SEBELUM ADD :", attendance.jam_masuk)
+
     db.add(attendance)
+
+    print("SETELAH ADD :", attendance.jam_masuk)
+
     db.commit()
 
-    print("========================")
-    print("DB JAM MASUK :", attendance.jam_masuk)
-    print("========================")
+    print("SETELAH COMMIT :", attendance.jam_masuk)
+
+    db.refresh(attendance)
+
+    print("SETELAH REFRESH :", attendance.jam_masuk)
+
+    db.add(attendance)
+    db.commit()
 
     return {
         "success": True,
