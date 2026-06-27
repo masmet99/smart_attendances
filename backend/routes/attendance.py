@@ -166,6 +166,11 @@ async def checkin(
             "success": False,
             "message": "Anda sudah melakukan check-in hari ini"
         }
+    
+    print("===================")
+    print("NOW :", now())
+    print("TODAY :", today())
+    print("===================")
 
     attendance = Attendance(
         user_id=user["user_id"],

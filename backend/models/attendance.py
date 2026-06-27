@@ -12,6 +12,7 @@ from sqlalchemy.sql import func
 from database.base import Base
 
 
+
 class Attendance(Base):
     __tablename__ = "attendances"
 
