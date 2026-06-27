@@ -44,6 +44,8 @@ function CheckIn() {
   const [lastFacePosition, setLastFacePosition] = useState(null);
   const [challenge, setChallenge]       = useState(null);
   const [livenessPassed, setLivenessPassed] = useState(false);
+  const [checkingIn, setCheckingIn]     = useState(false);
+  const [mapOpen, setMapOpen]           = useState(false); // peta accordion
 
   const videoRef             = useRef(null);
   const canvasRef            = useRef(null);
@@ -96,7 +98,7 @@ function CheckIn() {
     };
   }, [cameraOpen]);
 
-  // ── semua fungsi logika TIDAK DIUBAH ─────────────────
+  // ── logika tidak diubah ───────────────────────────────
   const loadFaceModel = async () => {
     try {
       await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
@@ -295,15 +297,18 @@ function CheckIn() {
     if (!latitude || !longitude) { showWarning("Ambil lokasi terlebih dahulu"); return; }
     if (!livenessPassed)          { showWarning("Verifikasi wajah belum berhasil"); return; }
     if (!photoFile)               { showWarning("Ambil foto terlebih dahulu"); return; }
+    setCheckingIn(true);
     try {
       const result = await checkIn(photoFile, latitude, longitude);
       console.log(result);
       if (result.success) { showSuccess(result.message); }
-      else                { showError(result.message); return; }
+      else                { showError(result.message); }
     } catch (error) {
       console.log(error);
       if (error.response?.data) { showError(error.response.data.message); }
       else                      { showError("Check In gagal"); }
+    } finally {
+      setCheckingIn(false);
     }
   };
 
@@ -326,7 +331,7 @@ function CheckIn() {
     OPEN_MOUTH: { icon: "😮", text: "Buka mulut lebar-lebar" },
   };
 
-  const canCheckIn = insideArea && livenessPassed && !!photoFile;
+  const canCheckIn = insideArea && livenessPassed && !!photoFile && !checkingIn;
 
   return (
     <div className="layout">
@@ -334,7 +339,7 @@ function CheckIn() {
 
       <div className="main-content">
 
-        {/* HEADER */}
+        {/* HERO */}
         <div className="ci-hero-card">
           <div>
             <h1 className="ci-hero-title">Absensi Kehadiran</h1>
@@ -360,7 +365,7 @@ function CheckIn() {
           })}
         </div>
 
-        {/* LOKASI */}
+        {/* LOKASI — tombol ambil lokasi di dalam card */}
         <div className="card ci-section-card">
           <p className="ci-section-label">Status Lokasi</p>
 
@@ -382,7 +387,7 @@ function CheckIn() {
                   {insideArea ? "🟢 Dalam Area Kantor" : "🔴 Di Luar Area Kantor"}
                 </span>
               </div>
-              <div className="ci-detail-row">
+              <div className="ci-detail-row" style={{ borderBottom: "none", paddingBottom: 0 }}>
                 <span className="ci-detail-label">📡 Koordinat</span>
                 <span className="ci-detail-val" style={{ fontSize: "0.75rem", color: "#94A3B8" }}>
                   {latitude.toFixed(5)}, {longitude.toFixed(5)}
@@ -390,50 +395,69 @@ function CheckIn() {
               </div>
             </>
           ) : (
-            <p className="ci-empty-hint">Tekan "Ambil Lokasi" untuk mendeteksi posisimu.</p>
+            <p className="ci-empty-hint">Tekan tombol di bawah untuk mendeteksi posisimu.</p>
           )}
+
+          <button className="ci-btn-block" onClick={getLocation} style={{ marginTop: "12px" }}>
+            📍 {latitude ? "Perbarui Lokasi" : "Ambil Lokasi"}
+          </button>
         </div>
 
-        {/* MAP */}
+        {/* PETA — accordion, default tertutup */}
         {geofence && (
-          <div className="card">
-            <p className="ci-section-label">Peta Area Absensi</p>
-            <p className="ci-map-meta">
-              {geofence.nama_lokasi} · Radius {geofence.radius_meter}m
-            </p>
-            <div className="ci-map-wrap">
-              <MapContainer
-                center={[geofence.latitude, geofence.longitude]}
-                zoom={17}
-                style={{ height: "100%", width: "100%", borderRadius: "10px" }}
-              >
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <Marker position={[geofence.latitude, geofence.longitude]} />
-                <Circle center={[geofence.latitude, geofence.longitude]} radius={geofence.radius_meter} />
-                {latitude && longitude && <Marker position={[latitude, longitude]} />}
-              </MapContainer>
-            </div>
+          <div className="card ci-map-accordion">
+            <button
+              className="ci-map-accordion-header"
+              onClick={() => setMapOpen(!mapOpen)}
+            >
+              <div className="ci-map-accordion-info">
+                <span className="ci-section-label" style={{ marginBottom: 0 }}>Peta Area Absensi</span>
+                <span className="ci-map-accordion-sub">
+                  {geofence.nama_lokasi} · Radius {geofence.radius_meter}m
+                </span>
+              </div>
+              <span className={`ci-map-accordion-arrow ${mapOpen ? "open" : ""}`}>›</span>
+            </button>
+
+            {mapOpen && (
+              <div className="ci-map-body">
+                <div className="ci-map-wrap">
+                  <MapContainer
+                    center={[geofence.latitude, geofence.longitude]}
+                    zoom={17}
+                    style={{ height: "100%", width: "100%", borderRadius: "10px" }}
+                  >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker position={[geofence.latitude, geofence.longitude]} />
+                    <Circle center={[geofence.latitude, geofence.longitude]} radius={geofence.radius_meter} />
+                    {latitude && longitude && <Marker position={[latitude, longitude]} />}
+                  </MapContainer>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* KAMERA */}
+        {/* KAMERA — tombol buka kamera di dalam card */}
         {!photo && (
           <div className="card ci-section-card">
             <p className="ci-section-label">Kamera Selfie</p>
 
             {!cameraOpen ? (
-              <div className="ci-cam-placeholder">
-                <span style={{ fontSize: "2.5rem" }}>📷</span>
-                <p>Tekan "Buka Kamera" untuk memulai verifikasi wajah</p>
-              </div>
+              <>
+                <div className="ci-cam-placeholder">
+                  <span style={{ fontSize: "2.5rem" }}>📷</span>
+                  <p>Verifikasi wajah diperlukan untuk check in</p>
+                </div>
+                <button className="ci-btn-block" onClick={openCamera}>
+                  📷 Buka Kamera
+                </button>
+              </>
             ) : (
               <>
-                {/* Liveness challenge banner */}
                 {challenge && !livenessPassed && (
                   <div className="ci-liveness-banner">
-                    <span style={{ fontSize: "1.5rem" }}>
-                      {challengeText[challenge]?.icon}
-                    </span>
+                    <span style={{ fontSize: "1.5rem" }}>{challengeText[challenge]?.icon}</span>
                     <div>
                       <p className="ci-liveness-title">Verifikasi Liveness</p>
                       <p className="ci-liveness-sub">{challengeText[challenge]?.text}</p>
@@ -442,12 +466,9 @@ function CheckIn() {
                 )}
 
                 {livenessPassed && (
-                  <div className="ci-liveness-success">
-                    ✅ Verifikasi liveness berhasil
-                  </div>
+                  <div className="ci-liveness-success">✅ Verifikasi liveness berhasil</div>
                 )}
 
-                {/* Video */}
                 <div className="ci-video-wrap">
                   <video
                     ref={videoRef}
@@ -458,10 +479,10 @@ function CheckIn() {
                   <div
                     className="ci-scanner-oval"
                     style={{
-                      left:   scannerArea.x,
-                      top:    scannerArea.y,
-                      width:  scannerArea.width,
-                      height: scannerArea.height,
+                      left:        scannerArea.x,
+                      top:         scannerArea.y,
+                      width:       scannerArea.width,
+                      height:      scannerArea.height,
                       borderColor: faceInsideScanner ? "#22c55e" : "#94a3b8",
                       borderStyle: faceInsideScanner ? "solid"   : "dashed",
                       boxShadow:   faceInsideScanner ? "0 0 32px rgba(34,197,94,.5)" : "none",
@@ -469,7 +490,6 @@ function CheckIn() {
                   />
                 </div>
 
-                {/* Status wajah */}
                 <div className="ci-face-status">
                   {!faceDetected ? (
                     <span className="ci-status-pill ci-status-danger">🔴 Wajah tidak terdeteksi</span>
@@ -495,27 +515,11 @@ function CheckIn() {
                 style={{ width: "100%", maxWidth: "460px", borderRadius: "12px" }}
               />
             </div>
-            <button
-              className="ci-btn-secondary"
-              style={{ marginTop: "12px" }}
-              onClick={openCamera}
-            >
+            <button className="ci-btn-block ci-btn-block-ghost" style={{ marginTop: "12px" }} onClick={openCamera}>
               🔄 Ambil Ulang Foto
             </button>
           </div>
         )}
-
-        {/* AKSI */}
-        <div className="card">
-          <div className="ci-action-row">
-            <button className="ci-btn-primary" onClick={getLocation}>
-              📍 Ambil Lokasi
-            </button>
-            <button className="ci-btn-secondary" onClick={openCamera}>
-              📷 Buka Kamera
-            </button>
-          </div>
-        </div>
 
         {/* TOMBOL CHECK IN */}
         <button
@@ -523,7 +527,7 @@ function CheckIn() {
           onClick={handleCheckIn}
           disabled={!canCheckIn}
         >
-          ✅ CHECK IN SEKARANG
+          {checkingIn ? "⏳ Memproses..." : "✅ CHECK IN SEKARANG"}
         </button>
 
         <canvas ref={canvasRef} style={{ display: "none" }} />

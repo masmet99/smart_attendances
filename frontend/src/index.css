@@ -3195,3 +3195,110 @@ img[alt="Preview"] {
     grid-template-columns: 1fr;
   }
 }
+
+/* =======================
+   CHECK IN — Layout Update
+======================= */
+
+/* Tombol full-width di dalam card */
+.ci-btn-block {
+  width: 100%;
+  padding: 10px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  display: block;
+  text-align: center;
+}
+
+.ci-btn-block:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.ci-btn-block-ghost {
+  background: #f8fafc;
+  color: #374151;
+  border: 1.5px solid #e2e8f0;
+}
+
+.ci-btn-block-ghost:hover {
+  background: #f1f5f9;
+  transform: none;
+}
+
+/* Peta accordion */
+.ci-map-accordion {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ci-map-accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.ci-map-accordion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ci-map-accordion-sub {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.ci-map-accordion-arrow {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease;
+  line-height: 1;
+}
+
+.ci-map-accordion-arrow.open {
+  transform: rotate(90deg);
+}
+
+.ci-map-body {
+  padding: 0 14px 14px;
+  animation: ci-map-in 0.2s ease both;
+}
+
+.ci-map-body::before {
+  content: "";
+  display: block;
+  height: 1px;
+  background: #e2e8f0;
+  margin-bottom: 12px;
+}
+
+@keyframes ci-map-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
