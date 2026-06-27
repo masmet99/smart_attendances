@@ -171,11 +171,11 @@ async def checkin(
     jam = now()
 
     print("NOW() :", jam)
-    
+
     attendance = Attendance(
         user_id=user["user_id"],
-        tanggal=date.today(),
-        jam_masuk=datetime.now(),
+        tanggal=today(),
+        jam_masuk=jam,
         latitude=latitude,
         longitude=longitude,
         similarity_score=round(similarity, 4),
