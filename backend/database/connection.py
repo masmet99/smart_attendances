@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, event
 from dotenv import load_dotenv
 import os
 
@@ -17,6 +18,12 @@ DATABASE_URL = (
 )
 
 engine = create_engine(DATABASE_URL)
+
+@event.listens_for(engine, "connect")
+def set_mysql_timezone(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("SET time_zone = '+08:00'")
+    cursor.close()
 
 SessionLocal = sessionmaker(
     autocommit=False,
