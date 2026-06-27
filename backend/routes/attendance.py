@@ -186,6 +186,10 @@ async def checkin(
     db.add(attendance)
     db.commit()
 
+    print("========================")
+    print("DB JAM MASUK :", attendance.jam_masuk)
+    print("========================")
+
     return {
         "success": True,
         "message": "Check-in berhasil",
