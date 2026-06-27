@@ -17,6 +17,7 @@ from utils.auth_middleware import get_current_user
 from models.attendance import Attendance
 from models.face_embedding import FaceEmbedding
 from models.geofence import Geofence
+from utils.timezone import now, today
 
 from services.face_service import (
     extract_embedding_from_bytes,
