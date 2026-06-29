@@ -18,6 +18,7 @@ function AdminSidebar() {
     { to: "/admin/attendance", icon: "📋", label: "Attendance"  },
     { to: "/admin/geofence",   icon: "📍", label: "Geofence"    },
     { to: "/admin/users",      icon: "👥", label: "Kelola Akun" },
+    { to: "/admin/settings", icon: "⚙️", label: "Pengaturan"},
   ];
 
   return (

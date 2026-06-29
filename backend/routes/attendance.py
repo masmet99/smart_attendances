@@ -27,6 +27,7 @@ from services.face_service import (
 from utils.geofence import calculate_distance
 
 from datetime import datetime, date
+from models.system_setting import SystemSetting
 
 import json
 
@@ -98,18 +99,27 @@ async def checkin(
         )
 
     similarity = best_similarity
-    
+
+    setting = db.query(
+    SystemSetting
+    ).first()
+
+    threshold = float(
+        setting.similarity_threshold
+    )
+        
 
     print(
         "SIMILARITY:",
         round(similarity, 4)
     )
 
-    if similarity < 0.65:
+    if similarity < threshold:
         return {
             "success": False,
             "message": "Wajah tidak cocok",
-            "similarity": round(similarity, 4)
+            "similarity": round(similarity, 4),
+            "threshold": threshold
         }
 
     # ==========================
@@ -195,9 +205,6 @@ async def checkin(
     db.refresh(attendance)
 
     print("SETELAH REFRESH :", attendance.jam_masuk)
-
-    db.add(attendance)
-    db.commit()
 
     return {
         "success": True,

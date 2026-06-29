@@ -10,6 +10,12 @@ from utils.admin_middleware import admin_required
 from models.face_embedding import FaceEmbedding
 from models.user import User
 
+from models.system_setting import SystemSetting
+
+from schemas.system_setting_schema import (
+    SystemSettingUpdate
+)
+
 from database.dependencies import get_db
 
 from schemas.user_schema import (
@@ -904,3 +910,78 @@ def search_location(
                 "Gagal mencari lokasi"
 
         }
+
+@router.get(
+    "/system-settings"
+)
+def get_system_settings(
+
+    db: Session = Depends(get_db)
+
+):
+
+    setting = db.query(
+        SystemSetting
+    ).first()
+
+    return {
+
+        "success": True,
+
+        "data": {
+
+            "work_start":
+                setting.work_start,
+
+            "work_end":
+                setting.work_end,
+
+            "late_tolerance":
+                setting.late_tolerance,
+
+            "similarity_threshold":
+                float(
+                    setting.similarity_threshold
+                )
+
+        }
+
+    }
+
+@router.put(
+    "/system-settings"
+)
+def update_system_settings(
+
+    data: SystemSettingUpdate,
+
+    db: Session = Depends(get_db)
+
+):
+
+    setting = db.query(
+        SystemSetting
+    ).first()
+
+    setting.work_start = data.work_start
+
+    setting.work_end = data.work_end
+
+    setting.late_tolerance = (
+        data.late_tolerance
+    )
+
+    setting.similarity_threshold = (
+        data.similarity_threshold
+    )
+
+    db.commit()
+
+    return {
+
+        "success": True,
+
+        "message":
+        "Pengaturan berhasil diperbarui"
+
+    }

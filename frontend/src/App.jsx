@@ -7,6 +7,7 @@ import DashboardAdmin from "./pages/DashboardAdmin";
 import AdminAttendance from "./pages/AdminAttendance";
 import CheckIn from "./pages/CheckIn";
 import AdminGeofence from "./pages/AdminGeofence";
+import SystemSettings from "./pages/SystemSettings";
 
 import RegisterFace from "./pages/RegisterFace";
 import AttendanceHistory from "./pages/AttendanceHistory";
@@ -85,6 +86,11 @@ function App() {
         <Route
           path="/admin/users"
           element={<UserManagement />}
+        />
+
+        <Route
+          path="/admin/settings"
+          element={<SystemSettings />}
         />
 
         </Routes>

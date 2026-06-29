@@ -21,6 +21,8 @@ from services.face_service import (
 from models.face_embedding import FaceEmbedding
 from models.user import User
 
+from models.system_setting import SystemSetting
+
 import json
 
 
@@ -146,10 +148,19 @@ async def verify_face(
         )
 
     similarity = best_similarity
+
+    setting = db.query(
+        SystemSetting
+    ).first()
+
+    threshold = float(
+        setting.similarity_threshold
+    )
     
 
     return {
         "success": True,
         "similarity": round(similarity, 4),
-        "match": similarity >= 0.65
+        "threshold": threshold,
+        "match": similarity >= threshold
     }
