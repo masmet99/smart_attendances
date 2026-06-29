@@ -7,6 +7,8 @@ function SystemSettings() {
 
   const [workStart,           setWorkStart]           = useState("");
   const [workEnd,             setWorkEnd]             = useState("");
+  const [checkinOpen,         setCheckinOpen]         = useState("");
+  const [checkinClose,        setCheckinClose]        = useState("");
   const [lateTolerance,       setLateTolerance]       = useState(15);
   const [similarityThreshold, setSimilarityThreshold] = useState(0.65);
   const [originalData,        setOriginalData]        = useState(null);
@@ -20,6 +22,8 @@ function SystemSettings() {
       const data   = result.data;
       setWorkStart(data.work_start);
       setWorkEnd(data.work_end);
+      setCheckinOpen(data.checkin_open);
+      setCheckinClose(data.checkin_close);
       setLateTolerance(data.late_tolerance);
       setSimilarityThreshold(data.similarity_threshold);
       setOriginalData(data);
@@ -31,6 +35,8 @@ function SystemSettings() {
   const hasChanges = originalData && (
     workStart           !== originalData.work_start           ||
     workEnd             !== originalData.work_end             ||
+    checkinOpen         !== originalData.checkin_open         ||
+    checkinClose        !==originalData.checkin_close         ||
     lateTolerance       !== originalData.late_tolerance       ||
     similarityThreshold !== originalData.similarity_threshold
   );
@@ -41,6 +47,8 @@ function SystemSettings() {
       await updateSystemSettings({
         work_start:           workStart,
         work_end:             workEnd,
+        checkin_open:         checkinOpen,
+        checkin_close:        checkinClose,
         late_tolerance:       lateTolerance,
         similarity_threshold: similarityThreshold,
       });
@@ -58,6 +66,8 @@ function SystemSettings() {
     if (!originalData) return;
     setWorkStart(originalData.work_start);
     setWorkEnd(originalData.work_end);
+    setCheckinOpen(originalData.checkin_open);
+    setCheckinClose(originalData.checkin_close);
     setLateTolerance(originalData.late_tolerance);
     setSimilarityThreshold(originalData.similarity_threshold);
   };
@@ -109,6 +119,62 @@ function SystemSettings() {
                 value={workEnd}
                 onChange={(e) => setWorkEnd(e.target.value)}
               />
+            </div>
+
+            <div className="ss-field">
+
+            <label>
+
+            Check-in Dibuka
+
+            </label>
+
+            <input
+
+            type="time"
+
+            value={checkinOpen}
+
+            onChange={(e)=>
+
+            setCheckinOpen(
+
+            e.target.value
+
+            )
+
+            }
+
+            />
+
+            </div>
+
+            <div className="ss-field">
+
+            <label>
+
+            Check-in Ditutup
+
+            </label>
+
+            <input
+
+            type="time"
+
+            value={checkinClose}
+
+            onChange={(e)=>
+
+            setCheckinClose(
+
+            e.target.value
+
+            )
+
+            }
+
+            />
+
             </div>
 
             <div className="ss-field">

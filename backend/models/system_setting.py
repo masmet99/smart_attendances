@@ -28,7 +28,17 @@ class SystemSetting(Base):
         Time,
         nullable=False
     )
+    
+    checkin_open = Column(
+    Time,
+    nullable=False
+    )
 
+    checkin_close = Column(
+        Time,
+        nullable=False
+    )
+    
     late_tolerance = Column(
         Integer,
         nullable=False

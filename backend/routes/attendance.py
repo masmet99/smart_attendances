@@ -26,7 +26,7 @@ from services.face_service import (
 
 from utils.geofence import calculate_distance
 
-from datetime import datetime, date
+from datetime import timedelta
 from models.system_setting import SystemSetting
 
 import json
@@ -101,12 +101,20 @@ async def checkin(
     similarity = best_similarity
 
     setting = db.query(
-    SystemSetting
+        SystemSetting
     ).first()
 
     threshold = float(
-        setting.similarity_threshold
+    setting.similarity_threshold
     )
+
+    work_start = setting.work_start
+
+    late_tolerance = setting.late_tolerance
+
+    checkin_open = setting.checkin_open
+
+    checkin_close = setting.checkin_close
         
 
     print(
@@ -121,6 +129,14 @@ async def checkin(
             "similarity": round(similarity, 4),
             "threshold": threshold
         }
+    
+    # ==========================
+    # PENGATURAN SISTEM
+    # ==========================
+
+    work_start = setting.work_start
+
+    late_tolerance = setting.late_tolerance
 
     # ==========================
     # VALIDASI GEOFENCE
@@ -181,6 +197,57 @@ async def checkin(
     jam = now()
 
     print("NOW() :", jam)
+    from datetime import datetime, timedelta
+
+    current_time = jam.time()
+
+    # ==========================
+    # VALIDASI JAM CHECK-IN
+    # ==========================
+
+    if current_time < checkin_open:
+
+        return {
+            "success": False,
+            "message": "Jam check-in belum dibuka.",
+            "allowed_time": {
+                "open": str(checkin_open),
+                "close": str(checkin_close)
+            }
+        }
+
+    if current_time > checkin_close:
+
+        return {
+            "success": False,
+            "message": "Jam check-in telah berakhir.",
+            "allowed_time": {
+                "open": str(checkin_open),
+                "close": str(checkin_close)
+            }
+    }
+
+    late_limit = datetime.combine(
+        today(),
+        work_start
+    ) + timedelta(
+        minutes=late_tolerance
+    )
+
+    late_limit = late_limit.replace(
+        tzinfo=jam.tzinfo
+    )
+
+    status = (
+        "HADIR"
+        if jam <= late_limit
+        else "TERLAMBAT"
+    )
+
+    print("=========================")
+    print("BATAS TERLAMBAT :", late_limit)
+    print("STATUS :", status)
+    print("=========================")
 
     attendance = Attendance(
         user_id=user["user_id"],
@@ -189,27 +256,19 @@ async def checkin(
         latitude=latitude,
         longitude=longitude,
         similarity_score=round(similarity, 4),
-        status="HADIR"
+        status="status"
     )
 
-    print("SEBELUM ADD :", attendance.jam_masuk)
-
     db.add(attendance)
-
-    print("SETELAH ADD :", attendance.jam_masuk)
-
     db.commit()
-
-    print("SETELAH COMMIT :", attendance.jam_masuk)
-
     db.refresh(attendance)
-
-    print("SETELAH REFRESH :", attendance.jam_masuk)
 
     return {
         "success": True,
         "message": "Check-in berhasil",
+        "status":status,
         "similarity": round(similarity, 4),
+        "threshold": threshold,
         "distance_meter": round(distance, 2)
     }
 

@@ -936,6 +936,12 @@ def get_system_settings(
             "work_end":
                 setting.work_end,
 
+            "checkin_open":
+            setting.checkin_open,
+
+            "checkin_close":
+            setting.checkin_close,
+
             "late_tolerance":
                 setting.late_tolerance,
 
@@ -966,6 +972,10 @@ def update_system_settings(
     setting.work_start = data.work_start
 
     setting.work_end = data.work_end
+
+    setting.checkin_open = data.checkin_open
+
+    setting.checkin_close = data.checkin_close
 
     setting.late_tolerance = (
         data.late_tolerance

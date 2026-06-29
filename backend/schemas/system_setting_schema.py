@@ -10,6 +10,10 @@ class SystemSettingUpdate(
 
     work_end: time
 
+    checkin_open: time
+
+    checkin_close: time
+
     late_tolerance: int
 
     similarity_threshold: float
