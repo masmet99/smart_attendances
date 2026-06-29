@@ -438,7 +438,7 @@ function CheckIn() {
           </div>
         )}
 
-        {/* KAMERA — tombol buka kamera di dalam card */}
+        {/* KAMERA — Button buka kamera di dalam card */}
         {!photo && (
           <div className="card ci-section-card">
             <p className="ci-section-label">Kamera Selfie</p>
