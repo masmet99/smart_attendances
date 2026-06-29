@@ -284,6 +284,30 @@ def checkout(
             "message": "Anda belum check-in atau sudah check-out hari ini"
         }
 
+    # ==========================
+    # CEK JAM PULANG
+    # ==========================
+
+    setting = db.query(
+        SystemSetting
+    ).first()
+
+    work_end = setting.work_end
+
+    current_time = now().time()
+
+    if current_time < work_end:
+
+        return {
+            "success": False,
+            "message": "Belum memasuki jam pulang.",
+            "checkout_time": str(work_end)
+        }
+
+    # ==========================
+    # CHECKOUT
+    # ==========================
+
     attendance.jam_pulang = now()
 
     db.commit()
