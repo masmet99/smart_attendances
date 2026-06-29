@@ -26,7 +26,7 @@ from services.face_service import (
 
 from utils.geofence import calculate_distance
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from models.system_setting import SystemSetting
 
 import json
@@ -129,14 +129,6 @@ async def checkin(
             "similarity": round(similarity, 4),
             "threshold": threshold
         }
-    
-    # ==========================
-    # PENGATURAN SISTEM
-    # ==========================
-
-    work_start = setting.work_start
-
-    late_tolerance = setting.late_tolerance
 
     # ==========================
     # VALIDASI GEOFENCE
@@ -197,8 +189,7 @@ async def checkin(
     jam = now()
 
     print("NOW() :", jam)
-    from datetime import datetime, timedelta
-
+    
     current_time = jam.time()
 
     # ==========================
@@ -256,7 +247,7 @@ async def checkin(
         latitude=latitude,
         longitude=longitude,
         similarity_score=round(similarity, 4),
-        status="status"
+        status=status
     )
 
     db.add(attendance)
