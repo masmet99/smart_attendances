@@ -101,7 +101,12 @@ function DashboardUser() {
   const sudahCheckIn  = attendance?.checked_in;
   const sudahCheckOut = attendance?.checked_out;
 
-  // ── Status realtime ──────────────────────────────────
+  // ── Status realtime — 3 fase utama ────────────────────
+  // 1. Sebelum jam check-in dibuka → countdown ke pembukaan
+  // 2. Check-in sedang dibuka (belum check-in) → countdown ke penutupan
+  // 3. Check-in sudah ditutup tanpa check-in → status gagal (tanpa countdown)
+  // 4. Sudah check-in, menunggu jam pulang → countdown ke jam pulang (checkout terbuka)
+  // 5. Sudah lewat jam pulang, belum checkout → ajakan checkout langsung
   let statusTitle = "";
   let statusColor = "";
   let countdown   = null;
@@ -113,25 +118,31 @@ function DashboardUser() {
     const workEnd = getTodayDate(setting.work_end);
 
     if (now < open) {
+      // FASE 1 — Check-in belum dibuka
       statusTitle = "Check-in belum dibuka";
       statusColor = "warning";
       countdown   = formatCountdown(Math.floor((open - now) / 1000));
 
     } else if (!sudahCheckIn && now <= close) {
+      // FASE 2 — Check-in sedang dibuka
       statusTitle = "Check-in sedang dibuka";
       statusColor = "success";
       countdown   = formatCountdown(Math.floor((close - now) / 1000));
 
     } else if (!sudahCheckIn && now > close) {
+      // FASE 3 — Check-in sudah ditutup, user tidak check-in
       statusTitle = "Jam check-in telah berakhir";
       statusColor = "danger";
+      countdown   = null;
 
     } else if (sudahCheckIn && !sudahCheckOut && now < workEnd) {
+      // FASE 4 — Sudah check-in, check-out belum terbuka (masih jam kerja)
       statusTitle = `Check out tersedia pukul ${setting.work_end}`;
       statusColor = "info";
       countdown   = formatCountdown(Math.floor((workEnd - now) / 1000));
 
     } else if (sudahCheckIn && !sudahCheckOut) {
+      // FASE 5 — Sudah lewat jam pulang, checkout terbuka
       statusTitle = "Saatnya check out";
       statusColor = "checkout";
       countdown   = null;

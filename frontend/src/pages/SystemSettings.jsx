@@ -36,10 +36,14 @@ function SystemSettings() {
     workStart           !== originalData.work_start           ||
     workEnd             !== originalData.work_end             ||
     checkinOpen         !== originalData.checkin_open         ||
-    checkinClose        !==originalData.checkin_close         ||
+    checkinClose        !== originalData.checkin_close        ||
     lateTolerance       !== originalData.late_tolerance       ||
     similarityThreshold !== originalData.similarity_threshold
   );
+
+  // ── Validasi logis sederhana, tidak mengubah alur simpan ──
+  const checkinInvalid = checkinOpen && checkinClose && checkinClose <= checkinOpen;
+  const workInvalid    = workStart && workEnd && workEnd <= workStart;
 
   const handleSave = async () => {
     setSaving(true);
@@ -91,106 +95,87 @@ function SystemSettings() {
           )}
         </div>
 
-        {/* JAM KERJA */}
+        {/* JAM KERJA & CHECK-IN — digabung satu card dengan timeline */}
         <div className="card ss-section-card">
           <div className="ss-section-header">
             <div className="ss-section-icon">🕒</div>
             <div>
-              <p className="ss-section-title">Jam Kerja</p>
-              <p className="ss-section-sub">Atur waktu operasional absensi pegawai</p>
+              <p className="ss-section-title">Jam Kerja & Absensi</p>
+              <p className="ss-section-sub">Atur jendela check-in dan jam kerja operasional</p>
             </div>
           </div>
 
-          <div className="ss-fields-grid">
-
-            <div className="ss-field">
-              <label>Jam Masuk</label>
-              <input
-                type="time"
-                value={workStart}
-                onChange={(e) => setWorkStart(e.target.value)}
-              />
-            </div>
-
-            <div className="ss-field">
-              <label>Jam Pulang</label>
-              <input
-                type="time"
-                value={workEnd}
-                onChange={(e) => setWorkEnd(e.target.value)}
-              />
-            </div>
-
-            <div className="ss-field">
-
-            <label>
-
-            Check-in Dibuka
-
-            </label>
-
-            <input
-
-            type="time"
-
-            value={checkinOpen}
-
-            onChange={(e)=>
-
-            setCheckinOpen(
-
-            e.target.value
-
-            )
-
-            }
-
-            />
-
-            </div>
-
-            <div className="ss-field">
-
-            <label>
-
-            Check-in Ditutup
-
-            </label>
-
-            <input
-
-            type="time"
-
-            value={checkinClose}
-
-            onChange={(e)=>
-
-            setCheckinClose(
-
-            e.target.value
-
-            )
-
-            }
-
-            />
-
-            </div>
-
-            <div className="ss-field">
-              <label>Toleransi Terlambat</label>
-              <div className="ss-input-suffix-wrap">
+          {/* Grup check-in */}
+          <div className="ss-field-group">
+            <p className="ss-group-label">
+              <span className="ss-group-dot ss-dot-checkin" />
+              Jendela Check-in
+            </p>
+            <div className="ss-fields-row">
+              <div className="ss-field">
+                <label>Dibuka</label>
                 <input
-                  type="number"
-                  value={lateTolerance}
-                  min={0}
-                  max={60}
-                  onChange={(e) => setLateTolerance(Number(e.target.value))}
+                  type="time"
+                  value={checkinOpen}
+                  onChange={(e) => setCheckinOpen(e.target.value)}
                 />
-                <span className="ss-input-suffix">menit</span>
+              </div>
+              <div className="ss-field">
+                <label>Ditutup</label>
+                <input
+                  type="time"
+                  value={checkinClose}
+                  onChange={(e) => setCheckinClose(e.target.value)}
+                />
               </div>
             </div>
+            {checkinInvalid && (
+              <p className="ss-warn-text">⚠ Jam tutup harus setelah jam buka</p>
+            )}
+          </div>
 
+          {/* Grup jam kerja */}
+          <div className="ss-field-group">
+            <p className="ss-group-label">
+              <span className="ss-group-dot ss-dot-work" />
+              Jam Kerja
+            </p>
+            <div className="ss-fields-row">
+              <div className="ss-field">
+                <label>Mulai</label>
+                <input
+                  type="time"
+                  value={workStart}
+                  onChange={(e) => setWorkStart(e.target.value)}
+                />
+              </div>
+              <div className="ss-field">
+                <label>Selesai</label>
+                <input
+                  type="time"
+                  value={workEnd}
+                  onChange={(e) => setWorkEnd(e.target.value)}
+                />
+              </div>
+            </div>
+            {workInvalid && (
+              <p className="ss-warn-text">⚠ Jam selesai harus setelah jam mulai</p>
+            )}
+          </div>
+
+          {/* Toleransi — baris compact */}
+          <div className="ss-tolerance-row">
+            <span className="ss-tolerance-label">⏱ Toleransi terlambat</span>
+            <div className="ss-tolerance-input">
+              <input
+                type="number"
+                value={lateTolerance}
+                min={0}
+                max={60}
+                onChange={(e) => setLateTolerance(Number(e.target.value))}
+              />
+              <span>menit</span>
+            </div>
           </div>
         </div>
 
@@ -204,7 +189,7 @@ function SystemSettings() {
             </div>
           </div>
 
-          <div className="ss-field" style={{ marginTop: "20px" }}>
+          <div className="ss-field" style={{ marginTop: "8px" }}>
             <div className="ss-range-header">
               <label>Similarity Threshold</label>
               <span className="ss-range-val">{similarityPct}%</span>
@@ -225,7 +210,6 @@ function SystemSettings() {
               <span>90% (ketat)</span>
             </div>
 
-            {/* Indikator level */}
             <div className="ss-threshold-badges">
               <span className={`ss-level-badge ${similarityPct < 65 ? "active" : ""}`}>
                 🟡 Longgar (&lt;65%)
@@ -251,7 +235,11 @@ function SystemSettings() {
               <button className="ss-btn-reset" onClick={handleReset}>
                 🔄 Reset
               </button>
-              <button className="ss-btn-save" onClick={handleSave} disabled={saving}>
+              <button
+                className="ss-btn-save"
+                onClick={handleSave}
+                disabled={saving || checkinInvalid || workInvalid}
+              >
                 {saving ? "⏳ Menyimpan..." : "💾 Simpan"}
               </button>
             </div>

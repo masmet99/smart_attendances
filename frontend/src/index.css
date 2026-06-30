@@ -3776,3 +3776,147 @@ img[alt="Preview"] {
   background: #dc2626;
   transform: translateY(-1px);
 }
+
+/* =======================
+   SYSTEM SETTINGS — Timeline & Field Group Update
+   Tambahkan di bagian bawah index.css, setelah CSS SystemSettings yang lama
+   (boleh hapus .ss-fields-grid lama karena diganti .ss-field-group + .ss-fields-row)
+======================= */
+
+/* Timeline visual */
+.ss-timeline {
+  margin-bottom: 1.2rem;
+}
+
+.ss-timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ss-tl-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.ss-tl-checkin { color: #1d4ed8; }
+.ss-tl-work    { color: #15803d; }
+
+.ss-timeline-track {
+  position: relative;
+  height: 28px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.ss-tl-segment {
+  position: absolute;
+  top: 4px;
+  height: 20px;
+  border-radius: 6px;
+}
+
+.ss-seg-checkin {
+  background: #bfdbfe;
+  left: 8%;
+  width: 25%;
+}
+
+.ss-seg-work {
+  background: #bbf7d0;
+  left: 35%;
+  width: 50%;
+}
+
+/* Field group dengan dot indicator */
+.ss-field-group {
+  margin-top: 1.1rem;
+}
+
+.ss-group-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ss-group-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ss-dot-checkin { background: #3b82f6; }
+.ss-dot-work    { background: #10b981; }
+
+.ss-fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Warning text untuk validasi waktu invalid */
+.ss-warn-text {
+  font-size: 0.72rem;
+  color: #d97706;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* Toleransi — baris compact, bukan grid item terpisah */
+.ss-tolerance-row {
+  margin-top: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.ss-tolerance-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.ss-tolerance-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ss-tolerance-input input {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 7px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.ss-tolerance-input span {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+@media (max-width: 640px) {
+  .ss-fields-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ss-timeline-labels {
+    flex-direction: column;
+  }
+}
