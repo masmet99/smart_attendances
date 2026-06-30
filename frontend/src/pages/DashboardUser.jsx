@@ -127,14 +127,14 @@ function DashboardUser() {
       statusColor = "danger";
 
     } else if (sudahCheckIn && !sudahCheckOut && now < workEnd) {
-      statusTitle = "Anda sudah check-in";
+      statusTitle = `Check out tersedia pukul ${setting.work_end}`;
       statusColor = "info";
       countdown   = formatCountdown(Math.floor((workEnd - now) / 1000));
 
     } else if (sudahCheckIn && !sudahCheckOut) {
       statusTitle = "Saatnya check out";
       statusColor = "checkout";
-      countdown   = formatCountdown(Math.floor((now - workEnd) / 1000));
+      countdown   = null;
     }
   }
 
@@ -193,12 +193,9 @@ function DashboardUser() {
             )}
 
             {statusColor === "checkout" && (
-              <>
-                <p className="db-status-hint">Sudah lewat dari jam pulang kerja</p>
-                <button className="db-status-checkout-btn" onClick={handleCheckOut}>
-                  🚪 Check out sekarang
-                </button>
-              </>
+              <button className="db-status-checkout-btn" onClick={handleCheckOut}>
+                🚪 Check out sekarang
+              </button>
             )}
           </div>
         )}
@@ -282,8 +279,8 @@ function DashboardUser() {
           </div>
         )}
 
-        {/* TOMBOL CHECK OUT — fallback jika status card checkout tidak tampil (mis. setting belum termuat) */}
-        {attendance && sudahCheckIn && !sudahCheckOut && statusColor !== "checkout" && (
+        {/* TOMBOL CHECK OUT — fallback HANYA jika setting gagal dimuat (status card tidak bisa tampil) */}
+        {!setting && attendance && sudahCheckIn && !sudahCheckOut && (
           <div className="card db-checkout-card">
             <p className="db-checkout-hint">Kamu belum check out hari ini.</p>
             <button className="btn db-btn-checkout" onClick={handleCheckOut}>

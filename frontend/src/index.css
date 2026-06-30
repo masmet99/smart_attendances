@@ -3756,18 +3756,10 @@ img[alt="Preview"] {
   color: #fbbf24;
 }
 
-/* Hint teks kecil di bawah countdown */
-.db-status-hint {
-  font-size: 0.78rem;
-  color: #94a3b8;
-  margin-top: 0.9rem;
-  text-align: center;
-}
-
 /* Tombol checkout terintegrasi di dalam status card */
 .db-status-checkout-btn {
   width: 100%;
-  margin-top: 0.7rem;
+  margin-top: 1rem;
   padding: 0.8rem;
   background: #ef4444;
   color: #fff;
