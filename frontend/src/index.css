@@ -3605,3 +3605,182 @@ img[alt="Preview"] {
     flex-direction: column;
   }
 }
+
+/* =======================
+   DASHBOARD USER — Status & Jadwal Update
+======================= */
+
+/* Status + countdown gabung */
+.db-status-card {
+  background: #0f172a;
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+  margin-top: 16px;
+  color: #fff;
+}
+
+.db-status-top {
+  margin-bottom: 1rem;
+}
+
+.db-status-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.db-status-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.db-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.db-dot-success { background: #10b981; box-shadow: 0 0 0 4px rgba(16,185,129,0.25); }
+.db-dot-warning { background: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,0.25); }
+.db-dot-danger  { background: #ef4444; box-shadow: 0 0 0 4px rgba(239,68,68,0.25); }
+.db-dot-info    { background: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.25); }
+
+/* Countdown row — 3 kotak Jam/Menit/Detik */
+.db-countdown-row {
+  display: flex;
+  gap: 10px;
+}
+
+.db-cd-box {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.db-cd-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.db-cd-unit {
+  font-size: 0.62rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Jadwal hari ini — flat grid, tanpa header section berat */
+.db-work-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.db-work-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.db-work-icon {
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+
+.db-work-label {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.db-work-val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+@media (max-width: 640px) {
+  .db-countdown-row {
+    gap: 6px;
+  }
+
+  .db-cd-num {
+    font-size: 1.3rem;
+  }
+
+  .db-work-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =======================
+   DASHBOARD USER — Status Checkout (amber)
+======================= */
+
+/* Titik indikator amber untuk fase checkout */
+.db-dot-checkout {
+  background: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245,158,11,0.25);
+}
+
+/* Kotak countdown jadi amber saat fase checkout (elapsed timer) */
+.db-status-checkout .db-cd-box {
+  background: rgba(245,158,11,0.12);
+  border-color: rgba(245,158,11,0.25);
+}
+
+.db-status-checkout .db-cd-num {
+  color: #fbbf24;
+}
+
+/* Hint teks kecil di bawah countdown */
+.db-status-hint {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-top: 0.9rem;
+  text-align: center;
+}
+
+/* Tombol checkout terintegrasi di dalam status card */
+.db-status-checkout-btn {
+  width: 100%;
+  margin-top: 0.7rem;
+  padding: 0.8rem;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.db-status-checkout-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
