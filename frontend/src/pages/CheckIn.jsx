@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProfile } from "../services/authService";
-import { checkIn, getGeofence } from "../services/attendanceService";
+import { checkIn, getGeofence, getTodayAttendance } from "../services/attendanceService";
 import * as faceapi from "face-api.js";
 import Sidebar from "../components/Sidebar";
 
@@ -170,6 +170,15 @@ function CheckIn() {
         navigate("/register-face");
         return;
       }
+
+      // Cek apakah sudah check in hari ini
+      const today = await getTodayAttendance();
+      if (today?.checked_in) {
+        showWarning("Anda sudah check in hari ini");
+        navigate("/dashboard");
+        return;
+      }
+
     } catch (error) { console.log(error); }
   };
 
@@ -306,8 +315,12 @@ function CheckIn() {
     try {
       const result = await checkIn(photoFile, latitude, longitude);
       console.log(result);
-      if (result.success) { showSuccess(result.message); }
-      else                { showError(result.message); }
+      if (result.success) {
+        showSuccess(result.message);
+        navigate("/dashboard");
+      } else {
+        showError(result.message);
+      }
     } catch (error) {
       console.log(error);
       if (error.response?.data) { showError(error.response.data.message); }
