@@ -45,7 +45,9 @@ function CheckIn() {
   const [challenge, setChallenge]       = useState(null);
   const [livenessPassed, setLivenessPassed] = useState(false);
   const [checkingIn, setCheckingIn]     = useState(false);
-  const [mapOpen, setMapOpen]           = useState(false); // peta accordion
+  const [mapOpen, setMapOpen]           = useState(false);
+  const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
+  const [loadingLocation, setLoadingLocation]   = useState(false);
 
   const videoRef             = useRef(null);
   const canvasRef            = useRef(null);
@@ -179,6 +181,7 @@ function CheckIn() {
   };
 
   const getLocation = () => {
+    setLoadingLocation(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
@@ -190,10 +193,12 @@ function CheckIn() {
           setDistance(dist);
           setInsideArea(dist <= geofence.radius_meter);
         }
+        setLoadingLocation(false);
       },
       (error) => {
         showWarning("Gagal mengambil lokasi");
         console.log(error);
+        setLoadingLocation(false);
       }
     );
   };
@@ -398,8 +403,15 @@ function CheckIn() {
             <p className="ci-empty-hint">Tekan tombol di bawah untuk mendeteksi posisimu.</p>
           )}
 
-          <button className="ci-btn-block" onClick={getLocation} style={{ marginTop: "12px" }}>
-            📍 {latitude ? "Perbarui Lokasi" : "Ambil Lokasi"}
+          <button
+            className="ci-btn-block"
+            onClick={getLocation}
+            disabled={loadingLocation}
+            style={{ marginTop: "12px", opacity: loadingLocation ? 0.6 : 1 }}
+          >
+            {loadingLocation
+              ? "⏳ Mendeteksi lokasi..."
+              : latitude ? "📍 Perbarui Lokasi" : "📍 Ambil Lokasi"}
           </button>
         </div>
 
@@ -438,7 +450,7 @@ function CheckIn() {
           </div>
         )}
 
-        {/* KAMERA — Button buka kamera di dalam card */}
+        {/* KAMERA — tombol buka kamera di dalam card */}
         {!photo && (
           <div className="card ci-section-card">
             <p className="ci-section-label">Kamera Selfie</p>
