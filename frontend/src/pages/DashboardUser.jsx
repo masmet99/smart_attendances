@@ -53,18 +53,114 @@ function DashboardUser() {
   };
 
   const handleCheckOut = async () => {
+
     try {
-      const result = await checkOut();
-      showSuccess(result.message);
-      loadData();
-    } catch (error) {
-      console.log(error);
-      if (error.response?.data) {
-        showError(error.response.data.message);
-      } else {
-        showError("Check Out gagal");
+
+      if (!navigator.geolocation) {
+
+        showError(
+          "Browser tidak mendukung GPS."
+        );
+
+        return;
+
       }
+
+      navigator.geolocation.getCurrentPosition(
+
+        async (position) => {
+
+          try {
+
+            const latitude =
+              position.coords.latitude;
+
+            const longitude =
+              position.coords.longitude;
+
+            const result =
+              await checkOut(
+                latitude,
+                longitude
+              );
+
+            if (!result.success) {
+
+              showError(
+                result.message
+              );
+
+              return;
+
+            }
+
+            showSuccess(
+              result.message
+            );
+
+            loadData();
+
+          }
+
+          catch (error) {
+
+            console.log(error);
+
+            if (
+              error.response &&
+              error.response.data
+            ) {
+
+              showError(
+                error.response.data.message
+              );
+
+            }
+
+            else {
+
+              showError(
+                "Check Out gagal"
+              );
+
+            }
+
+          }
+
+        },
+
+        () => {
+
+          showError(
+            "Gagal mendapatkan lokasi GPS."
+          );
+
+        },
+
+        {
+
+          enableHighAccuracy: true,
+
+          timeout: 10000,
+
+          maximumAge: 0
+
+        }
+
+      );
+
     }
+
+    catch (error) {
+
+      console.log(error);
+
+      showError(
+        "Terjadi kesalahan."
+      );
+
+    }
+
   };
 
   const getInitials = (nama) => {

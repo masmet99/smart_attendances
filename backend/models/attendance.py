@@ -34,6 +34,10 @@ class Attendance(Base):
 
     longitude = Column(DECIMAL(11, 8), nullable=False)
 
+    checkout_latitude = Column(DECIMAL(10,8))
+    
+    checkout_longitude = Column(DECIMAL(11,8))
+
     similarity_score = Column(DECIMAL(5, 4))
 
     status = Column(

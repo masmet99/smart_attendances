@@ -40,14 +40,36 @@ export const checkIn = async (
   return response.data;
 };
 
-export const checkOut = async () => {
+export const checkOut = async (
 
-  const response = await api.post(
-    "/attendance/checkout"
-  );
+    latitude,
 
-  return response.data;
-};
+    longitude
+
+) => {
+
+    const formData = new FormData();
+
+    formData.append(
+        "latitude",
+        latitude
+    );
+
+    formData.append(
+        "longitude",
+        longitude
+    );
+
+    const response = await api.post(
+
+        "/attendance/checkout",
+
+        formData
+
+    );
+
+    return response.data;
+};;
 
 export const getHistory = async () => {
 

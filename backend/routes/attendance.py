@@ -266,8 +266,15 @@ async def checkin(
 
 @router.post("/checkout")
 def checkout(
+
+    latitude: float = Form(...),
+
+    longitude: float = Form(...),
+
     db: Session = Depends(get_db),
+
     user=Depends(get_current_user)
+
 ):
 
     attendance = db.query(
@@ -303,10 +310,51 @@ def checkout(
             "message": "Belum memasuki jam pulang.",
             "checkout_time": str(work_end)
         }
+    
+    # ==========================
+    # VALIDASI GEOFENCE CHECKOUT
+    # ==========================
+
+    geofence = db.query(
+        Geofence
+    ).first()
+
+    if not geofence:
+
+        return {
+            "success": False,
+            "message": "Geofence belum dikonfigurasi"
+        }
+
+    distance = calculate_distance(
+
+        float(latitude),
+
+        float(longitude),
+
+        float(geofence.latitude),
+
+        float(geofence.longitude)
+
+        )
+
+    if distance > geofence.radius_meter:
+
+        return {
+            "success": False,
+            "message": "Check-out hanya dapat dilakukan di area kantor.",
+            "distance_meter": round(distance, 2),
+            "radius_meter": geofence.radius_meter
+        }
 
     # ==========================
     # CHECKOUT
     # ==========================
+
+    
+    attendance.checkout_latitude = latitude
+
+    attendance.checkout_longitude = longitude
 
     attendance.jam_pulang = now()
 
@@ -343,8 +391,21 @@ def attendance_history(
             "jam_pulang": attendance.jam_pulang,
             "latitude": float(attendance.latitude),
             "longitude": float(attendance.longitude),
+            
+            "checkout_latitude":
+            float(attendance.checkout_latitude)
+            if attendance.checkout_latitude is not None
+            else None,
+
+            "checkout_longitude":
+            float(attendance.checkout_longitude)
+            if attendance.checkout_longitude is not None
+            else None,
+
+
             "similarity_score": float(attendance.similarity_score)
             if attendance.similarity_score is not None else None,
+
             "status": attendance.status
         })
 
@@ -384,6 +445,15 @@ def today_attendance(
             "tanggal": attendance.tanggal,
             "jam_masuk": attendance.jam_masuk,
             "jam_pulang": attendance.jam_pulang,
+            "checkout_latitude":
+            float(attendance.checkout_latitude)
+            if attendance.checkout_latitude is not None
+            else None,
+
+            "checkout_longitude":
+            float(attendance.checkout_longitude)
+            if attendance.checkout_longitude is not None
+            else None,
             "status": attendance.status,
             "similarity_score": float(attendance.similarity_score)
             if attendance.similarity_score is not None
