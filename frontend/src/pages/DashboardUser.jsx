@@ -15,8 +15,11 @@ import { showSuccess, showError } from "../utils/alert";
 
 function DashboardUser() {
 
-  const navigate = useNavigate();
-  const [user, setUser]               = useState(null);
+  const [checkoutModal, setCheckoutModal] = useState(false); // modal terbuka?
+  const [checkoutPhase, setCheckoutPhase] = useState("idle"); // idle | gps | confirm | processing
+  const [checkoutCoords, setCheckoutCoords] = useState(null);
+  const [checkoutDistance, setCheckoutDistance] = useState(null);
+  const [checkoutInside, setCheckoutInside] = useState(false);
   const [setting, setSetting]         = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [attendance, setAttendance]   = useState(null);
@@ -52,115 +55,62 @@ function DashboardUser() {
     }
   };
 
+  const openCheckoutModal = () => {
+    setCheckoutModal(true);
+    setCheckoutPhase("gps");
+    setCheckoutCoords(null);
+    setCheckoutDistance(null);
+    setCheckoutInside(false);
+
+    if (!navigator.geolocation) {
+      showError("Browser tidak mendukung GPS.");
+      setCheckoutModal(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setCheckoutCoords({ lat, lng });
+        setCheckoutPhase("confirm");
+      },
+      () => {
+        showError("Gagal mendapatkan lokasi GPS.");
+        setCheckoutModal(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
+
   const handleCheckOut = async () => {
-
+    if (!checkoutCoords) return;
+    setCheckoutPhase("processing");
     try {
-
-      if (!navigator.geolocation) {
-
-        showError(
-          "Browser tidak mendukung GPS."
-        );
-
+      const result = await checkOut(checkoutCoords.lat, checkoutCoords.lng);
+      if (!result.success) {
+        showError(result.message);
+        setCheckoutModal(false);
+        setCheckoutPhase("idle");
         return;
-
       }
-
-      navigator.geolocation.getCurrentPosition(
-
-        async (position) => {
-
-          try {
-
-            const latitude =
-              position.coords.latitude;
-
-            const longitude =
-              position.coords.longitude;
-
-            const result =
-              await checkOut(
-                latitude,
-                longitude
-              );
-
-            if (!result.success) {
-
-              showError(
-                result.message
-              );
-
-              return;
-
-            }
-
-            showSuccess(
-              result.message
-            );
-
-            loadData();
-
-          }
-
-          catch (error) {
-
-            console.log(error);
-
-            if (
-              error.response &&
-              error.response.data
-            ) {
-
-              showError(
-                error.response.data.message
-              );
-
-            }
-
-            else {
-
-              showError(
-                "Check Out gagal"
-              );
-
-            }
-
-          }
-
-        },
-
-        () => {
-
-          showError(
-            "Gagal mendapatkan lokasi GPS."
-          );
-
-        },
-
-        {
-
-          enableHighAccuracy: true,
-
-          timeout: 10000,
-
-          maximumAge: 0
-
-        }
-
-      );
-
-    }
-
-    catch (error) {
-
+      showSuccess(result.message);
+      setCheckoutModal(false);
+      setCheckoutPhase("idle");
+      loadData();
+    } catch (error) {
       console.log(error);
-
-      showError(
-        "Terjadi kesalahan."
-      );
-
+      if (error.response?.data) { showError(error.response.data.message); }
+      else                       { showError("Check Out gagal"); }
+      setCheckoutModal(false);
+      setCheckoutPhase("idle");
     }
+  };
 
+  const closeCheckoutModal = () => {
+    setCheckoutModal(false);
+    setCheckoutPhase("idle");
+    setCheckoutCoords(null);
   };
 
   const getInitials = (nama) => {
@@ -300,7 +250,7 @@ function DashboardUser() {
             )}
 
             {statusColor === "checkout" && (
-              <button className="db-status-checkout-btn" onClick={handleCheckOut}>
+              <button className="db-status-checkout-btn" onClick={openCheckoutModal}>
                 🚪 Check out sekarang
               </button>
             )}
@@ -386,13 +336,67 @@ function DashboardUser() {
           </div>
         )}
 
-        {/* TOMBOL CHECK OUT — fallback HANYA jika setting gagal dimuat (status card tidak bisa tampil) */}
+        {/* TOMBOL CHECK OUT — fallback HANYA jika setting gagal dimuat */}
         {!setting && attendance && sudahCheckIn && !sudahCheckOut && (
           <div className="card db-checkout-card">
             <p className="db-checkout-hint">Kamu belum check out hari ini.</p>
-            <button className="btn db-btn-checkout" onClick={handleCheckOut}>
+            <button className="btn db-btn-checkout" onClick={openCheckoutModal}>
               🚪 Check Out Sekarang
             </button>
+          </div>
+        )}
+
+        {/* CHECKOUT MODAL */}
+        {checkoutModal && (
+          <div className="co-modal-overlay" onClick={checkoutPhase === "gps" || checkoutPhase === "processing" ? undefined : closeCheckoutModal}>
+            <div className="co-modal" onClick={(e) => e.stopPropagation()}>
+
+              {/* FASE 1 — GPS */}
+              {checkoutPhase === "gps" && (
+                <>
+                  <div className="co-modal-icon">📡</div>
+                  <h3 className="co-modal-title">Membaca Lokasi</h3>
+                  <p className="co-modal-sub">Mohon tunggu, GPS sedang aktif...</p>
+                  <div className="co-spinner" />
+                </>
+              )}
+
+              {/* FASE 2 — Konfirmasi */}
+              {checkoutPhase === "confirm" && checkoutCoords && (
+                <>
+                  <div className="co-modal-icon">📍</div>
+                  <h3 className="co-modal-title">Konfirmasi Check Out</h3>
+                  <p className="co-modal-sub">Pastikan lokasi kamu benar sebelum check out</p>
+
+                  <div className="co-modal-rows">
+                    <div className="co-modal-row">
+                      <span className="co-row-label">📡 Koordinat</span>
+                      <span className="co-row-val" style={{ fontSize: "0.74rem", color: "#94a3b8" }}>
+                        {checkoutCoords.lat.toFixed(5)}, {checkoutCoords.lng.toFixed(5)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button className="co-btn-confirm" onClick={handleCheckOut}>
+                    🚪 Konfirmasi Check Out
+                  </button>
+                  <button className="co-btn-cancel" onClick={closeCheckoutModal}>
+                    Batal
+                  </button>
+                </>
+              )}
+
+              {/* FASE 3 — Processing */}
+              {checkoutPhase === "processing" && (
+                <>
+                  <div className="co-modal-icon">⏳</div>
+                  <h3 className="co-modal-title">Memproses Check Out</h3>
+                  <p className="co-modal-sub">Harap tunggu sebentar...</p>
+                  <div className="co-spinner co-spinner-green" />
+                </>
+              )}
+
+            </div>
           </div>
         )}
 
