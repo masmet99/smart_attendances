@@ -15,8 +15,11 @@ import { showSuccess, showError } from "../utils/alert";
 
 function DashboardUser() {
 
-  const [checkoutModal, setCheckoutModal] = useState(false); // modal terbuka?
-  const [checkoutPhase, setCheckoutPhase] = useState("idle"); // idle | gps | confirm | processing
+  const navigate = useNavigate();
+
+  const [user, setUser]               = useState(null);
+  const [checkoutModal, setCheckoutModal]   = useState(false);
+  const [checkoutPhase, setCheckoutPhase]   = useState("idle");
   const [checkoutCoords, setCheckoutCoords] = useState(null);
   const [checkoutDistance, setCheckoutDistance] = useState(null);
   const [checkoutInside, setCheckoutInside] = useState(false);
