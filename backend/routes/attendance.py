@@ -270,6 +270,54 @@ async def checkin(
     }
 
 
+@router.post("/checkout/location")
+def validate_checkout_location(
+
+    latitude: float = Form(...),
+
+    longitude: float = Form(...),
+
+    db: Session = Depends(get_db)
+
+):
+
+    geofence = db.query(
+        Geofence
+    ).first()
+
+    if not geofence:
+
+        return {
+            "success": False,
+            "message": "Geofence belum dikonfigurasi"
+        }
+
+    distance = calculate_distance(
+
+        latitude,
+
+        longitude,
+
+        float(geofence.latitude),
+
+        float(geofence.longitude)
+
+    )
+
+    inside = distance <= geofence.radius_meter
+
+    return {
+
+        "success": True,
+
+        "inside": inside,
+
+        "distance_meter": round(distance, 2),
+
+        "radius_meter": geofence.radius_meter
+
+    }
+
 @router.post("/checkout")
 def checkout(
 
