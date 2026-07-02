@@ -90,3 +90,29 @@ export const getGeofence =
 
     return response.data;
   };
+
+  export const validateCheckoutLocation = async (
+  latitude,
+  longitude
+) => {
+
+  const formData = new FormData();
+
+  formData.append(
+    "latitude",
+    latitude
+  );
+
+  formData.append(
+    "longitude",
+    longitude
+  );
+
+  const response = await api.post(
+    "/attendance/checkout/location",
+    formData
+  );
+
+  return response.data;
+
+};

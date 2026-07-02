@@ -7,7 +7,8 @@ import { getSystemSettings } from "../services/systemSettingService";
 
 import {
   getTodayAttendance,
-  checkOut
+  checkOut,
+  validateCheckoutLocation
 } from "../services/attendanceService";
 
 import { formatDateTime } from "../utils/formatDate";
@@ -22,6 +23,7 @@ function DashboardUser() {
   const [checkoutPhase, setCheckoutPhase]   = useState("idle");
   const [checkoutCoords, setCheckoutCoords] = useState(null);
   const [checkoutDistance, setCheckoutDistance] = useState(null);
+  const [checkoutRadius, setCheckoutRadius] = useState(null);
   const [checkoutInside, setCheckoutInside] = useState(false);
   const [setting, setSetting]         = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -59,31 +61,123 @@ function DashboardUser() {
   };
 
   const openCheckoutModal = () => {
+
     setCheckoutModal(true);
+
     setCheckoutPhase("gps");
+
     setCheckoutCoords(null);
+
     setCheckoutDistance(null);
+
     setCheckoutInside(false);
 
     if (!navigator.geolocation) {
-      showError("Browser tidak mendukung GPS.");
+
+      showError(
+        "Browser tidak mendukung GPS."
+      );
+
       setCheckoutModal(false);
+
       return;
+
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        setCheckoutCoords({ lat, lng });
-        setCheckoutPhase("confirm");
+
+      async (position) => {
+
+        const lat =
+          position.coords.latitude;
+
+        const lng =
+          position.coords.longitude;
+
+        setCheckoutCoords({
+          lat,
+          lng
+        });
+
+        // Sedang validasi geofence
+        setCheckoutPhase(
+          "validating"
+        );
+
+        try {
+
+          const result =
+            await validateCheckoutLocation(
+              lat,
+              lng
+            );
+
+          setCheckoutDistance(
+            result.distance_meter
+          );
+
+          setCheckoutRadius(
+            result.radius_meter
+          );
+
+          setCheckoutInside(
+            result.inside
+          );
+
+          if (result.inside) {
+
+            setCheckoutPhase(
+              "confirm"
+            );
+
+          }
+
+          else {
+
+            setCheckoutPhase(
+              "invalid"
+            );
+
+          }
+
+        }
+
+        catch (error) {
+
+          console.log(error);
+
+          showError(
+            "Gagal memvalidasi lokasi."
+          );
+
+          setCheckoutModal(false);
+
+        }
+
       },
+
       () => {
-        showError("Gagal mendapatkan lokasi GPS.");
+
+        showError(
+          "Gagal mendapatkan lokasi GPS."
+        );
+
         setCheckoutModal(false);
+
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+
+      {
+
+        enableHighAccuracy: true,
+
+        timeout: 10000,
+
+        maximumAge: 0
+
+      }
+
     );
+
   };
 
   const handleCheckOut = async () => {
@@ -351,57 +445,271 @@ function DashboardUser() {
 
         {/* CHECKOUT MODAL */}
         {checkoutModal && (
-          <div className="co-modal-overlay" onClick={checkoutPhase === "gps" || checkoutPhase === "processing" ? undefined : closeCheckoutModal}>
-            <div className="co-modal" onClick={(e) => e.stopPropagation()}>
 
-              {/* FASE 1 — GPS */}
-              {checkoutPhase === "gps" && (
-                <>
-                  <div className="co-modal-icon">📡</div>
-                  <h3 className="co-modal-title">Membaca Lokasi</h3>
-                  <p className="co-modal-sub">Mohon tunggu, GPS sedang aktif...</p>
-                  <div className="co-spinner" />
-                </>
-              )}
+            <div
+              className="co-modal-overlay"
+              onClick={
+                checkoutPhase === "gps" ||
+                checkoutPhase === "validating" ||
+                checkoutPhase === "processing"
+                  ? undefined
+                  : closeCheckoutModal
+              }
+            >
 
-              {/* FASE 2 — Konfirmasi */}
-              {checkoutPhase === "confirm" && checkoutCoords && (
-                <>
-                  <div className="co-modal-icon">📍</div>
-                  <h3 className="co-modal-title">Konfirmasi Check Out</h3>
-                  <p className="co-modal-sub">Pastikan lokasi kamu benar sebelum check out</p>
+              <div
+                className="co-modal"
+                onClick={(e) => e.stopPropagation()}
+              >
 
-                  <div className="co-modal-rows">
-                    <div className="co-modal-row">
-                      <span className="co-row-label">📡 Koordinat</span>
-                      <span className="co-row-val" style={{ fontSize: "0.74rem", color: "#94a3b8" }}>
-                        {checkoutCoords.lat.toFixed(5)}, {checkoutCoords.lng.toFixed(5)}
-                      </span>
-                    </div>
-                  </div>
+                {/* ========================================= */}
+                {/* FASE 1 — GPS */}
+                {/* ========================================= */}
 
-                  <button className="co-btn-confirm" onClick={handleCheckOut}>
-                    🚪 Konfirmasi Check Out
-                  </button>
-                  <button className="co-btn-cancel" onClick={closeCheckoutModal}>
-                    Batal
-                  </button>
-                </>
-              )}
+                {
+                  checkoutPhase === "gps" && (
 
-              {/* FASE 3 — Processing */}
-              {checkoutPhase === "processing" && (
-                <>
-                  <div className="co-modal-icon">⏳</div>
-                  <h3 className="co-modal-title">Memproses Check Out</h3>
-                  <p className="co-modal-sub">Harap tunggu sebentar...</p>
-                  <div className="co-spinner co-spinner-green" />
-                </>
-              )}
+                    <>
+
+                      <div className="co-modal-icon">
+                        📡
+                      </div>
+
+                      <h3 className="co-modal-title">
+                        Membaca Lokasi
+                      </h3>
+
+                      <p className="co-modal-sub">
+                        Mohon tunggu, GPS sedang aktif...
+                      </p>
+
+                      <div className="co-spinner" />
+
+                    </>
+
+                  )
+                }
+
+                {/* ========================================= */}
+                {/* FASE 2 — VALIDATING */}
+                {/* ========================================= */}
+
+                {
+                  checkoutPhase === "validating" && (
+
+                    <>
+
+                      <div className="co-modal-icon">
+                        📍
+                      </div>
+
+                      <h3 className="co-modal-title">
+                        Memvalidasi Lokasi
+                      </h3>
+
+                      <p className="co-modal-sub">
+                        Sedang mengecek apakah Anda berada di area kantor...
+                      </p>
+
+                      <div className="co-spinner" />
+
+                    </>
+
+                  )
+                }
+
+                {/* ========================================= */}
+                {/* FASE 3 — LOKASI VALID */}
+                {/* ========================================= */}
+
+                {
+                  checkoutPhase === "confirm" &&
+                  checkoutCoords &&
+                  checkoutInside && (
+
+                    <>
+
+                      <div className="co-modal-icon">
+                        ✅
+                      </div>
+
+                      <h3 className="co-modal-title">
+                        Lokasi Valid
+                      </h3>
+
+                      <p className="co-modal-sub">
+                        Anda berada di dalam area kantor.
+                      </p>
+
+                      <div className="co-modal-rows">
+
+                        <div className="co-modal-row">
+
+                          <span className="co-row-label">
+                            📡 Koordinat
+                          </span>
+
+                          <span
+                            className="co-row-val"
+                            style={{
+                              fontSize: "0.74rem",
+                              color: "#94a3b8"
+                            }}
+                          >
+                            {checkoutCoords.lat.toFixed(5)},
+                            {" "}
+                            {checkoutCoords.lng.toFixed(5)}
+                          </span>
+
+                        </div>
+
+                        <div className="co-modal-row">
+
+                          <span className="co-row-label">
+                            📍 Jarak
+                          </span>
+
+                          <span className="co-row-val">
+                            {checkoutDistance} meter
+                          </span>
+
+                        </div>
+
+                        <div className="co-modal-row">
+
+                          <span className="co-row-label">
+                            🎯 Radius
+                          </span>
+
+                          <span className="co-row-val">
+                            {checkoutRadius} meter
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                      <button
+                        className="co-btn-confirm"
+                        onClick={handleCheckOut}
+                      >
+                        🚪 Konfirmasi Check Out
+                      </button>
+
+                      <button
+                        className="co-btn-cancel"
+                        onClick={closeCheckoutModal}
+                      >
+                        Batal
+                      </button>
+
+                    </>
+
+                  )
+                }
+
+                {/* ========================================= */}
+                {/* FASE 4 — LOKASI TIDAK VALID */}
+                {/* ========================================= */}
+
+                {
+                  checkoutPhase === "invalid" && (
+
+                    <>
+
+                      <div className="co-modal-icon">
+                        ❌
+                      </div>
+
+                      <h3 className="co-modal-title">
+                        Lokasi Tidak Valid
+                      </h3>
+
+                      <p className="co-modal-sub">
+                        Anda berada di luar area kantor.
+                      </p>
+
+                      <div className="co-modal-rows">
+
+                        <div className="co-modal-row">
+
+                          <span className="co-row-label">
+                            📍 Jarak
+                          </span>
+
+                          <span className="co-row-val">
+                            {checkoutDistance} meter
+                          </span>
+
+                        </div>
+
+                        <div className="co-modal-row">
+
+                          <span className="co-row-label">
+                            🎯 Radius
+                          </span>
+
+                          <span className="co-row-val">
+                            {checkoutRadius} meter
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                      <button
+                        className="co-btn-confirm"
+                        onClick={openCheckoutModal}
+                      >
+                        🔄 Baca Ulang Lokasi
+                      </button>
+
+                      <button
+                        className="co-btn-cancel"
+                        onClick={closeCheckoutModal}
+                      >
+                        Batal
+                      </button>
+
+                    </>
+
+                  )
+                }
+
+                {/* ========================================= */}
+                {/* FASE 5 — PROCESSING */}
+                {/* ========================================= */}
+
+                {
+                  checkoutPhase === "processing" && (
+
+                    <>
+
+                      <div className="co-modal-icon">
+                        ⏳
+                      </div>
+
+                      <h3 className="co-modal-title">
+                        Memproses Check Out
+                      </h3>
+
+                      <p className="co-modal-sub">
+                        Harap tunggu sebentar...
+                      </p>
+
+                      <div className="co-spinner co-spinner-green" />
+
+                    </>
+
+                  )
+                }
+
+              </div>
 
             </div>
-          </div>
-        )}
+
+          )
+        }
 
       </div>
     </div>
