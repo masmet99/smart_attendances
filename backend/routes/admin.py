@@ -46,6 +46,9 @@ from datetime import timedelta
 from models.geofence import Geofence
 from pydantic import BaseModel
 
+from models.activity_log import ActivityLog
+from models.user import User
+
 router = APIRouter(
     prefix="/admin",
     tags=["Admin"]
@@ -993,5 +996,48 @@ def update_system_settings(
 
         "message":
         "Pengaturan berhasil diperbarui"
+    }
+
+@router.get("/activity")
+def get_activity_logs(
+    db: Session = Depends(get_db)
+):
+    logs = (
+        db.query(
+            ActivityLog,
+            User.nama
+        )
+
+        .join(
+            User,
+            User.id == ActivityLog.user_id
+        )
+
+        .order_by(
+            ActivityLog.created_at.desc()
+        )
+        .limit(10)
+        .all()
+    )
+
+    result = []
+
+    for log, nama in logs:
+
+        result.append({
+
+            "nama": nama,
+
+            "activity": log.activity,
+
+            "created_at": log.created_at
+
+        })
+
+    return {
+
+        "success": True,
+
+        "data": result
 
     }

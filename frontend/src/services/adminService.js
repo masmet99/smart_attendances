@@ -113,3 +113,13 @@ async (data) => {
 
   return response.data;
 };
+
+export const getActivityLogs = async () => {
+
+  const response = await api.get(
+    "/admin/activity"
+  );
+
+  return response.data;
+
+};

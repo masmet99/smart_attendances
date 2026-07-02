@@ -7,7 +7,8 @@ import AttendanceChart from "../components/AttendanceChart";
 import {
   getDashboard,
   getUsers,
-  getWeeklyAttendance
+  getWeeklyAttendance,
+  getActivityLogs
 } from "../services/adminService";
 
 import { showSuccess, showError } from "../utils/alert";
@@ -18,20 +19,37 @@ function DashboardAdmin() {
 
   const [stats, setStats]       = useState(null);
   const [chartData, setChartData] = useState([]);
+  const [activityLogs, setActivityLogs] = useState([]);
 
   useEffect(() => { loadData(); }, []);
 
-  const loadData = async () => {
-    try {
-      const dashboard = await getDashboard();
-      setStats(dashboard.data);
+const loadData = async () => {
 
-      const weekly = await getWeeklyAttendance();
-      setChartData(weekly.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  try {
+    const dashboard =
+      await getDashboard();
+    setStats(
+      dashboard.data
+    );
+
+    const weekly =
+      await getWeeklyAttendance();
+    setChartData(
+      weekly.data
+    );
+
+    const activity =
+      await getActivityLogs();
+    setActivityLogs(
+      activity.data
+    );
+  }
+
+  catch(error){
+    console.log(error);
+  }
+
+};
 
   const quickMenus = [
     {
@@ -133,6 +151,123 @@ function DashboardAdmin() {
               <span className="da-quick-arrow">→</span>
             </div>
           ))}
+        </div>
+
+        {/* LOG AKTIVITAS */}
+        <div className="card da-activity-card">
+
+          <div className="da-chart-header">
+
+            <div>
+
+              <h2 className="da-chart-title">
+
+                📝 Aktivitas Terbaru
+
+              </h2>
+
+              <p className="da-chart-sub">
+
+                Aktivitas pengguna terbaru
+
+              </p>
+
+            </div>
+
+          </div>
+
+          {
+
+            activityLogs.length === 0 ?
+
+            (
+
+              <p>
+
+                Belum ada aktivitas.
+
+              </p>
+
+            )
+
+            :
+
+            activityLogs.map(
+
+              (log,index)=>(
+
+              <div
+
+                key={index}
+
+                className="da-activity-item"
+
+              >
+
+                <div
+                  className="da-activity-icon"
+                >
+
+                  {
+
+                  log.activity==="LOGIN"
+
+                  ? "🔑"
+
+                  :
+
+                  log.activity==="CHECK_IN"
+
+                  ? "🟢"
+
+                  : "🔴"
+
+                  }
+
+                </div>
+
+                <div
+                  className="da-activity-body"
+                >
+
+                  <strong>
+
+                    {log.nama}
+
+                  </strong>
+
+                  <p>
+
+                    {log.activity}
+
+                  </p>
+
+                  <small>
+
+                    {
+
+                    new Date(
+                      log.created_at
+                    )
+
+                    .toLocaleString(
+                      "id-ID"
+                    )
+
+                    }
+
+                  </small>
+
+                </div>
+
+              </div>
+
+              )
+
+            )
+
+          }
+
         </div>
 
       </div>

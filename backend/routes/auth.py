@@ -7,6 +7,7 @@ from models.user import User
 from utils.jwt_handler import create_access_token
 from utils.auth_middleware import get_current_user
 from models.user import User
+from utils.activity_logger import save_activity
 
 router = APIRouter(
     prefix="/auth",
@@ -46,6 +47,12 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
         "nip": user.nip,
         "role": user.role
     })
+
+    save_activity(
+    db,
+    user.id,
+    "LOGIN"
+    )
 
     return {
         "access_token": token,

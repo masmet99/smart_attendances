@@ -1,13 +1,14 @@
 from sqlalchemy import (
     Column,
     BigInteger,
-    String,
-    TIMESTAMP,
+    Enum,
+    DateTime,
     ForeignKey
 )
 
-from sqlalchemy.sql import func
 from database.base import Base
+
+from utils.timezone import now
 
 
 class ActivityLog(Base):
@@ -22,16 +23,33 @@ class ActivityLog(Base):
 
     user_id = Column(
         BigInteger,
-        ForeignKey("users.id"),
-        nullable=True
-    )
-
-    activity = Column(
-        String(255),
+        ForeignKey(
+            "users.id",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
+    activity = Column(
+
+        Enum(
+
+            "LOGIN",
+
+            "CHECK_IN",
+
+            "CHECK_OUT"
+
+        ),
+
+        nullable=False
+
+    )
+
     created_at = Column(
-        TIMESTAMP,
-        server_default=func.now()
+
+        DateTime,
+
+        default=now
+
     )

@@ -7,7 +7,7 @@ from fastapi import (
 )
 
 
-
+from utils.activity_logger import save_activity
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -254,6 +254,12 @@ async def checkin(
     db.commit()
     db.refresh(attendance)
 
+    save_activity(
+    db,
+    user["user_id"],
+    "CHECK_IN"
+    )
+
     return {
         "success": True,
         "message": "Check-in berhasil",
@@ -359,6 +365,12 @@ def checkout(
     attendance.jam_pulang = now()
 
     db.commit()
+
+    save_activity(
+    db,
+    user["user_id"],
+    "CHECK_OUT"
+    )
 
     return {
         "success": True,
