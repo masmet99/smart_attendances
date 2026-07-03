@@ -12,6 +12,7 @@ from utils.system_logger import (
 )
 
 from utils.checkin_performance import CheckInPerformance
+from utils.checkout_performance import CheckOutPerformance
 from utils.activity_logger import save_activity
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -277,7 +278,7 @@ async def checkin(
     )
     
     perf.print()
-    
+
     return {
         "success": True,
         "message": "Check-in berhasil",
@@ -349,6 +350,8 @@ def checkout(
 
 ):
 
+    perf = CheckOutPerformance()
+
     attendance = db.query(
         Attendance
     ).filter(
@@ -382,7 +385,7 @@ def checkout(
             "message": "Belum memasuki jam pulang.",
             "checkout_time": str(work_end)
         }
-    
+
     # ==========================
     # VALIDASI GEOFENCE CHECKOUT
     # ==========================
@@ -408,7 +411,14 @@ def checkout(
 
         float(geofence.longitude)
 
-        )
+    )
+
+    # ==========================
+    # RESPONSE TIME
+    # LOCATION VALIDATION
+    # ==========================
+
+    perf.location_done()
 
     if distance > geofence.radius_meter:
 
@@ -420,8 +430,9 @@ def checkout(
         }
 
     # ==========================
-    # CHECKOUT
+    # CHECK OUT
     # ==========================
+
     attendance.checkout_latitude = latitude
 
     attendance.checkout_longitude = longitude
@@ -446,18 +457,34 @@ def checkout(
 
     db.commit()
 
+    # ==========================
+    # RESPONSE TIME
+    # DATABASE
+    # ==========================
+
+    perf.database_done()
+
     save_activity(
-    db,
-    user["user_id"],
-    "CHECK_OUT"
+
+        db,
+
+        user["user_id"],
+
+        "CHECK_OUT"
+
     )
+
+    # ==========================
+    # PRINT PERFORMANCE
+    # ==========================
+
+    perf.print()
 
     return {
         "success": True,
         "message": "Check-out berhasil",
         "jam_pulang": attendance.jam_pulang
     }
-
 
 @router.get("/history")
 def attendance_history(
