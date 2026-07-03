@@ -185,7 +185,6 @@ async def checkin(
         .first()
     )
     
-    print(last_attendance)
 
     # ==========================
     # CEK ABSENSI HARI INI
