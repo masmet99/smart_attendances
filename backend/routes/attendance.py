@@ -275,13 +275,14 @@ async def checkin(
     "CHECK_IN"
     )
 
-    processing_time = end_timer(timer)
+    processing_time = end_timer(
 
-    print("========================================")
-    print("API               : CHECK IN")
-    print("PROCESSING TIME   :", processing_time, "ms")
-    print("========================================")
-    
+    "CHECK IN",
+
+    timer
+
+    )
+
     return {
         "success": True,
         "message": "Check-in berhasil",
