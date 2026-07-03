@@ -153,122 +153,75 @@ const loadData = async () => {
           ))}
         </div>
 
-        {/* LOG AKTIVITAS */}
-        <div className="card da-activity-card">
+{/* LOG AKTIVITAS */}
+<div className="card da-activity-card">
+  <div className="da-activity-header">
+    <div>
+      <h2 className="da-chart-title">📝 Aktivitas Terbaru</h2>
+      <p className="da-chart-sub">Aktivitas pengguna terbaru</p>
+    </div>
 
-          <div className="da-chart-header">
+    <span className="da-activity-count">
+      {activityLogs.length} aktivitas
+    </span>
+  </div>
 
-            <div>
+  {activityLogs.length === 0 ? (
+    <p className="da-activity-empty">Belum ada aktivitas.</p>
+  ) : (
+    <div className="da-activity-list">
+      {activityLogs.map((log, index) => {
+        const activityInfo =
+          log.activity === "LOGIN"
+            ? {
+                icon: "🔑",
+                iconClass: "da-icon-login",
+                badgeClass: "da-badge-login",
+                label: "Login",
+              }
+            : log.activity === "CHECK_IN"
+            ? {
+                icon: "🟢",
+                iconClass: "da-icon-checkin",
+                badgeClass: "da-badge-checkin",
+                label: "Check In",
+              }
+            : {
+                icon: "🔴",
+                iconClass: "da-icon-checkout",
+                badgeClass: "da-badge-checkout",
+                label: "Check Out",
+              };
 
-              <h2 className="da-chart-title">
-
-                📝 Aktivitas Terbaru
-
-              </h2>
-
-              <p className="da-chart-sub">
-
-                Aktivitas pengguna terbaru
-
-              </p>
-
+        return (
+          <div key={index} className="da-activity-item">
+            <div className={`da-activity-icon ${activityInfo.iconClass}`}>
+              {activityInfo.icon}
             </div>
 
-          </div>
+            <div className="da-activity-body">
+              <div className="da-activity-name">
+                {log.nama}
 
-          {
-
-            activityLogs.length === 0 ?
-
-            (
-
-              <p>
-
-                Belum ada aktivitas.
-
-              </p>
-
-            )
-
-            :
-
-            activityLogs.map(
-
-              (log,index)=>(
-
-              <div
-
-                key={index}
-
-                className="da-activity-item"
-
-              >
-
-                <div
-                  className="da-activity-icon"
-                >
-
-                  {
-
-                  log.activity==="LOGIN"
-
-                  ? "🔑"
-
-                  :
-
-                  log.activity==="CHECK_IN"
-
-                  ? "🟢"
-
-                  : "🔴"
-
-                  }
-
-                </div>
-
-                <div
-                  className="da-activity-body"
-                >
-
-                  <strong>
-
-                    {log.nama}
-
-                  </strong>
-
-                  <p>
-
-                    {log.activity}
-
-                  </p>
-
-                  <small>
-
-                    {
-
-                    new Date(
-                      log.created_at
-                    )
-
-                    .toLocaleString(
-                      "id-ID"
-                    )
-
-                    }
-
-                  </small>
-
-                </div>
-
+                <span className={`da-activity-badge ${activityInfo.badgeClass}`}>
+                  {activityInfo.label}
+                </span>
               </div>
 
-              )
+              <p className="da-activity-label">
+                Aktivitas pengguna
+              </p>
 
-            )
-
-          }
-
-        </div>
+              <small className="da-activity-time">
+                {new Date(log.created_at).toLocaleString("id-ID")}
+              </small>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  )}
+</div>
 
       </div>
     </div>
