@@ -9,6 +9,11 @@ from utils.auth_middleware import get_current_user
 from models.user import User
 from utils.activity_logger import save_activity
 
+from utils.performance import (
+    start_timer,
+    log_processing
+)
+
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
@@ -16,6 +21,8 @@ router = APIRouter(
 
 @router.post("/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
+
+    timer = start_timer()
 
     user = db.query(User).filter(
         User.nip == data.nip
@@ -52,6 +59,11 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     db,
     user.id,
     "LOGIN"
+    )
+
+    log_processing(
+    "LOGIN",
+    timer
     )
 
     return {
