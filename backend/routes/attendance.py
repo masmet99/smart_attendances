@@ -6,11 +6,6 @@ from fastapi import (
     Form
 )
 
-from utils.performance import (
-    start_timer,
-    end_timer
-)
-
 from utils.system_logger import (
     log_checkin,
     log_checkout
@@ -62,7 +57,7 @@ async def checkin(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    timer = start_timer()
+    
     
     contents = await file.read()
 
@@ -273,14 +268,6 @@ async def checkin(
     db,
     user["user_id"],
     "CHECK_IN"
-    )
-
-    processing_time = end_timer(
-
-    "CHECK IN",
-
-    timer
-
     )
 
     return {
