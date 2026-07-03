@@ -6,6 +6,10 @@ from fastapi import (
     Form
 )
 
+from utils.system_logger import (
+    log_checkin,
+    log_checkout
+)
 
 from utils.activity_logger import save_activity
 from sqlalchemy.orm import Session
@@ -116,12 +120,6 @@ async def checkin(
 
     checkin_close = setting.checkin_close
         
-
-    print(
-        "SIMILARITY:",
-        round(similarity, 4)
-    )
-
     if similarity < threshold:
         return {
             "success": False,
@@ -138,12 +136,6 @@ async def checkin(
         Geofence
     ).first()
 
-    print("================================")
-    print("LAT DB :", geofence.latitude)
-    print("LNG DB :", geofence.longitude)
-    print("RADIUS :", geofence.radius_meter)
-    print("================================")
-
     if not geofence:
         return {
             "success": False,
@@ -157,10 +149,6 @@ async def checkin(
         float(geofence.longitude)
     )
 
-    print("USER LAT :", latitude)
-    print("USER LNG :", longitude)
-    print("DISTANCE :", distance)
-
     if distance > geofence.radius_meter:
         return {
             "success": False,
@@ -168,23 +156,6 @@ async def checkin(
             "distance_meter": round(distance, 2),
             "radius_meter": geofence.radius_meter
         }
-    
-    # ==========================
-    # VALIDASI PERPINDAHAN LOKASI
-    # ==========================
-
-    last_attendance = (
-
-        db.query(Attendance)
-        .filter(
-            Attendance.user_id == user["user_id"]
-        )
-        .order_by(
-            Attendance.created_at.desc()
-        )
-        .first()
-    )
-    
 
     # ==========================
     # CEK ABSENSI HARI INI
@@ -203,10 +174,7 @@ async def checkin(
             "message": "Anda sudah melakukan check-in hari ini"
         }
     
-    jam = now()
-
-    print("NOW() :", jam)
-    
+    jam = now()    
     current_time = jam.time()
 
     # ==========================
@@ -252,10 +220,35 @@ async def checkin(
         else "TERLAMBAT"
     )
 
-    print("=========================")
-    print("BATAS TERLAMBAT :", late_limit)
-    print("STATUS :", status)
-    print("=========================")
+    log_checkin(
+
+    user_id=user["user_id"],
+
+    similarity=similarity,
+
+    threshold=threshold,
+
+    status=status,
+
+    latitude=latitude,
+
+    longitude=longitude,
+
+    geofence=geofence,
+
+    distance=distance,
+
+    checkin_open=checkin_open,
+
+    checkin_close=checkin_close,
+
+    work_start=work_start,
+
+    late_limit=late_limit,
+
+    current_time=jam
+
+    )
 
     attendance = Attendance(
         user_id=user["user_id"],
@@ -429,6 +422,22 @@ def checkout(
 
     attendance.jam_pulang = now()
 
+    log_checkout(
+
+        user_id=user["user_id"],
+
+        latitude=latitude,
+
+        longitude=longitude,
+
+        geofence=geofence,
+
+        distance=distance,
+
+        checkout_time=attendance.jam_pulang
+
+    )
+    
     db.commit()
 
     save_activity(
