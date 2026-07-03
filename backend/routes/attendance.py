@@ -168,6 +168,24 @@ async def checkin(
             "distance_meter": round(distance, 2),
             "radius_meter": geofence.radius_meter
         }
+    
+    # ==========================
+    # VALIDASI PERPINDAHAN LOKASI
+    # ==========================
+
+    last_attendance = (
+
+        db.query(Attendance)
+        .filter(
+            Attendance.user_id == user["user_id"]
+        )
+        .order_by(
+            Attendance.created_at.desc()
+        )
+        .first()
+    )
+    
+    print(last_attendance)
 
     # ==========================
     # CEK ABSENSI HARI INI
