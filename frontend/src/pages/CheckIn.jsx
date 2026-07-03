@@ -5,6 +5,8 @@ import { checkIn, getGeofence, getTodayAttendance } from "../services/attendance
 import * as faceapi from "face-api.js";
 import Sidebar from "../components/Sidebar";
 
+import { measureApi } from "../utils/measureApi";
+
 import {
   MapContainer,
   TileLayer,
@@ -313,7 +315,14 @@ function CheckIn() {
     if (!photoFile)               { showWarning("Ambil foto terlebih dahulu"); return; }
     setCheckingIn(true);
     try {
-      const result = await checkIn(photoFile, latitude, longitude);
+      const result = await measureApi(
+          "CHECK IN",
+          () => checkIn(
+              photoFile,
+              latitude,
+              longitude
+          )
+      );
       console.log(result);
       if (result.success) {
         showSuccess(result.message);
