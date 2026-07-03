@@ -6,7 +6,10 @@ from fastapi import (
     Depends
 )
 
-
+from utils.performance import (
+    start_timer,
+    log_processing
+)
 
 from sqlalchemy.orm import Session
 from database.dependencies import get_db
@@ -46,6 +49,7 @@ async def register_face(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
+    timer = start_timer()
     
     contents = await file.read()
 
@@ -90,6 +94,11 @@ async def register_face(
     current_user.face_registered = True
 
     db.commit()
+
+    log_processing(
+    "REGISTER FACE",
+    timer
+    )
 
     return {
         "success": True,

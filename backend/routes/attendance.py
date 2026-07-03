@@ -11,6 +11,11 @@ from utils.system_logger import (
     log_checkout
 )
 
+from utils.performance import (
+    start_timer,
+    log_processing
+)
+
 from utils.activity_logger import save_activity
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -57,9 +62,11 @@ async def checkin(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    
+    total_timer = start_timer()
     
     contents = await file.read()
+
+    face_timer = start_timer()
 
     current_embedding = extract_embedding_from_bytes(
         contents
@@ -103,6 +110,11 @@ async def checkin(
         )
 
     similarity = best_similarity
+
+    log_processing(
+    "FACE VERIFICATION",
+    face_timer
+    )
 
     setting = db.query(
         SystemSetting
