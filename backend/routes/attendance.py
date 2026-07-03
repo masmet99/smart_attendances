@@ -11,11 +11,7 @@ from utils.system_logger import (
     log_checkout
 )
 
-from utils.performance import (
-    start_timer,
-    log_processing
-)
-
+from utils.checkin_performance import CheckInPerformance
 from utils.activity_logger import save_activity
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -62,11 +58,9 @@ async def checkin(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    total_timer = start_timer()
+    perf = CheckInPerformance()
     
     contents = await file.read()
-
-    face_timer = start_timer()
 
     current_embedding = extract_embedding_from_bytes(
         contents
@@ -110,11 +104,7 @@ async def checkin(
         )
 
     similarity = best_similarity
-
-    log_processing(
-    "FACE VERIFICATION",
-    face_timer
-    )
+    perf.face_done()
 
     setting = db.query(
         SystemSetting
@@ -160,6 +150,8 @@ async def checkin(
         float(geofence.latitude),
         float(geofence.longitude)
     )
+
+    perf.location_done()
 
     if distance > geofence.radius_meter:
         return {
@@ -276,12 +268,16 @@ async def checkin(
     db.commit()
     db.refresh(attendance)
 
+    perf.database_done()
+
     save_activity(
     db,
     user["user_id"],
     "CHECK_IN"
     )
-
+    
+    perf.print()
+    
     return {
         "success": True,
         "message": "Check-in berhasil",
