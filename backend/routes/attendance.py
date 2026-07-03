@@ -11,6 +11,7 @@ from utils.system_logger import (
     log_checkout
 )
 
+from utils.movement import is_movement_valid
 from utils.activity_logger import save_activity
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -156,6 +157,47 @@ async def checkin(
             "distance_meter": round(distance, 2),
             "radius_meter": geofence.radius_meter
         }
+    # ==========================
+    # VALIDASI PERPINDAHAN LOKASI
+    # ==========================
+
+    last_attendance = (
+
+        db.query(Attendance)
+        .filter(
+            Attendance.user_id == user["user_id"]
+        )
+        .order_by(
+            Attendance.id.desc()
+        )
+        .first()
+    )
+
+    if last_attendance:
+        valid_movement, moved_distance, speed = (
+            is_movement_valid(
+                last_attendance.latitude,
+                last_attendance.longitude,
+                last_attendance.jam_masuk,
+                latitude,
+                longitude,
+                now()
+            )
+        )
+
+        print("=========================")
+        print("LAST DISTANCE :", round(moved_distance, 2), "meter")
+        print("EST SPEED :", round(speed, 2), "km/h")
+        print("=========================")
+
+        if not valid_movement:
+
+            return {
+                "success": False,
+                "message": "Perpindahan lokasi tidak wajar.",
+                "distance_meter": round(moved_distance, 2),
+                "estimated_speed": round(speed, 2)
+            }
 
     # ==========================
     # CEK ABSENSI HARI INI
@@ -414,8 +456,6 @@ def checkout(
     # ==========================
     # CHECKOUT
     # ==========================
-
-    
     attendance.checkout_latitude = latitude
 
     attendance.checkout_longitude = longitude
@@ -437,7 +477,7 @@ def checkout(
         checkout_time=attendance.jam_pulang
 
     )
-    
+
     db.commit()
 
     save_activity(
