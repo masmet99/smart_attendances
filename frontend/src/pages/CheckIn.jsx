@@ -296,32 +296,16 @@ function CheckIn() {
     setTimeout(() => { capturePhoto(); setTimeout(() => { stopCamera(); }, 200); }, 300);
   };
 
-const getScannerArea = () => {
-
-  const videoWidth  = videoRef.current?.clientWidth || 300;
-  const videoHeight = videoRef.current?.clientHeight || 300;
-
-  // Ukuran oval mengikuti lebar video
-  const scannerWidth = videoWidth * 0.45;
-
-  // Rasio wajah manusia
-  const scannerHeight = scannerWidth * 1.35;
-
-  return {
-
-    width: scannerWidth,
-
-    height: scannerHeight,
-
-    // Posisi horizontal tepat di tengah
-    x: (videoWidth - scannerWidth) / 2,
-
-    // Sedikit lebih ke atas agar wajah pas
-    y: (videoHeight - scannerHeight) / 2 - 20
-
+  const getScannerArea = () => {
+    const videoWidth  = videoRef.current?.clientWidth  || 300;
+    const videoHeight = videoRef.current?.clientHeight || 250;
+    return {
+      width:  videoWidth  * 0.40,
+      height: videoHeight * 0.65,
+      x:      (videoWidth * 0.50) - (videoWidth * 0.40 / 2),
+      y:      videoHeight * 0.08
+    };
   };
-
-};
 
   const handleCheckIn = async () => {
     if (!latitude || !longitude) { showWarning("Ambil lokasi terlebih dahulu"); return; }
