@@ -6,14 +6,9 @@ from fastapi import (
     Depends
 )
 
-from utils.performance import (
-    start_timer,
-    log_processing
-)
-
+from utils.register_performance import RegisterPerformance
 from sqlalchemy.orm import Session
 from database.dependencies import get_db
-
 from utils.auth_middleware import get_current_user
 
 from services.face_service import (
@@ -49,13 +44,15 @@ async def register_face(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    timer = start_timer()
+    perf = RegisterPerformance()
     
     contents = await file.read()
 
     embedding = extract_embedding_from_bytes(
     contents
 )
+
+    perf.face_done()
 
     if embedding is None:
         return {
@@ -94,11 +91,8 @@ async def register_face(
     current_user.face_registered = True
 
     db.commit()
-
-    log_processing(
-    "REGISTER FACE",
-    timer
-    )
+    
+    perf.database_done()
 
     return {
         "success": True,
