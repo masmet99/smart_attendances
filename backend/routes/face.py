@@ -93,7 +93,8 @@ async def register_face(
     db.commit()
     
     perf.database_done()
-
+    perf.print()
+    
     return {
         "success": True,
         "message": "Registrasi wajah berhasil"
