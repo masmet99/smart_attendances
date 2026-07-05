@@ -122,6 +122,13 @@ async def checkin(
     checkin_open = setting.checkin_open
 
     checkin_close = setting.checkin_close
+
+    print("")
+    print("=========== FACE VERIFICATION ===========")
+    print("SIMILARITY :", round(similarity, 4))
+    print("THRESHOLD  :", threshold)
+    print("MATCH      :", similarity >= threshold)
+    print("========================================")
         
     if similarity < threshold:
         return {
