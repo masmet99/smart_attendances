@@ -111,7 +111,7 @@ const [form, setForm] =
 
     setForm({
 
-      form,
+      ...form,
 
       [e.target.name]:
         e.target.value
