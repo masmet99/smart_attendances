@@ -325,11 +325,8 @@ def get_user(
         }
     }
 
-
-
 @router.put("/users/{user_id}")
 def update_user(
-
 
     user_id: int,
     data: UserUpdate,
@@ -338,12 +335,9 @@ def update_user(
     admin=Depends(admin_required)
 
 ):
-    
-    print("REQUEST =", data)
-    print("NIP =", data.nip)
 
     user = db.query(User).filter(
-    User.id == user_id
+        User.id == user_id
     ).first()
 
     if not user:
@@ -352,7 +346,8 @@ def update_user(
             status_code=404,
             detail="User tidak ditemukan."
         )
-    
+
+    # Validasi NIP
     if data.nip is not None:
 
         existing = db.query(User).filter(
@@ -360,12 +355,12 @@ def update_user(
             User.id != user_id
         ).first()
 
-    if existing:
+        if existing:
 
-        raise HTTPException(
-            status_code=400,
-            detail="NIP sudah digunakan oleh user lain."
-        )
+            raise HTTPException(
+                status_code=400,
+                detail="NIP sudah digunakan oleh user lain."
+            )
 
         user.nip = data.nip
 
@@ -390,6 +385,7 @@ def update_user(
         user.is_active = data.is_active
 
     db.commit()
+    db.refresh(user)
 
     return {
         "success": True,
