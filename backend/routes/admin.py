@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import ( APIRouter, Depends, HTTPException ) 
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -79,9 +79,17 @@ def create_user(
     db: Session = Depends(get_db),
     admin=Depends(admin_required)
 ):
-    
-    print("REQUEST USER =", user)
-    print("ROLE =", user.role)
+
+    existing_user = db.query(User).filter(
+        User.nip == user.nip
+    ).first()
+
+    if existing_user:
+
+        raise HTTPException(
+            status_code=400,
+            detail="NIP sudah terdaftar."
+        )
 
     new_user = User(
         nip=user.nip,
@@ -101,7 +109,6 @@ def create_user(
         "message": "User created successfully",
         "id": new_user.id
     }
-
 
 @router.get("/users")
 def get_users(
