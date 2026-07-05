@@ -50,6 +50,11 @@ const [
   setShowAddModal
 ] = useState(false);
 
+const [
+  showAddPassword,
+  setShowAddPassword
+] = useState(false);
+
 const [form, setForm] =
   useState({
     nip: "",
@@ -175,8 +180,6 @@ const [form, setForm] =
 
     try {
 
-        console.log(form);
-
       await api.post(
         "/admin/users",
         form
@@ -192,6 +195,8 @@ const [form, setForm] =
       });
 
       loadUsers();
+
+      setShowAddPassword(false);
 
       // Tutup modal
     setShowAddModal(false);
@@ -340,21 +345,134 @@ const resetPassword =
       title:
         "Reset Password",
 
-      input:
-        "password",
+      html:
+        `
+          <div style="text-align:left">
+            <label
+              for="reset-password-input"
+              style="display:block;margin-bottom:8px;font-weight:600;color:#334155"
+            >
+              Password Baru
+            </label>
 
-      inputLabel:
-        "Password Baru",
+            <div style="display:flex;gap:8px">
+              <input
+                id="reset-password-input"
+                type="password"
+                placeholder="Masukkan password baru"
+                autocomplete="new-password"
+                name="reset_new_password"
+                style="flex:1;padding:12px;border:1px solid #dcdcdc;border-radius:8px"
+              />
 
-      inputPlaceholder:
-        "Masukkan password baru",
+              <button
+                id="toggle-reset-password"
+                type="button"
+                style="padding:0 12px;border:1px solid #dcdcdc;border-radius:8px;background:#fff;cursor:pointer;font-weight:600"
+              >
+                Lihat
+              </button>
+            </div>
+          </div>
+        `,
+
+      focusConfirm:
+        false,
 
       showCancelButton:
-        true
+        true,
+
+      confirmButtonText:
+        "Reset",
+
+      cancelButtonText:
+        "Batal",
+
+      didOpen:
+        () => {
+
+          const popup =
+            Swal.getPopup();
+
+          if (!popup) return;
+
+          const input =
+            popup.querySelector(
+              "#reset-password-input"
+            );
+
+          const toggleButton =
+            popup.querySelector(
+              "#toggle-reset-password"
+            );
+
+          if (
+            !input ||
+            !toggleButton
+          ) return;
+
+          input.focus();
+
+          toggleButton.addEventListener(
+            "click",
+            () => {
+
+              const visible =
+                input.type === "text";
+
+              input.type =
+                visible
+                  ? "password"
+                  : "text";
+
+              toggleButton.textContent =
+                visible
+                  ? "Lihat"
+                  : "Sembunyikan";
+
+            }
+          );
+
+        },
+
+      preConfirm:
+        () => {
+
+          const password =
+            document
+              .getElementById(
+                "reset-password-input"
+              )
+              ?.value
+              .trim();
+
+          if (!password) {
+
+            Swal.showValidationMessage(
+              "Password baru wajib diisi"
+            );
+
+            return false;
+
+          }
+
+          if (password.length < 6) {
+
+            Swal.showValidationMessage(
+              "Password minimal 6 karakter"
+            );
+
+            return false;
+
+          }
+
+          return password;
+
+        }
 
     });
 
-  if (!result.value)
+  if (!result.isConfirmed)
     return;
 
   try {
@@ -480,20 +598,62 @@ const openEdit = (user) => {
 const saveEdit =
   async () => {
 
+  const payload = {
+
+    nip:
+      editForm.nip.trim(),
+
+    nama:
+      editForm.nama.trim(),
+
+    jabatan:
+      editForm.jabatan.trim(),
+
+    unit_kerja:
+      editForm.unit_kerja.trim(),
+
+    role:
+      editForm.role
+
+  };
+
+  if (!payload.nip) {
+
+    Swal.fire({
+      icon: "warning",
+      title: "NIP Kosong",
+      text: "Silakan masukkan NIP."
+    });
+
+    return;
+
+  }
+
+  if (!payload.nama) {
+
+    Swal.fire({
+      icon: "warning",
+      title: "Nama Kosong",
+      text: "Silakan masukkan nama."
+    });
+
+    return;
+
+  }
+
   try {
 
-    console.log("EDIT FORM:", editForm);
     await api.put(
 
       `/admin/users/${editingUser.id}`,
 
-      editForm
+      payload
 
     );
 
     setEditingUser(null);
 
-    loadUsers();
+    await loadUsers();
 
     Swal.fire({
     icon: "success",
@@ -868,9 +1028,12 @@ return (
 
     <button
       className="open-add-btn"
-      onClick={() =>
-        setShowAddModal(true)
-      }
+      onClick={() => {
+
+        setShowAddPassword(false);
+        setShowAddModal(true);
+
+      }}
     >
       ➕ Tambah Akun
     </button>
@@ -955,9 +1118,12 @@ return (
 
   <div
     className="modal-overlay"
-    onClick={() =>
-      setShowAddModal(false)
-    }
+    onClick={() => {
+
+      setShowAddPassword(false);
+      setShowAddModal(false);
+
+    }}
   >
 
     <div
@@ -969,9 +1135,12 @@ return (
 
       <button
         className="modal-close"
-        onClick={() =>
-          setShowAddModal(false)
-        }
+        onClick={() => {
+
+          setShowAddPassword(false);
+          setShowAddModal(false);
+
+        }}
       >
         ✕
       </button>
@@ -1033,13 +1202,53 @@ return (
           onChange={handleChange}
         />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-        />
+        <div
+          style={{
+            display: "flex",
+            gap: "8px"
+          }}
+        >
+
+          <input
+            type={
+              showAddPassword
+                ? "text"
+                : "password"
+            }
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            autoComplete="new-password"
+            onChange={handleChange}
+            style={{
+              flex: 1
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={() =>
+              setShowAddPassword(
+                !showAddPassword
+              )
+            }
+            style={{
+              padding: "0 12px",
+              border: "1px solid #dbe2ea",
+              borderRadius: "12px",
+              background: "#fff",
+              cursor: "pointer",
+              fontWeight: 600
+            }}
+          >
+            {
+              showAddPassword
+                ? "Sembunyikan"
+                : "Lihat"
+            }
+          </button>
+
+        </div>
 
         <div className="custom-select">
 
@@ -1405,14 +1614,21 @@ return (
         <div className="table-tools">
 
           <input
-            type="text"
+            type="search"
+            id="user-search"
+            name="user_search"
+            autoComplete="off"
             placeholder="Cari user..."
             value={search}
-            onChange={(e) =>
+            onChange={(e) => {
+
               setSearch(
                 e.target.value
-              )
-            }
+              );
+
+              setCurrentPage(1);
+
+            }}
           />
 
           <select

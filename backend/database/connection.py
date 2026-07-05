@@ -17,7 +17,10 @@ DATABASE_URL = (
     f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    echo=True
+)
 
 @event.listens_for(engine, "connect")
 def set_mysql_timezone(dbapi_connection, connection_record):
