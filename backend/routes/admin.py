@@ -330,6 +330,7 @@ def get_user(
 @router.put("/users/{user_id}")
 def update_user(
 
+
     user_id: int,
     data: UserUpdate,
 
@@ -337,6 +338,9 @@ def update_user(
     admin=Depends(admin_required)
 
 ):
+    
+    print("REQUEST =", data)
+    print("NIP =", data.nip)
 
     user = db.query(User).filter(
     User.id == user_id
