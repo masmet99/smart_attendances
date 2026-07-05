@@ -48,6 +48,8 @@ function CheckIn() {
   const [mapOpen, setMapOpen]           = useState(false);
   const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
   const [loadingLocation, setLoadingLocation]   = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRY = 3;
 
   const videoRef             = useRef(null);
   const canvasRef            = useRef(null);
@@ -56,6 +58,8 @@ function CheckIn() {
   const faceInsideScannerRef = useRef(false);
   const faceDetectedRef      = useRef(false);
   const livenessPassedRef    = useRef(false);
+  const animationRef = useRef(null);
+  
 
   // ── step progress helper ──────────────────────────────
   const stepStatus = (step) => {
@@ -233,7 +237,10 @@ function CheckIn() {
   const startLivenessDetection = () => {
     const detect = () => {
       if (!videoRef.current || videoRef.current.videoWidth === 0) {
-        requestAnimationFrame(detect); return;
+            animationRef.current =
+                requestAnimationFrame(detect);
+
+            return;
       }
       const result = faceLandmarkerRef.current.detectForVideo(videoRef.current, performance.now());
       if (result.faceLandmarks?.length > 0 && faceInsideScannerRef.current) {
@@ -250,9 +257,11 @@ function CheckIn() {
       livenessPassedRef.current = false; setLivenessPassed(false);
       setFaceInsideScanner(false);
       faceDetectedRef.current = false; setFaceDetected(false);
+      
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
       setCameraOpen(true);
       setTimeout(() => { if (videoRef.current) videoRef.current.srcObject = stream; }, 100);
+      
       const challenges = ["LOOK_LEFT", "LOOK_RIGHT", "OPEN_MOUTH"];
       setChallenge(challenges[Math.floor(Math.random() * challenges.length)]);
     } catch (error) {
@@ -279,21 +288,74 @@ function CheckIn() {
   };
 
   const stopCamera = () => {
+
     const stream = videoRef.current?.srcObject;
-    if (stream) stream.getTracks().forEach(track => track.stop());
-    if (videoRef.current) videoRef.current.srcObject = null;
+    if (stream)
+        stream.getTracks().forEach(track => track.stop());
+    if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+    }
+
+    if (trackingRef.current) {
+        clearInterval(trackingRef.current);
+        trackingRef.current = null;
+    }
+
+    if (videoRef.current)
+        videoRef.current.srcObject = null;
+
     setCameraOpen(false);
     faceDetectedRef.current = false;
     setFaceDetected(false);
     setFaceInsideScanner(false);
   };
 
+  const resetLiveness = () => {
+
+  livenessPassedRef.current = false;
+  setLivenessPassed(false);
+
+  faceDetectedRef.current = false;
+  setFaceDetected(false);
+
+  faceInsideScannerRef.current = false;
+  setFaceInsideScanner(false);
+
+  setPhoto(null);
+  setPhotoFile(null);
+
+  };
+
   const completeLiveness = () => {
-    if (livenessPassedRef.current) return;
-    livenessPassedRef.current = true;
-    setLivenessPassed(true);
-    showSuccess("Verifikasi berhasil");
-    setTimeout(() => { capturePhoto(); setTimeout(() => { stopCamera(); }, 200); }, 300);
+
+      if (livenessPassedRef.current) return;
+      livenessPassedRef.current = true;
+      setLivenessPassed(true);
+
+      // STOP LOOP DETEKSI
+      if (animationRef.current) {
+          cancelAnimationFrame(
+              animationRef.current
+          );
+          animationRef.current = null;
+      }
+
+      // STOP FACE TRACKING
+      if (trackingRef.current) {
+          clearInterval(
+              trackingRef.current
+          );
+          trackingRef.current = null;
+      }
+
+      showSuccess("Verifikasi berhasil");
+      setTimeout(() => {
+          capturePhoto();
+          setTimeout(() => {
+              stopCamera();
+          }, 200);
+      }, 300);
   };
 
   const getScannerArea = () => {
@@ -317,6 +379,7 @@ function CheckIn() {
       console.log(result);
       if (result.success) {
         showSuccess(result.message);
+        setRetryCount(0);
         navigate("/dashboard");
       } else {
         showError(result.message);
@@ -540,7 +603,23 @@ function CheckIn() {
                 style={{ width: "100%", maxWidth: "460px", borderRadius: "12px" }}
               />
             </div>
-            <button className="ci-btn-block ci-btn-block-ghost" style={{ marginTop: "12px" }} onClick={openCamera}>
+            <button
+              className="ci-btn-block ci-btn-block-ghost"
+              style={{ marginTop: "12px" }}
+              onClick={() => {
+
+                if (retryCount >= MAX_RETRY) {
+                  showError("Batas pengambilan ulang foto telah tercapai.");
+                  return;
+                }
+
+                setRetryCount(prev => prev + 1);
+                
+                stopCamera();
+                resetLiveness();
+                openCamera();
+              }}
+            >
               🔄 Ambil Ulang Foto
             </button>
           </div>
