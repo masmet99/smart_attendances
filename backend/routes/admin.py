@@ -339,14 +339,15 @@ def update_user(
 ):
 
     user = db.query(User).filter(
-        User.id == user_id
+    User.id == user_id
     ).first()
 
     if not user:
-        return {
-            "success": False,
-            "message": "User tidak ditemukan"
-        }
+
+        raise HTTPException(
+            status_code=404,
+            detail="User tidak ditemukan."
+        )
     
     if data.nip is not None:
 
@@ -355,11 +356,12 @@ def update_user(
             User.id != user_id
         ).first()
 
-        if existing:
-            return {
-                "success": False,
-                "message": "NIP sudah digunakan"
-            }
+    if existing:
+
+        raise HTTPException(
+            status_code=400,
+            detail="NIP sudah digunakan oleh user lain."
+        )
 
         user.nip = data.nip
 

@@ -125,6 +125,54 @@ const [form, setForm] =
 
     e.preventDefault();
 
+    if (!form.nip.trim()) {
+
+      Swal.fire({
+        icon: "warning",
+        title: "NIP Kosong",
+        text: "Silakan masukkan NIP."
+      });
+
+      return;
+
+    }
+
+    if (!form.nama.trim()) {
+
+      Swal.fire({
+        icon: "warning",
+        title: "Nama Kosong",
+        text: "Silakan masukkan nama."
+      });
+
+      return;
+
+    }
+
+    if (!form.password.trim()) {
+
+      Swal.fire({
+        icon: "warning",
+        title: "Password Kosong",
+        text: "Silakan masukkan password."
+      });
+
+      return;
+
+    }
+
+    if (form.password.length < 6) {
+
+      Swal.fire({
+        icon: "warning",
+        title: "Password Terlalu Pendek",
+        text: "Password minimal 6 karakter."
+      });
+
+      return;
+
+    }
+
     try {
 
         console.log(form);
@@ -145,6 +193,9 @@ const [form, setForm] =
 
       loadUsers();
 
+      // Tutup modal
+    setShowAddModal(false);
+
     Swal.fire({
     icon: "success",
     title: "Berhasil",
@@ -155,11 +206,15 @@ const [form, setForm] =
 
       console.log(err);
 
-    Swal.fire({
-    icon: "error",
-    title: "Gagal",
-    text: "Gagal menambah user"
-    });
+      const message =
+        err.response?.data?.detail ||
+        "Gagal menambah user";
+
+      Swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: message
+      });
 
     }
 
@@ -449,9 +504,15 @@ const saveEdit =
 
     console.log(err);
 
-    alert(
-      "Gagal update user"
-    );
+    const message =
+      err.response?.data?.detail ||
+      "Gagal memperbarui user.";
+
+    Swal.fire({
+      icon: "error",
+      title: "Gagal",
+      text: message
+    });
 
   }
 
