@@ -99,8 +99,18 @@ function CheckIn() {
     if (!cameraOpen || !videoRef.current) return;
     const video = videoRef.current;
     video.onloadedmetadata = () => {
-      if (modelsLoaded) startFaceTracking();
-      startLivenessDetection();
+
+        const ratio =
+            video.videoHeight /
+            video.videoWidth;
+
+        video.style.height =
+            (video.clientWidth * ratio) + "px";
+
+        if (modelsLoaded)
+            startFaceTracking();
+
+        startLivenessDetection();
     };
   }, [cameraOpen]);
 
@@ -258,15 +268,7 @@ function CheckIn() {
       setFaceInsideScanner(false);
       faceDetectedRef.current = false; setFaceDetected(false);
       
-      const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-              facingMode: "user",
-              width: { ideal: 640 },
-              height: { ideal: 480 },
-              aspectRatio: 4 / 3
-          },
-          audio: false
-      });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
       setCameraOpen(true);
       setTimeout(() => { if (videoRef.current) videoRef.current.srcObject = stream; }, 100);
       
