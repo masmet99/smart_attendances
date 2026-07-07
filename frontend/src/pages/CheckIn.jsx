@@ -364,20 +364,18 @@ function CheckIn() {
     const videoHeight = videoRef.current?.clientHeight || 250;
 
     // Scanner dihitung dari lebar video saja
-    const scannerWidth = videoWidth * 0.42;
+    const scannerWidth = videoWidth * 0.48;
 
     // Rasio oval tetap
     const scannerHeight = scannerWidth * 1.45;
 
     return {
-      width: scannerWidth,
-      height: scannerHeight,
-
-      x: (videoWidth - scannerWidth) / 2,
-
-      y: (videoHeight - scannerHeight) * 0.20
+        width: scannerWidth,
+        height: scannerHeight,
+        x: (videoWidth - scannerWidth) / 2,
+        y: (videoHeight - scannerHeight) * 0.18
     };
-};
+  };
 
   const handleCheckIn = async () => {
     if (!latitude || !longitude) { showWarning("Ambil lokasi terlebih dahulu"); return; }
