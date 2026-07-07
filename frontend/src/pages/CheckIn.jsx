@@ -98,7 +98,15 @@ function CheckIn() {
   useEffect(() => {
     if (!cameraOpen || !videoRef.current) return;
     const video = videoRef.current;
+
     video.onloadedmetadata = () => {
+
+      console.log("clientWidth :", video.clientWidth);
+      console.log("clientHeight:", video.clientHeight);
+
+      console.log("videoWidth :", video.videoWidth);
+      console.log("videoHeight:", video.videoHeight);
+
       if (modelsLoaded) startFaceTracking();
       startLivenessDetection();
     };
