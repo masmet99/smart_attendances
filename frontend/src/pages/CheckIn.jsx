@@ -49,6 +49,7 @@ function CheckIn() {
   const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
   const [loadingLocation, setLoadingLocation]   = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [videoInfo, setVideoInfo] = useState(null);
   const MAX_RETRY = 3;
 
   const videoRef             = useRef(null);
@@ -586,6 +587,26 @@ function CheckIn() {
                   />
                 </div>
 
+              {videoInfo && (
+                  <div
+                    style={{
+                      marginTop: 10,
+                      padding: 10,
+                      background: "#f1f5f9",
+                      borderRadius: 8,
+                      fontSize: 13,
+                      textAlign: "left",
+                    }}
+                  >
+                    <div>
+                      client : {videoInfo.clientWidth} × {videoInfo.clientHeight}
+                    </div>
+                    <div>
+                      video : {videoInfo.videoWidth} × {videoInfo.videoHeight}
+                    </div>
+                  </div>
+                )}
+                
                 <div className="ci-face-status">
                   {!faceDetected ? (
                     <span className="ci-status-pill ci-status-danger">🔴 Wajah tidak terdeteksi</span>
