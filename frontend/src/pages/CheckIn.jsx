@@ -258,7 +258,15 @@ function CheckIn() {
       setFaceInsideScanner(false);
       faceDetectedRef.current = false; setFaceDetected(false);
       
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+              facingMode: "user",
+              width: { ideal: 640 },
+              height: { ideal: 480 },
+              aspectRatio: 4 / 3
+          },
+          audio: false
+      });
       setCameraOpen(true);
       setTimeout(() => { if (videoRef.current) videoRef.current.srcObject = stream; }, 100);
       
@@ -558,19 +566,12 @@ function CheckIn() {
                 )}
 
                 <div className="ci-video-wrap">
-                <video
+                  <video
                     ref={videoRef}
                     autoPlay
                     playsInline
-                    style={{
-                        width: "100%",
-                        height: "auto",
-                        maxWidth: "560px",
-                        borderRadius: "12px",
-                        display: "block",
-                        objectFit: "contain"
-                    }}
-                />
+                    style={{ width: "100%", maxWidth: "560px", borderRadius: "12px", display: "block" }}
+                  />
                   <div
                     className="ci-scanner-oval"
                     style={{
