@@ -49,7 +49,6 @@ function CheckIn() {
   const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
   const [loadingLocation, setLoadingLocation]   = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  const [videoInfo, setVideoInfo] = useState(null);
   const MAX_RETRY = 3;
 
   const videoRef             = useRef(null);
@@ -99,15 +98,7 @@ function CheckIn() {
   useEffect(() => {
     if (!cameraOpen || !videoRef.current) return;
     const video = videoRef.current;
-
     video.onloadedmetadata = () => {
-
-      console.log("clientWidth :", video.clientWidth);
-      console.log("clientHeight:", video.clientHeight);
-
-      console.log("videoWidth :", video.videoWidth);
-      console.log("videoHeight:", video.videoHeight);
-
       if (modelsLoaded) startFaceTracking();
       startLivenessDetection();
     };
@@ -567,12 +558,19 @@ function CheckIn() {
                 )}
 
                 <div className="ci-video-wrap">
-                  <video
+                <video
                     ref={videoRef}
                     autoPlay
                     playsInline
-                    style={{ width: "100%", maxWidth: "560px", borderRadius: "12px", display: "block" }}
-                  />
+                    style={{
+                        width: "100%",
+                        height: "auto",
+                        maxWidth: "560px",
+                        borderRadius: "12px",
+                        display: "block",
+                        objectFit: "contain"
+                    }}
+                />
                   <div
                     className="ci-scanner-oval"
                     style={{
@@ -587,26 +585,6 @@ function CheckIn() {
                   />
                 </div>
 
-              {videoInfo && (
-                  <div
-                    style={{
-                      marginTop: 10,
-                      padding: 10,
-                      background: "#f1f5f9",
-                      borderRadius: 8,
-                      fontSize: 13,
-                      textAlign: "left",
-                    }}
-                  >
-                    <div>
-                      client : {videoInfo.clientWidth} × {videoInfo.clientHeight}
-                    </div>
-                    <div>
-                      video : {videoInfo.videoWidth} × {videoInfo.videoHeight}
-                    </div>
-                  </div>
-                )}
-                
                 <div className="ci-face-status">
                   {!faceDetected ? (
                     <span className="ci-status-pill ci-status-danger">🔴 Wajah tidak terdeteksi</span>
