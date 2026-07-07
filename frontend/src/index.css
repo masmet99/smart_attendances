@@ -2311,6 +2311,19 @@ img[alt="Preview"] {
   transition: all 0.3s ease;
 }
 
+.ci-camera-video{
+    width:100%;
+    max-width:560px;
+
+    aspect-ratio:3/4;
+
+    object-fit:cover;
+
+    display:block;
+
+    border-radius:12px;
+}
+
 /* Face status */
 .ci-face-status {
   display: flex;

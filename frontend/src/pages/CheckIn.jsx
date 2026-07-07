@@ -49,6 +49,7 @@ function CheckIn() {
   const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
   const [loadingLocation, setLoadingLocation]   = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [, forceRender] = useState(0);
   const MAX_RETRY = 3;
 
   const videoRef             = useRef(null);
@@ -96,21 +97,51 @@ function CheckIn() {
   }, []);
 
   useEffect(() => {
+
+    if (!cameraOpen) return;
+
+    const updateScanner = () => {
+        forceRender(v => v + 1);
+    };
+
+    window.addEventListener("resize", updateScanner);
+
+    window.addEventListener("orientationchange", updateScanner);
+
+    const video = videoRef.current;
+
+    video?.addEventListener(
+        "loadedmetadata",
+        updateScanner
+    );
+
+    return () => {
+
+        window.removeEventListener(
+            "resize",
+            updateScanner
+        );
+
+        window.removeEventListener(
+            "orientationchange",
+            updateScanner
+        );
+
+        video?.removeEventListener(
+            "loadedmetadata",
+            updateScanner
+        );
+
+    };
+
+}, [cameraOpen]);
+
+  useEffect(() => {
     if (!cameraOpen || !videoRef.current) return;
     const video = videoRef.current;
     video.onloadedmetadata = () => {
-
-        const ratio =
-            video.videoHeight /
-            video.videoWidth;
-
-        video.style.height =
-            (video.clientWidth * ratio) + "px";
-
-        if (modelsLoaded)
-            startFaceTracking();
-
-        startLivenessDetection();
+      if (modelsLoaded) startFaceTracking();
+      startLivenessDetection();
     };
   }, [cameraOpen]);
 
@@ -268,7 +299,26 @@ function CheckIn() {
       setFaceInsideScanner(false);
       faceDetectedRef.current = false; setFaceDetected(false);
       
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+              facingMode: "user",
+
+              width: {
+                  ideal: 480
+              },
+
+              height: {
+                  ideal: 640
+              },
+
+              aspectRatio: {
+                  ideal: 3 / 4
+              }
+          },
+
+          audio: false
+      });
+
       setCameraOpen(true);
       setTimeout(() => { if (videoRef.current) videoRef.current.srcObject = stream; }, 100);
       
@@ -369,14 +419,33 @@ function CheckIn() {
   };
 
   const getScannerArea = () => {
-    const videoWidth  = videoRef.current?.clientWidth  || 300;
-    const videoHeight = videoRef.current?.clientHeight || 250;
-    return {
-      width:  videoWidth  * 0.40,
-      height: videoHeight * 0.65,
-      x:      (videoWidth * 0.50) - (videoWidth * 0.40 / 2),
-      y:      videoHeight * 0.08
-    };
+
+      const video = videoRef.current;
+
+      if (!video) {
+          return {
+              x: 0,
+              y: 0,
+              width: 0,
+              height: 0,
+          };
+      }
+
+      const vw = video.clientWidth;
+      const vh = video.clientHeight;
+
+      // ukuran scanner berdasarkan LEBAR video saja
+      const scannerWidth = vw * 0.42;
+
+      // rasio oval tetap
+      const scannerHeight = scannerWidth * 1.45;
+
+      return {
+          width: scannerWidth,
+          height: scannerHeight,
+          x: (vw - scannerWidth) / 2,
+          y: (vh - scannerHeight) / 2,
+      };
   };
 
   const handleCheckIn = async () => {
@@ -569,10 +638,10 @@ function CheckIn() {
 
                 <div className="ci-video-wrap">
                   <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    style={{ width: "100%", maxWidth: "560px", borderRadius: "12px", display: "block" }}
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      className="ci-camera-video"
                   />
                   <div
                     className="ci-scanner-oval"
