@@ -258,7 +258,25 @@ function CheckIn() {
       setFaceInsideScanner(false);
       faceDetectedRef.current = false; setFaceDetected(false);
       
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "user",
+
+          width: {
+            ideal: 720
+          },
+
+          height: {
+            ideal: 960
+          },
+
+          aspectRatio: {
+            ideal: 3 / 4
+          }
+        },
+
+        audio: false
+      });
       setCameraOpen(true);
       setTimeout(() => { if (videoRef.current) videoRef.current.srcObject = stream; }, 100);
       
