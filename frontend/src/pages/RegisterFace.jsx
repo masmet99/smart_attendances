@@ -69,44 +69,44 @@ function RegisterFace() {
     mouth_open: "Buka mulut lebar-lebar."
   };
 
-  const getScannerArea = () => {
-
-    const videoWidth =
-      videoRef.current?.clientWidth || 300;
-
-    const videoHeight =
-      videoRef.current?.clientHeight || 250;
-
-    // Samakan dengan Check In
-    const scannerWidth = videoWidth * 0.48;
-
-    // Rasio oval tetap
-    const scannerHeight = scannerWidth * 1.45;
-
-    return {
-
-      width: scannerWidth,
-
-      height: scannerHeight,
-
-      x: (videoWidth - scannerWidth) / 2,
-
-      y: (videoHeight - scannerHeight) * 0.18
-
-    };
-
-  };
-
   const currentIndex = poses.indexOf(currentPose);
   const progress = ((currentIndex + 1) / poses.length) * 100;
 
   const scannerArea = cameraOpen
-    ? getScannerArea()
+    ? (() => {
+
+        const videoWidth =
+          videoRef.current?.clientWidth || 300;
+
+        const videoHeight =
+          videoRef.current?.clientHeight || 250;
+
+        const scannerWidth =
+          videoWidth * 0.48;
+
+        const scannerHeight =
+          scannerWidth * 1.45;
+
+        return {
+
+          width: scannerWidth,
+
+          height: scannerHeight,
+
+          x:
+            (videoWidth - scannerWidth) / 2,
+
+          y:
+            (videoHeight - scannerHeight) * 0.18
+
+        };
+
+      })()
     : {
-        width: 0,
-        height: 0,
-        x: 0,
-        y: 0
+        width:0,
+        height:0,
+        x:0,
+        y:0
       };
 
   const clearTracking = () => {
@@ -213,19 +213,15 @@ function RegisterFace() {
       const centerX = (box.x + box.width / 2) * scaleX;
       const centerY = (box.y + box.height / 2) * scaleY;
 
-      const scanner = getScannerArea();
-
-      const scannerCenterX =
-          scanner.x + (scanner.width / 2);
-
-      const scannerCenterY =
-          scanner.y + (scanner.height / 2);
-
-      const toleranceX =
-          scanner.width * 0.35;
-
-      const toleranceY =
-          scanner.height * 0.35;
+      const currentVideoWidth = videoRef.current.clientWidth;
+      const currentVideoHeight = videoRef.current.clientHeight;
+      const scannerWidth = currentVideoWidth * 0.48;
+      const scannerHeight = currentVideoHeight * 1.45;
+      const scannerCenterX = currentVideoWidth / 2;
+      const scannerTop = (currentVideoHeight - scannerHeight) * 0.18;
+      const scannerCenterY = scannerTop + scannerHeight / 2;
+      const toleranceX = scannerWidth * 0.38;
+      const toleranceY = scannerHeight * 0.38;
 
       const insideScanner =
         Math.abs(centerX - scannerCenterX) < toleranceX &&
