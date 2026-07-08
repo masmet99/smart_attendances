@@ -27,15 +27,12 @@ function RegisterFace() {
   const [cameraOpen, setCameraOpen] = useState(false);
   const [countdown, setCountdown] = useState(null);
   const [faceStable, setFaceStable] = useState(false);
-  const [poseMatched, setPoseMatched] = useState(false);
-  const [poseMessage, setPoseMessage] = useState("");
   const [transitioning, setTransitioning] = useState(false);
   const [saving, setSaving] = useState(false);
   const [poseFinished, setPoseFinished] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [photoFile, setPhotoFile] = useState(null);
   const [currentPose, setCurrentPose] = useState("front");
-
 
   const poses = [
     "front",
@@ -168,19 +165,9 @@ function RegisterFace() {
 
   const loadFaceModel = async () => {
     try {
-
-      await Promise.all([
-
-        faceapi.nets
-          .tinyFaceDetector
-          .loadFromUri("/models"),
-
-        faceapi.nets
-          .faceLandmark68Net
-          .loadFromUri("/models")
-
-      ]);
-
+      await faceapi.nets
+        .tinyFaceDetector
+        .loadFromUri("/models");
     } catch {
       showError("Model wajah gagal dimuat");
     }
@@ -197,77 +184,25 @@ function RegisterFace() {
       let detection;
 
       try {
-        detection = await faceapi
-            .detectSingleFace(
-                videoRef.current,
-                new faceapi.TinyFaceDetectorOptions()
-            )
-            .withFaceLandmarks();
+        detection = await faceapi.detectSingleFace(
+          videoRef.current,
+          new faceapi.TinyFaceDetectorOptions()
+        );
       } catch {
         setFaceDetected(false);
         setFaceInsideScanner(false);
         return;
       }
 
-      if(!detection){
-
-          setFaceDetected(false);
-          setFaceInsideScanner(false);
-          setPoseMatched(false);
-          setPoseMessage("");
-          return;
+      if (!detection) {
+        setFaceDetected(false);
+        setFaceInsideScanner(false);
+        return;
       }
 
       setFaceDetected(true);
 
-      const box = detection.detection.box;
-
-      const landmarks =
-          detection.landmarks;
-      let validPose = false;
-
-      switch (currentPose) {
-          case "front":
-              validPose = checkFrontPose(landmarks);
-              setPoseMessage(
-                  validPose
-                      ? "🟢 Pose depan sesuai"
-                      : "🟡 Hadapkan wajah lurus ke kamera"
-              );
-              break;
-
-          case "left":
-              validPose = checkLeftPose(landmarks);
-              setPoseMessage(
-                  validPose
-                      ? "🟢 Pose kiri sesuai"
-                      : "🟡 Putar kepala sedikit ke kiri"
-              );
-              break;
-
-          case "right":
-              validPose = checkRightPose(landmarks);
-              setPoseMessage(
-                  validPose
-                      ? "🟢 Pose kanan sesuai"
-                      : "🟡 Putar kepala sedikit ke kanan"
-              );
-              break;
-
-          case "mouth_open":
-              validPose = checkMouthOpen(landmarks);
-              setPoseMessage(
-                  validPose
-                      ? "🟢 Mulut sudah terbuka"
-                      : "🟡 Buka mulut lebih lebar"
-              );
-              break;
-         
-            default:
-              validPose = false;
-      }
-      setPoseMatched(validPose);
-
+      const box = detection.box;
       const scaleX =
         videoRef.current.clientWidth /
         videoRef.current.videoWidth;
@@ -294,95 +229,6 @@ function RegisterFace() {
 
       setFaceInsideScanner(insideScanner);
     }, 500);
-  };
-
-
-  const checkFrontPose = (landmarks) => {
-
-      const nose = landmarks.getNose()[3];
-
-      const leftEye = landmarks.getLeftEye()[0];
-
-      const rightEye = landmarks.getRightEye()[3];
-
-      const leftDistance =
-          Math.abs(nose.x - leftEye.x);
-
-      const rightDistance =
-          Math.abs(rightEye.x - nose.x);
-
-      const ratio =
-          leftDistance / rightDistance;
-
-      return ratio > 0.90 && ratio < 1.10;
-
-  };
-
-  const checkLeftPose = (landmarks) => {
-
-      const nose = landmarks.getNose()[3];
-
-      const leftEye = landmarks.getLeftEye()[0];
-
-      const rightEye = landmarks.getRightEye()[3];
-
-      const leftDistance =
-          Math.abs(nose.x - leftEye.x);
-
-      const rightDistance =
-          Math.abs(rightEye.x - nose.x);
-
-      const ratio =
-          leftDistance / rightDistance;
-
-      return ratio > 1.35;
-
-  };
-
-  const checkRightPose = (landmarks) => {
-
-      const nose = landmarks.getNose()[3];
-
-      const leftEye = landmarks.getLeftEye()[0];
-
-      const rightEye = landmarks.getRightEye()[3];
-
-      const leftDistance =
-          Math.abs(nose.x - leftEye.x);
-
-      const rightDistance =
-          Math.abs(rightEye.x - nose.x);
-
-      const ratio =
-          leftDistance / rightDistance;
-
-      return ratio < 0.75;
-
-  };
-
-  const checkMouthOpen = (landmarks) => {
-
-      const mouth = landmarks.getMouth();
-
-      const upperLip = mouth[13];
-
-      const lowerLip = mouth[19];
-
-      const leftCorner = mouth[0];
-
-      const rightCorner = mouth[6];
-
-      const mouthHeight =
-          lowerLip.y - upperLip.y;
-
-      const mouthWidth =
-          rightCorner.x - leftCorner.x;
-
-      const ratio =
-          mouthHeight / mouthWidth;
-
-      return ratio > 0.30;
-
   };
 
   const openCamera = async () => {
@@ -577,7 +423,7 @@ function RegisterFace() {
   }, []);
 
   useEffect(() => {
-    if (!faceInsideScanner || !faceStable || !poseMatched) {
+    if (!faceInsideScanner || !faceStable) {
       clearCountdown();
       return;
     }
@@ -610,9 +456,8 @@ function RegisterFace() {
   ]);
 
   useEffect(() => {
-    if (!faceDetected || !faceInsideScanner || !poseMatched) {
+    if (!faceDetected || !faceInsideScanner) {
       setFaceStable(false);
-      setPoseMatched(false);
       clearStableTimer();
       return;
     }
@@ -716,7 +561,7 @@ function RegisterFace() {
               <p>
                 {poseDescriptions[currentPose]}
               </p>
-
+              
             </div>
           </div>
 
@@ -772,21 +617,6 @@ function RegisterFace() {
                     <span className="status success">
                       🟢 Wajah stabil
                     </span>
-                  )}
-
-                  {faceDetected && faceInsideScanner && (
-
-                    <div
-                        style={{
-                            marginTop:10,
-                            fontWeight:600,
-                            color:poseMatched
-                                ? "#16a34a"
-                                : "#f59e0b"
-                        }}
-                    >
-                        {poseMessage}
-                    </div>
                   )}
 
                   {countdown && (
