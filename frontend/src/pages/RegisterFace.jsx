@@ -69,18 +69,39 @@ function RegisterFace() {
     mouth_open: "Buka mulut lebar-lebar."
   };
 
+  const getScannerArea = () => {
+
+    const videoWidth =
+      videoRef.current?.clientWidth || 300;
+
+    const videoHeight =
+      videoRef.current?.clientHeight || 250;
+
+    // Samakan dengan Check In
+    const scannerWidth = videoWidth * 0.48;
+
+    // Rasio oval tetap
+    const scannerHeight = scannerWidth * 1.45;
+
+    return {
+
+      width: scannerWidth,
+
+      height: scannerHeight,
+
+      x: (videoWidth - scannerWidth) / 2,
+
+      y: (videoHeight - scannerHeight) * 0.18
+
+    };
+
+  };
+
   const currentIndex = poses.indexOf(currentPose);
   const progress = ((currentIndex + 1) / poses.length) * 100;
 
   const scannerArea = cameraOpen
-    ? {
-        width: (videoRef.current?.clientWidth || 300) * 0.45,
-        height: (videoRef.current?.clientHeight || 250) * 0.70,
-        x:
-          ((videoRef.current?.clientWidth || 300) / 2) -
-          (((videoRef.current?.clientWidth || 300) * 0.45) / 2),
-        y: (videoRef.current?.clientHeight || 250) * 0.08
-      }
+    ? getScannerArea()
     : {
         width: 0,
         height: 0,
@@ -192,14 +213,19 @@ function RegisterFace() {
       const centerX = (box.x + box.width / 2) * scaleX;
       const centerY = (box.y + box.height / 2) * scaleY;
 
-      const currentVideoWidth = videoRef.current.clientWidth;
-      const currentVideoHeight = videoRef.current.clientHeight;
-      const scannerWidth = currentVideoWidth * 0.45;
-      const scannerHeight = currentVideoHeight * 0.70;
-      const scannerCenterX = currentVideoWidth / 2;
-      const scannerCenterY = currentVideoHeight * 0.43;
-      const toleranceX = scannerWidth * 0.35;
-      const toleranceY = scannerHeight * 0.35;
+      const scanner = getScannerArea();
+
+      const scannerCenterX =
+          scanner.x + (scanner.width / 2);
+
+      const scannerCenterY =
+          scanner.y + (scanner.height / 2);
+
+      const toleranceX =
+          scanner.width * 0.35;
+
+      const toleranceY =
+          scanner.height * 0.35;
 
       const insideScanner =
         Math.abs(centerX - scannerCenterX) < toleranceX &&
@@ -217,8 +243,20 @@ function RegisterFace() {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: "user"
+        video:{
+            facingMode:"user",
+
+            width:{
+                ideal:480
+            },
+
+            height:{
+                ideal:640
+            },
+
+            aspectRatio:{
+                ideal:3/4
+            }
         },
         audio: false
       });
@@ -549,14 +587,10 @@ function RegisterFace() {
                 }}
               >
                 <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  style={{
-                    width: "100%",
-                    maxWidth: "600px",
-                    borderRadius: "16px"
-                  }}
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className="rf-camera-video"
                 />
 
                 {cameraOpen && (

@@ -4356,3 +4356,16 @@ img[alt="Preview"] {
     font-size: 13px;
   }
 }
+
+.rf-camera-video{
+    width:100%;
+    max-width:600px;
+
+    aspect-ratio:3/4;
+
+    object-fit:cover;
+
+    border-radius:16px;
+
+    display:block;
+}
