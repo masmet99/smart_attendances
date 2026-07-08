@@ -238,24 +238,25 @@ function RegisterFace() {
     clearCountdown();
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video:{
-            facingMode:"user",
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: "user",
 
-            width:{
-                ideal:480
+            width: {
+              ideal: 720
             },
 
-            height:{
-                ideal:640
+            height: {
+              ideal: 960
             },
 
-            aspectRatio:{
-                ideal:3/4
+            aspectRatio: {
+              ideal: 3 / 4
             }
-        },
-        audio: false
-      });
+          },
+
+          audio: false
+        });
 
       if (trackingRef.current) {
         clearInterval(trackingRef.current);
