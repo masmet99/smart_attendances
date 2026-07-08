@@ -220,8 +220,8 @@ function RegisterFace() {
       const scannerCenterX = currentVideoWidth / 2;
       const scannerTop = (currentVideoHeight - scannerHeight) * 0.18;
       const scannerCenterY = scannerTop + scannerHeight / 2;
-      const toleranceX = scannerWidth * 0.38;
-      const toleranceY = scannerHeight * 0.38;
+      const toleranceX = scannerWidth * 0.35;
+      const toleranceY = scannerHeight * 0.35;
 
       const insideScanner =
         Math.abs(centerX - scannerCenterX) < toleranceX &&
