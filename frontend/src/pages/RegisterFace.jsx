@@ -50,8 +50,8 @@ function RegisterFace() {
 
   const poseTitles = {
     front: "Pose Depan",
-    left: "⬅️ Gerakkan Kepala",
-    right: "➡️ Gerakkan Kepala",
+    left: "⬅️ Miringkan Muka (Ke Kiri)",
+    right: "➡️ Miringkan Muka (Ke Kanan)",
     mouth_open: "Pose Mulut Terbuka"
   };
 
@@ -561,7 +561,7 @@ function RegisterFace() {
               <p>
                 {poseDescriptions[currentPose]}
               </p>
-              
+
             </div>
           </div>
 
