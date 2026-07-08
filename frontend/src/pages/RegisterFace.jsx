@@ -82,7 +82,7 @@ function RegisterFace() {
           videoRef.current?.clientHeight || 250;
 
         const scannerWidth =
-          videoWidth * 0.48;
+          videoWidth * 0.55;
 
         const scannerHeight =
           scannerWidth * 1.45;
@@ -221,7 +221,7 @@ function RegisterFace() {
       const scannerTop = (currentVideoHeight - scannerHeight) * 0.18;
       const scannerCenterY = scannerTop + scannerHeight / 2;
       const toleranceX = scannerWidth * 0.35;
-      const toleranceY = scannerHeight * 0.35;
+      const toleranceY = scannerHeight * 0.3;
 
       const insideScanner =
         Math.abs(centerX - scannerCenterX) < toleranceX &&
@@ -238,25 +238,24 @@ function RegisterFace() {
     clearCountdown();
 
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "user",
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video:{
+            facingMode:"user",
 
-            width: {
-              ideal: 720
+            width:{
+                ideal:480
             },
 
-            height: {
-              ideal: 960
+            height:{
+                ideal:640
             },
 
-            aspectRatio: {
-              ideal: 3 / 4
+            aspectRatio:{
+                ideal:3/4
             }
-          },
-
-          audio: false
-        });
+        },
+        audio: false
+      });
 
       if (trackingRef.current) {
         clearInterval(trackingRef.current);
