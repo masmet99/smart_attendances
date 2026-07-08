@@ -82,10 +82,10 @@ function RegisterFace() {
           videoRef.current?.clientHeight || 250;
 
         const scannerWidth =
-          videoWidth * 0.55;
+          videoWidth * 0.52;
 
         const scannerHeight =
-          scannerWidth * 1.45;
+          scannerWidth * 1.30;
 
         return {
 
