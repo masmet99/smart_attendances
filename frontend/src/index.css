@@ -4366,4 +4366,12 @@ img[alt="Preview"] {
     display:block;
 
     border-radius:16px;
+
+}
+
+.rf-camera-container{
+    position: relative;
+    display: inline-block;
+
+    transform: scaleX(-1);
 }
