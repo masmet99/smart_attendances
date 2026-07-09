@@ -415,8 +415,8 @@ function CheckIn() {
   const scannerArea = getScannerArea();
 
   const challengeText = {
-    LOOK_LEFT:  { icon: "⬅️", text: "Putar kepala ke kiri. (Perlahan)" },
-    LOOK_RIGHT: { icon: "➡️", text: "Putar kepala ke kanan. (Perlahan)" },
+    LOOK_LEFT:  { icon: "➡️", text: "Putar kepala ke kanan. (Perlahan)" },
+    LOOK_RIGHT: { icon: "⬅️", text: "Putar kepala ke kiri. (Perlahan)" },
     OPEN_MOUTH: { icon: "😮", text: "Buka mulut" },
   };
 
