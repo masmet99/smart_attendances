@@ -50,8 +50,8 @@ function RegisterFace() {
 
   const poseTitles = {
     front: "Pose Depan",
-    left: "⬅️ Miringkan Muka (Ke Kiri)",
-    right: "➡️ Miringkan Muka (Ke Kanan)",
+    left: "⬅️ Miringkan Muka (Ke Kiri Perlahan)",
+    right: "➡️ Miringkan Muka (Ke Kanan Perlahan)",
     mouth_open: "Pose Mulut Terbuka"
   };
 
