@@ -1074,6 +1074,11 @@ img {
 }
 
 .modal-save-btn:hover { transform: translateY(-2px); }
+.modal-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
 
 .modal-cancel-btn {
   width: 120px;
@@ -4376,4 +4381,39 @@ img[alt="Preview"] {
     display: inline-block;
 
     transform: scaleX(-1);
+}
+
+/* =======================
+   USER MANAGEMENT — UX Fixes
+   (sr-only labels, empty/loading state tabel, ellipsis pagination)
+======================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.table-empty-state {
+  text-align: center;
+  padding: 40px 20px !important;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  color: #94a3b8;
+  font-weight: 700;
 }
