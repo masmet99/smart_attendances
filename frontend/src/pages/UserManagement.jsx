@@ -661,7 +661,7 @@ function UserManagement() {
       <div className="dashboard-content">
         {/* HEADER */}
         <div className="page-header-card">
-          <h1>👥 Kelola Akun Pegawai</h1>
+          <h1>👥 Kelola Akun Pegawai Cikong</h1>
           <p>Monitoring dan manajemen akun pengguna sistem.</p>
 
           <div className="header-stats">
