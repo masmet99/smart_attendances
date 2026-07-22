@@ -41,7 +41,7 @@ function AttendanceHistory() {
     }
   };
 
-  // ── stats ─────────────────────────────────────────────
+  // ── stats ────────────────────────────────────────────
   const hadirCount = histories.filter(i => i.status === "HADIR").length;
   const telatCount = histories.filter(i => i.status !== "HADIR" && i.status).length;
   const avgSimilarity =
