@@ -193,28 +193,49 @@ function CheckIn() {
     } catch (error) { console.log(error); }
   };
 
-  const getLocation = () => {
-    setLoadingLocation(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        setLatitude(lat);
-        setLongitude(lng);
-        if (geofence) {
-          const dist = calculateDistance(lat, lng, geofence.latitude, geofence.longitude);
-          setDistance(dist);
-          setInsideArea(dist <= geofence.radius_meter);
-        }
-        setLoadingLocation(false);
-      },
-      (error) => {
-        showWarning("Gagal mengambil lokasi");
-        console.log(error);
-        setLoadingLocation(false);
+const getLocation = () => {
+  setLoadingLocation(true);
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      console.log("Latitude :", lat);
+      console.log("Longitude:", lng);
+      console.log("Accuracy :", position.coords.accuracy, "meter");
+
+      setLatitude(lat);
+      setLongitude(lng);
+
+      if (geofence) {
+        const dist = calculateDistance(
+          lat,
+          lng,
+          geofence.latitude,
+          geofence.longitude
+        );
+
+        console.log("Distance:", dist);
+
+        setDistance(dist);
+        setInsideArea(dist <= geofence.radius_meter);
       }
-    );
-  };
+
+      setLoadingLocation(false);
+    },
+    (error) => {
+      showWarning("Gagal mengambil lokasi");
+      console.log(error);
+      setLoadingLocation(false);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0,
+    }
+  );
+};
 
   const checkChallenge = (result) => {
     if (!faceInsideScannerRef.current) return;
