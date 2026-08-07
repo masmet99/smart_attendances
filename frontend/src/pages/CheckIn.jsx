@@ -133,7 +133,7 @@ function CheckIn() {
       if (!videoRef.current) return;
       const detection = await faceapi.detectSingleFace(
         videoRef.current,
-        new faceapi.TinyFaceDetectorOptions()
+        new faceapi.TinyFaceDetectorOptions() //model ai buat face detection
       );
       if (detection) {
         const box = detection.box;
@@ -196,7 +196,7 @@ function CheckIn() {
 const getLocation = () => {
   setLoadingLocation(true);
 
-  navigator.geolocation.getCurrentPosition(
+  navigator.geolocation.getCurrentPosition(   //Web Geolocation API milik browser.
     (position) => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
@@ -250,7 +250,7 @@ const getLocation = () => {
     const upperLip   = landmarks[13];
     const lowerLip   = landmarks[14];
     const mouthGap   = Math.abs(upperLip.y - lowerLip.y);
-    if (challenge === "LOOK_LEFT"  && offset   < -0.03) { showSuccess("Kepala ke kiri terdeteksi");   completeLiveness(); }
+    if (challenge === "LOOK_LEFT"  && offset   < -0.03) { showSuccess("Kepala ke kiri terdeteksi");   completeLiveness(); } // nilai threshold berdasarkan observasi awal saat pengujian
     if (challenge === "LOOK_RIGHT" && offset   >  0.03) { showSuccess("Kepala ke kanan terdeteksi");  completeLiveness(); }
     if (challenge === "OPEN_MOUTH" && mouthGap >  0.03) { showSuccess("Mulut terbuka terdeteksi");    completeLiveness(); }
   };
@@ -279,12 +279,12 @@ const getLocation = () => {
       setFaceInsideScanner(false);
       faceDetectedRef.current = false; setFaceDetected(false);
       
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });  //WEB MEDIA API milik BROWSER (izin utk akses kamera)
       setCameraOpen(true);
       setTimeout(() => { if (videoRef.current) videoRef.current.srcObject = stream; }, 100);
       
       const challenges = ["LOOK_LEFT", "LOOK_RIGHT", "OPEN_MOUTH"];
-      setChallenge(challenges[Math.floor(Math.random() * challenges.length)]);
+      setChallenge(challenges[Math.floor(Math.random() * challenges.length)]); //challenge random buat
     } catch (error) {
       console.error(error);
       showWarning("Kamera tidak dapat diakses");
@@ -294,10 +294,10 @@ const getLocation = () => {
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
-    const canvas = canvasRef.current;
+    const canvas = canvasRef.current;     //mengambil satu frame video
     const context = canvas.getContext("2d");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth;    // menyamakan resolusi,
+    canvas.height = video.videoHeight; // supaya hasil foto memiliki resolusi asli kamera
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const imageData = canvas.toDataURL("image/jpeg");
     setPhoto(imageData);
@@ -348,7 +348,7 @@ const getLocation = () => {
 
   };
 
-  const completeLiveness = () => {
+  const completeLiveness = () => {  //baru foto diambil setelah liveness nya berhasil
 
       if (livenessPassedRef.current) return;
       livenessPassedRef.current = true;
@@ -372,7 +372,7 @@ const getLocation = () => {
 
       showSuccess("Verifikasi berhasil");
       setTimeout(() => {
-          capturePhoto();
+          capturePhoto(); //baru foto diambil setelah liveness nya berhasil
           setTimeout(() => {
               stopCamera();
           }, 200);
