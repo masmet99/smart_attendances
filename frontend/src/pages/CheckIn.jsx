@@ -24,7 +24,7 @@ import {
   FilesetResolver
 } from "@mediapipe/tasks-vision";
 
-
+// menyimpan data yang dibutuhkan selama proses check-in.
 function CheckIn() {
 
   const navigate = useNavigate();
@@ -87,7 +87,7 @@ function CheckIn() {
     return               { cls: "ci-badge-wait",         text: "Menunggu" };
   };
 
-  // ── lifecycle ─────────────────────────────────────────
+  // dijalankan ketika halaman CheckIn pertama kali dibuka.
   useEffect(() => {
     checkFaceRegistration();
     loadGeofence();
@@ -107,12 +107,12 @@ function CheckIn() {
   // ── logika tidak diubah ───────────────────────────────
   const loadFaceModel = async () => {
     try {
-      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+      await faceapi.nets.tinyFaceDetector.loadFromUri("/models"); //model face detector (there is face?)
       setModelsLoaded(true);
     } catch (error) { console.log(error); }
   };
 
-  const initFaceLandmarker = async () => {
+  const initFaceLandmarker = async () => { // model liveness detection
     const vision = await FilesetResolver.forVisionTasks(
       "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
     );
@@ -131,7 +131,7 @@ function CheckIn() {
     if (trackingRef.current) clearInterval(trackingRef.current);
     trackingRef.current = setInterval(async () => {
       if (!videoRef.current) return;
-      const detection = await faceapi.detectSingleFace(
+      const detection = await faceapi.detectSingleFace(    //face detection dilakukan disini
         videoRef.current,
         new faceapi.TinyFaceDetectorOptions() //model ai buat face detection
       );
@@ -209,7 +209,7 @@ const getLocation = () => {
       setLongitude(lng);
 
       if (geofence) {
-        const dist = calculateDistance(
+        const dist = calculateDistance( //jarak dihitung
           lat,
           lng,
           geofence.latitude,
@@ -237,7 +237,7 @@ const getLocation = () => {
   );
 };
 
-  const checkChallenge = (result) => {
+  const checkChallenge = (result) => { //liveness dilakukan disini
     if (!faceInsideScannerRef.current) return;
     if (!faceDetectedRef.current) return;
     if (livenessPassedRef.current) return;
@@ -250,6 +250,8 @@ const getLocation = () => {
     const upperLip   = landmarks[13];
     const lowerLip   = landmarks[14];
     const mouthGap   = Math.abs(upperLip.y - lowerLip.y);
+
+    //threshold gerakan pos muka
     if (challenge === "LOOK_LEFT"  && offset   < -0.03) { showSuccess("Kepala ke kiri terdeteksi");   completeLiveness(); } // nilai threshold berdasarkan observasi awal saat pengujian
     if (challenge === "LOOK_RIGHT" && offset   >  0.03) { showSuccess("Kepala ke kanan terdeteksi");  completeLiveness(); }
     if (challenge === "OPEN_MOUTH" && mouthGap >  0.03) { showSuccess("Mulut terbuka terdeteksi");    completeLiveness(); }
@@ -422,7 +424,7 @@ const getLocation = () => {
     }
   };
 
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {  //perhitungan haversine
     const R    = 6371000;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;

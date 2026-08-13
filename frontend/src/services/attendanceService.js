@@ -1,4 +1,4 @@
-import api from "../utils/api";
+import api from "../utils/api"; //menggunakan objek api untuk melakukan komunikasi HTTP dengan backend.
 
 export const getTodayAttendance = async () => {
 
