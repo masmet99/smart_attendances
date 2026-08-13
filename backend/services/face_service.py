@@ -10,7 +10,7 @@ app = FaceAnalysis(
 
 app.prepare(
     ctx_id=-1,
-    det_size=(128, 128)
+    det_size=(64, 64)
 )
 
 print("FACE MODEL LOADED")
